@@ -3,17 +3,28 @@ const A220_API_URL = 'https://a220-api.kiosco-a220.workers.dev';
 let apiKey = '';
 
 function loadGitHubConfig() {
-  // Compatibilidad con el HTML anterior: ocultamos toda configuración directa de GitHub.
-  for (const id of ['githubUser','githubRepo','githubBranch','githubFile','githubToken']) {
+  // La app pública sólo pide la clave de sincronización de la API.
+  // Los campos antiguos de GitHub se ocultan individualmente, sin ocultar el panel.
+  for (const id of ['githubUser','githubRepo','githubBranch','githubFile']) {
     const el = document.getElementById(id);
-    if (el) {
-      el.closest('div')?.classList.add('legacy-github-config');
-      el.style.display = 'none';
+    if (el) el.style.display = 'none';
+  }
+
+  let input = document.getElementById('apiKey');
+  if (!input) input = document.getElementById('githubToken');
+
+  if (!input) {
+    const panel = document.querySelector('#sync .panel:last-child');
+    if (panel) {
+      input = document.createElement('input');
+      input.id = 'apiKey';
+      input.type = 'password';
+      input.autocomplete = 'off';
+      input.placeholder = 'Clave de sincronización';
+      panel.insertBefore(input, panel.querySelector('button'));
     }
   }
 
-  const oldToken = document.getElementById('githubToken');
-  const input = document.getElementById('apiKey') || oldToken;
   if (input) {
     input.id = 'apiKey';
     input.placeholder = 'Clave de sincronización';
@@ -21,6 +32,9 @@ function loadGitHubConfig() {
     input.autocomplete = 'off';
     input.style.display = '';
   }
+
+  const saveButton = document.querySelector('#sync button[onclick="saveGitHubConfig()"]');
+  if (saveButton) saveButton.textContent = 'Cargar clave';
 }
 
 function saveGitHubConfig() {
@@ -28,18 +42,18 @@ function saveGitHubConfig() {
   apiKey = input?.value.trim() || '';
 
   if (!apiKey) {
-    showToast('⚠️ Ingresá la clave de sincronización','error');
+    showToast('⚠️ Ingresá la clave de sincronización', 'error');
     return;
   }
 
   input.value = '';
-  showToast('✅ Clave de sincronización cargada sólo en esta sesión','success');
+  showToast('✅ Clave cargada sólo en esta sesión', 'success');
 }
 
 function apiHeaders() {
   if (!apiKey) throw new Error('Ingresá la clave de sincronización en esta sesión');
   return {
-    'Authorization': `Bearer ${apiKey}`,
+    Authorization: `Bearer ${apiKey}`,
     'Content-Type': 'application/json',
   };
 }
