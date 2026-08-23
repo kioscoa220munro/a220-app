@@ -1,9 +1,26 @@
 // Sincronización A220 mediante API privada. Nunca contiene el token de GitHub.
+const A220_API_URL = 'https://a220-api.kiosco-a220.workers.dev';
 let apiKey = '';
 
 function loadGitHubConfig() {
-  const input = document.getElementById('apiKey');
-  if (input) input.value = '';
+  // Compatibilidad con el HTML anterior: ocultamos toda configuración directa de GitHub.
+  for (const id of ['githubUser','githubRepo','githubBranch','githubFile','githubToken']) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.closest('div')?.classList.add('legacy-github-config');
+      el.style.display = 'none';
+    }
+  }
+
+  const oldToken = document.getElementById('githubToken');
+  const input = document.getElementById('apiKey') || oldToken;
+  if (input) {
+    input.id = 'apiKey';
+    input.placeholder = 'Clave de sincronización';
+    input.type = 'password';
+    input.autocomplete = 'off';
+    input.style.display = '';
+  }
 }
 
 function saveGitHubConfig() {
@@ -28,7 +45,7 @@ function apiHeaders() {
 }
 
 async function apiRequest(path, options = {}) {
-  const response = await fetch(`${APP_CONFIG.apiUrl}${path}`, {
+  const response = await fetch(`${A220_API_URL}${path}`, {
     ...options,
     headers: {
       ...apiHeaders(),
