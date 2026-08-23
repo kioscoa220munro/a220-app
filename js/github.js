@@ -1,2 +1,122 @@
-// Sincronización con repo privado. El token se mantiene sólo en memoria.
-let githubConfig={...APP_CONFIG.githubDefault},githubToken='';function loadGitHubConfig(){try{const s=localStorage.getItem(APP_CONFIG.githubKey);if(s)githubConfig={...githubConfig,...JSON.parse(s)}}catch(e){}for(const [id,key] of [['githubUser','user'],['githubRepo','repo'],['githubBranch','branch'],['githubFile','file']]){const el=document.getElementById(id);if(el)el.value=githubConfig[key]||''}} function saveGitHubConfig(){githubConfig.user=document.getElementById('githubUser').value.trim();githubConfig.repo=document.getElementById('githubRepo').value.trim();githubConfig.branch=document.getElementById('githubBranch').value.trim()||'main';githubConfig.file=document.getElementById('githubFile').value.trim()||'a220-data.json';githubToken=document.getElementById('githubToken').value.trim();if(!githubConfig.user||!githubConfig.repo||!githubToken){showToast('⚠️ Usuario, repositorio y token son obligatorios','error');return}localStorage.setItem(APP_CONFIG.githubKey,JSON.stringify({user:githubConfig.user,repo:githubConfig.repo,branch:githubConfig.branch,file:githubConfig.file}));document.getElementById('githubToken').value='';showToast('✅ Configuración guardada. Token sólo en memoria.','success')} function githubHeaders(){if(!githubToken)throw new Error('Ingresá el token GitHub en esta sesión');return {'Accept':'application/vnd.github+json','Authorization':`Bearer ${githubToken}`,'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'}} function githubUrl(){return `https://api.github.com/repos/${encodeURIComponent(githubConfig.user)}/${encodeURIComponent(githubConfig.repo)}/contents/${encodeURIComponent(githubConfig.file)}`} function utf8ToBase64(s){const bytes=new TextEncoder().encode(s);let bin='';for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(bin)} function base64ToUtf8(b64){const bin=atob(b64.replace(/\n/g,''));return new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0)))} async function githubMeta(){const r=await fetch(`${githubUrl()}?ref=${encodeURIComponent(githubConfig.branch)}`,{headers:githubHeaders(),cache:'no-store'});if(r.status===404)return null;if(!r.ok)throw new Error(`GitHub ${r.status}`);return r.json()} async function syncToGitHub(){if(!isLoggedIn)return;try{showToast('📤 Cifrando y subiendo...','info');const env=await createEnvelope(appData,a220Password),meta=await githubMeta();if(meta&&Number(meta.revision||0)>Number(appData.revision||0)&&!confirm('GitHub tiene una versión más nueva. ¿Sobrescribirla?'))return;const body={message:`A220 Pro cifrado · rev ${appData.revision}`,content:utf8ToBase64(JSON.stringify(env,null,2)),branch:githubConfig.branch};if(meta?.sha)body.sha=meta.sha;const r=await fetch(githubUrl(),{method:'PUT',headers:githubHeaders(),body:JSON.stringify(body)});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||`GitHub ${r.status}`)}showToast('✅ Datos cifrados sincronizados','success')}catch(e){showToast('❌ '+e.message,'error')}} async function syncFromGitHub(){try{showToast('📥 Descargando...','info');const meta=await githubMeta();if(!meta){showToast('⚠️ No existe todavía el archivo','error');return}const env=JSON.parse(base64ToUtf8(meta.content)),remote=await decryptEnvelope(env,a220Password);if(!confirm(`Restaurar GitHub rev ${remote.data.revision} y reemplazar local?`))return;localStorage.setItem(APP_CONFIG.storageKey+'_before_sync',localStorage.getItem(APP_CONFIG.storageKey));appData=remote.data;await persistEncrypted(false);renderAll();showToast('✅ Datos restaurados','success')}catch(e){showToast('❌ '+e.message,'error')}}
+// Sincronización A220 mediante API privada. Nunca contiene el token de GitHub.
+let apiKey = '';
+
+function loadGitHubConfig() {
+  const input = document.getElementById('apiKey');
+  if (input) input.value = '';
+}
+
+function saveGitHubConfig() {
+  const input = document.getElementById('apiKey');
+  apiKey = input?.value.trim() || '';
+
+  if (!apiKey) {
+    showToast('⚠️ Ingresá la clave de sincronización','error');
+    return;
+  }
+
+  input.value = '';
+  showToast('✅ Clave de sincronización cargada sólo en esta sesión','success');
+}
+
+function apiHeaders() {
+  if (!apiKey) throw new Error('Ingresá la clave de sincronización en esta sesión');
+  return {
+    'Authorization': `Bearer ${apiKey}`,
+    'Content-Type': 'application/json',
+  };
+}
+
+async function apiRequest(path, options = {}) {
+  const response = await fetch(`${APP_CONFIG.apiUrl}${path}`, {
+    ...options,
+    headers: {
+      ...apiHeaders(),
+      ...(options.headers || {}),
+    },
+    cache: 'no-store',
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `API ${response.status}`);
+  }
+
+  return data;
+}
+
+async function syncToGitHub() {
+  if (!isLoggedIn) return;
+
+  try {
+    showToast('📤 Cifrando y subiendo...', 'info');
+
+    const env = await createEnvelope(appData, a220Password);
+    const current = await apiRequest('/data', { method: 'GET' });
+
+    if (current.exists && current.content) {
+      try {
+        const remoteEnv = JSON.parse(current.content);
+        const remote = await decryptEnvelope(remoteEnv, a220Password);
+
+        if (
+          Number(remote.data?.revision || 0) > Number(appData.revision || 0) &&
+          !confirm('GitHub tiene una versión más nueva. ¿Sobrescribirla?')
+        ) return;
+      } catch (_) {
+        throw new Error('Los datos remotos no se pueden validar con esta contraseña');
+      }
+    }
+
+    const result = await apiRequest('/data', {
+      method: 'PUT',
+      body: JSON.stringify({
+        content: JSON.stringify(env, null, 2),
+        sha: current.sha || null,
+      }),
+    });
+
+    if (result.ok) showToast('✅ Datos cifrados sincronizados', 'success');
+  } catch (e) {
+    showToast('❌ ' + e.message, 'error');
+  }
+}
+
+async function syncFromGitHub() {
+  try {
+    showToast('📥 Descargando...', 'info');
+
+    const remote = await apiRequest('/data', { method: 'GET' });
+
+    if (!remote.exists || !remote.content) {
+      showToast('⚠️ Todavía no existe una copia remota', 'error');
+      return;
+    }
+
+    const env = JSON.parse(remote.content);
+    const decrypted = await decryptEnvelope(env, a220Password);
+
+    if (!confirm(`Restaurar GitHub rev ${decrypted.data.revision} y reemplazar local?`)) return;
+
+    localStorage.setItem(
+      APP_CONFIG.storageKey + '_before_sync',
+      localStorage.getItem(APP_CONFIG.storageKey)
+    );
+
+    appData = decrypted.data;
+    await persistEncrypted(false);
+    renderAll();
+
+    showToast('✅ Datos restaurados', 'success');
+  } catch (e) {
+    showToast('❌ ' + e.message, 'error');
+  }
+}
+
+function clearSyncKey() {
+  apiKey = '';
+  const input = document.getElementById('apiKey');
+  if (input) input.value = '';
+  showToast('🔒 Clave de sincronización eliminada de la sesión', 'info');
+}
