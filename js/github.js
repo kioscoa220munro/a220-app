@@ -1,10 +1,10 @@
-// Sincronización A220 mediante API privada. Nunca contiene el token de GitHub.
+// A220 Pro - sincronización privada simple mediante a220-api.
+// El token real de GitHub NUNCA llega al navegador.
 const A220_API_URL = 'https://a220-api.kiosco-a220.workers.dev';
+const A220_SYNC_SESSION_KEY = 'a220_sync_api_key';
 let apiKey = '';
 
 function loadGitHubConfig() {
-  // La app pública sólo pide la clave de sincronización de la API.
-  // Los campos antiguos de GitHub se ocultan individualmente, sin ocultar el panel.
   for (const id of ['githubUser','githubRepo','githubBranch','githubFile']) {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
@@ -33,25 +33,41 @@ function loadGitHubConfig() {
     input.style.display = '';
   }
 
+  // Recuperar sólo durante esta sesión del navegador. Nunca localStorage.
+  try { apiKey = sessionStorage.getItem(A220_SYNC_SESSION_KEY) || ''; } catch (_) { apiKey = ''; }
+
   const saveButton = document.querySelector('#sync button[onclick="saveGitHubConfig()"]');
-  if (saveButton) saveButton.textContent = 'Cargar clave';
+  if (saveButton) saveButton.textContent = apiKey ? 'Clave cargada ✓' : 'Cargar clave';
 }
 
-function saveGitHubConfig() {
+async function saveGitHubConfig() {
   const input = document.getElementById('apiKey');
-  apiKey = input?.value.trim() || '';
+  const value = input?.value.trim() || '';
 
-  if (!apiKey) {
-    showToast('⚠️ Ingresá la clave de sincronización', 'error');
+  if (!value) {
+    if (apiKey) {
+      showToast('✅ La clave ya está cargada en esta sesión', 'success');
+    } else {
+      showToast('⚠️ Ingresá la clave de sincronización', 'error');
+    }
     return;
   }
 
-  input.value = '';
-  showToast('✅ Clave cargada sólo en esta sesión', 'success');
+  apiKey = value;
+  try { sessionStorage.setItem(A220_SYNC_SESSION_KEY, apiKey); } catch (_) {}
+  if (input) input.value = '';
+
+  try {
+    const response = await fetch(`${A220_API_URL}/health`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`API ${response.status}`);
+    showToast('☁️ Conexión lista. Ya podés sincronizar', 'success');
+  } catch (_) {
+    showToast('⚠️ Clave cargada, pero no pude comprobar Cloudflare', 'info');
+  }
 }
 
 function apiHeaders() {
-  if (!apiKey) throw new Error('Ingresá la clave de sincronización en esta sesión');
+  if (!apiKey) throw new Error('Cargá la clave de sincronización una sola vez');
   return {
     Authorization: `Bearer ${apiKey}`,
     'Content-Type': 'application/json',
@@ -69,11 +85,9 @@ async function apiRequest(path, options = {}) {
   });
 
   const data = await response.json().catch(() => ({}));
-
   if (!response.ok) {
     throw new Error(data.message || data.error || `API ${response.status}`);
   }
-
   return data;
 }
 
@@ -82,7 +96,6 @@ async function syncToGitHub() {
 
   try {
     showToast('📤 Cifrando y subiendo...', 'info');
-
     const env = await createEnvelope(appData, a220Password);
     const current = await apiRequest('/data', { method: 'GET' });
 
@@ -90,11 +103,10 @@ async function syncToGitHub() {
       try {
         const remoteEnv = JSON.parse(current.content);
         const remote = await decryptEnvelope(remoteEnv, a220Password);
-
-        if (
-          Number(remote.data?.revision || 0) > Number(appData.revision || 0) &&
-          !confirm('GitHub tiene una versión más nueva. ¿Sobrescribirla?')
-        ) return;
+        if (Number(remote.data?.revision || 0) > Number(appData.revision || 0)) {
+          const ok = confirm('Hay una versión más nueva en la nube. ¿Querés reemplazarla con esta copia?');
+          if (!ok) return;
+        }
       } catch (_) {
         throw new Error('Los datos remotos no se pueden validar con esta contraseña');
       }
@@ -108,16 +120,18 @@ async function syncToGitHub() {
       }),
     });
 
-    if (result.ok) showToast('✅ Datos cifrados sincronizados', 'success');
+    if (!result.ok) throw new Error(result.message || 'No se pudo guardar');
+    showToast('✅ Sincronizado correctamente', 'success');
   } catch (e) {
     showToast('❌ ' + e.message, 'error');
   }
 }
 
 async function syncFromGitHub() {
+  if (!isLoggedIn) return;
+
   try {
     showToast('📥 Descargando...', 'info');
-
     const remote = await apiRequest('/data', { method: 'GET' });
 
     if (!remote.exists || !remote.content) {
@@ -127,8 +141,10 @@ async function syncFromGitHub() {
 
     const env = JSON.parse(remote.content);
     const decrypted = await decryptEnvelope(env, a220Password);
+    const products = decrypted.data?.products?.length || 0;
+    const sales = decrypted.data?.sales?.length || 0;
 
-    if (!confirm(`Restaurar GitHub rev ${decrypted.data.revision} y reemplazar local?`)) return;
+    if (!confirm(`Restaurar la copia remota (rev ${decrypted.data.revision || 0}, ${products} artículos, ${sales} ventas) y reemplazar la local?`)) return;
 
     localStorage.setItem(
       APP_CONFIG.storageKey + '_before_sync',
@@ -138,8 +154,7 @@ async function syncFromGitHub() {
     appData = decrypted.data;
     await persistEncrypted(false);
     renderAll();
-
-    showToast('✅ Datos restaurados', 'success');
+    showToast('✅ Datos restaurados desde la nube', 'success');
   } catch (e) {
     showToast('❌ ' + e.message, 'error');
   }
@@ -147,7 +162,8 @@ async function syncFromGitHub() {
 
 function clearSyncKey() {
   apiKey = '';
+  try { sessionStorage.removeItem(A220_SYNC_SESSION_KEY); } catch (_) {}
   const input = document.getElementById('apiKey');
   if (input) input.value = '';
-  showToast('🔒 Clave de sincronización eliminada de la sesión', 'info');
+  showToast('🔒 Clave eliminada de esta sesión', 'info');
 }
