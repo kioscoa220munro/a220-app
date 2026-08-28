@@ -1,0 +1,14 @@
+{
+  "name": "a220-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A220 Pro - frontend estático servido por Cloudflare Workers Static Assets",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "wrangler": "latest"
+  }
+}
