@@ -99,9 +99,10 @@ async function syncToGitHub() {
     const env = await createEnvelope(appData, a220Password);
     const current = await apiRequest('/data', { method: 'GET' });
 
-    if (current.exists && current.content) {
+    // El Worker actual usa { data } y ya no usa content/sha de GitHub.
+    if (current.exists && current.data) {
       try {
-        const remoteEnv = JSON.parse(current.content);
+        const remoteEnv = typeof current.data === 'string' ? JSON.parse(current.data) : current.data;
         const remote = await decryptEnvelope(remoteEnv, a220Password);
         if (Number(remote.data?.revision || 0) > Number(appData.revision || 0)) {
           const ok = confirm('Hay una versión más nueva en la nube. ¿Querés reemplazarla con esta copia?');
@@ -114,10 +115,7 @@ async function syncToGitHub() {
 
     const result = await apiRequest('/data', {
       method: 'PUT',
-      body: JSON.stringify({
-        content: JSON.stringify(env, null, 2),
-        sha: current.sha || null,
-      }),
+      body: JSON.stringify({ data: env }),
     });
 
     if (!result.ok) throw new Error(result.message || 'No se pudo guardar');
@@ -134,12 +132,12 @@ async function syncFromGitHub() {
     showToast('📥 Descargando...', 'info');
     const remote = await apiRequest('/data', { method: 'GET' });
 
-    if (!remote.exists || !remote.content) {
+    if (!remote.exists || !remote.data) {
       showToast('⚠️ Todavía no existe una copia remota', 'error');
       return;
     }
 
-    const env = JSON.parse(remote.content);
+    const env = typeof remote.data === 'string' ? JSON.parse(remote.data) : remote.data;
     const decrypted = await decryptEnvelope(env, a220Password);
     const products = decrypted.data?.products?.length || 0;
     const sales = decrypted.data?.sales?.length || 0;
