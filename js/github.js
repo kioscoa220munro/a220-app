@@ -33,7 +33,6 @@ function loadGitHubConfig() {
     input.style.display = '';
   }
 
-  // Recuperar sólo durante esta sesión del navegador. Nunca localStorage.
   try { apiKey = sessionStorage.getItem(A220_SYNC_SESSION_KEY) || ''; } catch (_) { apiKey = ''; }
 
   const saveButton = document.querySelector('#sync button[onclick="saveGitHubConfig()"]');
@@ -45,11 +44,8 @@ async function saveGitHubConfig() {
   const value = input?.value.trim() || '';
 
   if (!value) {
-    if (apiKey) {
-      showToast('✅ La clave ya está cargada en esta sesión', 'success');
-    } else {
-      showToast('⚠️ Ingresá la clave de sincronización', 'error');
-    }
+    if (apiKey) showToast('✅ La clave ya está cargada en esta sesión', 'success');
+    else showToast('⚠️ Ingresá la clave de sincronización', 'error');
     return;
   }
 
@@ -58,11 +54,17 @@ async function saveGitHubConfig() {
   if (input) input.value = '';
 
   try {
-    const response = await fetch(`${A220_API_URL}/health`, { cache: 'no-store' });
+    const response = await fetch(`${A220_API_URL}/data`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      cache: 'no-store',
+    });
+    if (response.status === 401) throw new Error('Clave de sincronización incorrecta');
     if (!response.ok) throw new Error(`API ${response.status}`);
-    showToast('☁️ Conexión lista. Ya podés sincronizar', 'success');
-  } catch (_) {
-    showToast('⚠️ Clave cargada, pero no pude comprobar Cloudflare', 'info');
+    showToast('☁️ Sincronización lista', 'success');
+  } catch (e) {
+    apiKey = '';
+    try { sessionStorage.removeItem(A220_SYNC_SESSION_KEY); } catch (_) {}
+    showToast('⚠️ ' + e.message, 'error');
   }
 }
 
@@ -77,29 +79,21 @@ function apiHeaders() {
 async function apiRequest(path, options = {}) {
   const response = await fetch(`${A220_API_URL}${path}`, {
     ...options,
-    headers: {
-      ...apiHeaders(),
-      ...(options.headers || {}),
-    },
+    headers: { ...apiHeaders(), ...(options.headers || {}) },
     cache: 'no-store',
   });
-
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(data.message || data.error || `API ${response.status}`);
-  }
+  if (!response.ok) throw new Error(data.message || data.error || `API ${response.status}`);
   return data;
 }
 
 async function syncToGitHub() {
   if (!isLoggedIn) return;
-
   try {
     showToast('📤 Cifrando y subiendo...', 'info');
     const env = await createEnvelope(appData, a220Password);
     const current = await apiRequest('/data', { method: 'GET' });
 
-    // El Worker actual usa { data } y ya no usa content/sha de GitHub.
     if (current.exists && current.data) {
       try {
         const remoteEnv = typeof current.data === 'string' ? JSON.parse(current.data) : current.data;
@@ -113,11 +107,7 @@ async function syncToGitHub() {
       }
     }
 
-    const result = await apiRequest('/data', {
-      method: 'PUT',
-      body: JSON.stringify({ data: env }),
-    });
-
+    const result = await apiRequest('/data', { method: 'PUT', body: JSON.stringify({ data: env }) });
     if (!result.ok) throw new Error(result.message || 'No se pudo guardar');
     showToast('✅ Sincronizado correctamente', 'success');
   } catch (e) {
@@ -127,13 +117,11 @@ async function syncToGitHub() {
 
 async function syncFromGitHub() {
   if (!isLoggedIn) return;
-
   try {
     showToast('📥 Descargando...', 'info');
     const remote = await apiRequest('/data', { method: 'GET' });
-
     if (!remote.exists || !remote.data) {
-      showToast('⚠️ Todavía no existe una copia remota', 'error');
+      showToast('⚠️ Todavía no existe una copia remota. Primero hacé una subida.', 'error');
       return;
     }
 
@@ -144,11 +132,7 @@ async function syncFromGitHub() {
 
     if (!confirm(`Restaurar la copia remota (rev ${decrypted.data.revision || 0}, ${products} artículos, ${sales} ventas) y reemplazar la local?`)) return;
 
-    localStorage.setItem(
-      APP_CONFIG.storageKey + '_before_sync',
-      localStorage.getItem(APP_CONFIG.storageKey)
-    );
-
+    localStorage.setItem(APP_CONFIG.storageKey + '_before_sync', localStorage.getItem(APP_CONFIG.storageKey));
     appData = decrypted.data;
     await persistEncrypted(false);
     renderAll();
@@ -156,12 +140,4 @@ async function syncFromGitHub() {
   } catch (e) {
     showToast('❌ ' + e.message, 'error');
   }
-}
-
-function clearSyncKey() {
-  apiKey = '';
-  try { sessionStorage.removeItem(A220_SYNC_SESSION_KEY); } catch (_) {}
-  const input = document.getElementById('apiKey');
-  if (input) input.value = '';
-  showToast('🔒 Clave eliminada de esta sesión', 'info');
 }
