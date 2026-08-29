@@ -8,13 +8,16 @@ function showView(id, btn) {
   target.classList.add('active');
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
-  // Renderizado aislado: nunca bloquea la navegación.
   queueMicrotask(() => {
-    try { if (id === 'dashboard' && typeof renderDashboard === 'function') renderDashboard(); } catch (e) { console.error(e); }
-    try { if (id === 'products' && typeof renderProducts === 'function') renderProducts(); } catch (e) { console.error(e); }
-    try { if (id === 'sales' && typeof renderSaleProducts === 'function') renderSaleProducts(); } catch (e) { console.error(e); }
-    try { if (id === 'movements' && typeof renderMoves === 'function') renderMoves(); } catch (e) { console.error(e); }
-    try { if (id === 'sales' && typeof renderCart === 'function') renderCart(); } catch (e) { console.error(e); }
+    try {
+      if (id === 'inicio' && typeof renderDashboard === 'function') renderDashboard();
+      if (id === 'productos' && typeof renderProducts === 'function') renderProducts();
+      if (id === 'ventas') {
+        if (typeof renderSaleProducts === 'function') renderSaleProducts();
+        if (typeof renderCart === 'function') renderCart();
+      }
+      if (id === 'movimientos' && typeof renderMoves === 'function') renderMoves();
+    } catch (e) { console.error('A220 render:', e); }
   });
   return true;
 }
@@ -33,7 +36,7 @@ function renderBarList(id, items, empty) {
   const el = document.getElementById(id); if (!el) return;
   if (!items.length) { el.innerHTML = `<div class="muted">${empty || 'Sin datos'}</div>`; return; }
   const max = Math.max(...items.map(x => x.value), 1);
-  el.innerHTML = items.map(x => `<div class="bar-row"><div class="bar-label"><span>${escapeHTML(x.label)}</span><strong>${money(x.value)}</strong></div><div class="bar-track"><i style="width:${Math.max(4,(x.value/max)*100)}%"></i></div></div>`).join('');
+  el.innerHTML = items.map(x => `<div class="bar-row"><div class="bar-label"><span>${typeof escapeHTML === 'function' ? escapeHTML(x.label) : String(x.label)}</span><strong>${typeof money === 'function' ? money(x.value) : x.value}</strong></div><div class="bar-track"><i style="width:${Math.max(4,(x.value/max)*100)}%"></i></div></div>`).join('');
 }
 
 function renderDashboard() {
@@ -43,7 +46,7 @@ function renderDashboard() {
   const units = sales.reduce((n,s) => n + (s.items || []).reduce((m,i) => m + Number(i.qty || 0), 0), 0);
   const average = sales.length ? total / sales.length : 0;
   const profit = sales.reduce((n,s) => n + (s.items || []).reduce((m,i) => { const p = typeof findProduct === 'function' ? findProduct(i.id) : null; return m + ((Number(i.price||0)-Number(p?.cost||0))*Number(i.qty||0)); }, 0), 0);
-  const values = { dVentas: money(total), dProductos: String((appData.products||[]).length), dBajo: String((appData.products||[]).filter(p => Number(p.stock||0) <= Number(p.minStock||0)).length), dUnidades: String(units), dTickets: String(sales.length), dTicketProm: money(average), dGanancia: money(profit), dashRangeLabel: ({today:'Hoy','7d':'Últimos 7 días','30d':'Últimos 30 días',month:'Este mes'})[dashboardRange] || 'Período' };
+  const values = { dVentas: typeof money === 'function' ? money(total) : String(total), dProductos: String((appData.products||[]).length), dBajo: String((appData.products||[]).filter(p => Number(p.stock||0) <= Number(p.minStock||0)).length), dUnidades: String(units), dTickets: String(sales.length), dTicketProm: typeof money === 'function' ? money(average) : String(average), dGanancia: typeof money === 'function' ? money(profit) : String(profit), dashRangeLabel: ({today:'Hoy','7d':'Últimos 7 días','30d':'Últimos 30 días',month:'Este mes'})[dashboardRange] || 'Período' };
   Object.keys(values).forEach(id => { const el=document.getElementById(id); if(el) el.textContent=values[id]; });
   const hourly=Array.from({length:24},(_,h)=>({label:String(h).padStart(2,'0')+'h',value:0}));
   sales.forEach(s=>{const h=new Date(s.date).getHours(); hourly[h].value+=Number(s.total||0);});
@@ -53,7 +56,7 @@ function renderDashboard() {
   const top={}; sales.forEach(s=>(s.items||[]).forEach(i=>{const n=i.name||'Producto';top[n]=(top[n]||0)+Number(i.total||0);}));
   renderBarList('topBars',Object.keys(top).sort((a,b)=>top[b]-top[a]).slice(0,8).map(n=>({label:n,value:top[n]})),'No hay productos vendidos');
   const alerts=document.getElementById('alertas'), low=(appData.products||[]).filter(p=>Number(p.stock||0)<=Number(p.minStock||0));
-  if(alerts) alerts.innerHTML=low.length?low.map(p=>`<div class="alert-row">⚠️ <strong>${escapeHTML(p.name)}</strong><span>${Number(p.stock||0)} en stock</span></div>`).join(''):'<div class="muted">Sin alertas.</div>';
+  if(alerts) alerts.innerHTML=low.length?low.map(p=>`<div class="alert-row">⚠️ <strong>${typeof escapeHTML === 'function' ? escapeHTML(p.name) : p.name}</strong><span>${Number(p.stock||0)} en stock</span></div>`).join(''):'<div class="muted">Sin alertas.</div>';
 }
 
 function setDashboardRange(range) { dashboardRange=range; document.querySelectorAll('.range-btn').forEach(b=>b.classList.toggle('active',b.dataset.range===range)); try{renderDashboard();}catch(e){console.error(e);} }
