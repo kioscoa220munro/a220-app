@@ -1,3 +1,3 @@
 // A220 Pro - configuración pública. No contiene secretos.
 const APP_CONFIG = Object.freeze({appName:'A220 Pro',storageKey:'a220_pro_v3',themeKey:'a220_theme',githubKey:'a220_github_v3',passwordHash:'7840707d439d35b2a648d3341f8ab945718e1cec205f045708f4b4149642086c',githubDefault:{user:'kioscoa220munro',repo:'a220-data',branch:'main',file:'a220-data.json'}});
-function getDefaultProducts(){return [];}
+function getDefaultProducts(){return [{id:1,name:'Cigarrillos Red Point ON Convertible x20',cat:'Cigarrillos',cost:0,price:2700,stock:10,minStock:0,barcode:'77959751',image:'',brand:'Red Point',quantity:'x20',source:'A220',sourceUrl:'',priceOrigin:'reference'}];}
