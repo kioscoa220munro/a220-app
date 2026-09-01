@@ -1,1 +1,0 @@
-Articulos = fuente maestra de productos y stock. Ventas = solo selecciona articulos existentes con stock > 0.
