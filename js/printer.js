@@ -1,5 +1,5 @@
 // A220 Pro - impresion termica 58 mm + corte exacto al final de datos
-const A220_PRINTER_CONFIG={name:'TP-POS58',paperWidth:58,openDrawerOnCash:true};
+const A220_PRINTER_CONFIG={name:'TP-POS58',paperWidth:58,autoPrint:true,openDrawerOnCash:true};
 let a220QZLoadPromise=null;
 function a220LoadQZ(){if(typeof qz!=='undefined')return Promise.resolve();if(a220QZLoadPromise)return a220QZLoadPromise;a220QZLoadPromise=new Promise((resolve,reject)=>{const existing=document.querySelector('script[data-a220-qz]');if(existing){existing.addEventListener('load',resolve,{once:true});existing.addEventListener('error',()=>reject(new Error('No se pudo cargar QZ Tray')),{once:true});return}const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/qz-tray@2.2.6/qz-tray.js';s.dataset.a220Qz='1';s.onload=resolve;s.onerror=()=>reject(new Error('No se pudo cargar QZ Tray'));document.head.appendChild(s)});return a220QZLoadPromise}
 a220LoadQZ().catch(e=>console.warn('A220 QZ:',e));
