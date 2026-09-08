@@ -1,8 +1,9 @@
 // A220 - acceso rápido a ofertas en Ventas
 (function(){
   function getData(){return typeof appData!=='undefined'&&appData?appData:null}
-  function esc(v){return typeof escapeHTML==='function'?escapeHTML(v):String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+  function esc(v){return typeof escapeHTML==='function'?escapeHTML(v):String(v??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]))}
   function price(v){return typeof money==='function'?money(v):`$${Number(v||0).toLocaleString('es-AR')}`}
+  function tierLabel(t){return String(t?.label||t?.presentation||t?.presentacion||t?.name||'').trim()}
   function render(){
     const box=document.getElementById('a220QuickOffers'),data=getData();
     if(!box||!data)return;
@@ -20,7 +21,7 @@
     let modal=document.getElementById('a220OfferOptionsModal');
     if(!modal){modal=document.createElement('div');modal.id='a220OfferOptionsModal';modal.className='a220-offer-modal';document.body.appendChild(modal)}
     const products=(data.products||[]).filter(p=>(offer.productIds||[]).map(Number).includes(Number(p.id)));
-    modal.innerHTML=`<div class="a220-offer-modal-card"><div class="a220-offer-modal-head"><div><strong>🎁 ${esc(offer.name)}</strong><small>${esc(products.map(p=>p.name).join(' + '))}</small></div><button type="button" class="a220-offer-close">×</button></div><div class="a220-offer-options">${tiers.map((t,i)=>`<button type="button" class="a220-offer-option" data-tier-index="${i}"><span><strong>${esc(t.label||`${t.qty} unidades`)}</strong><small>${Number(t.qty)||0} unidades</small></span><b>${price(t.price)}</b></button>`).join('')}</div></div>`;
+    modal.innerHTML=`<div class="a220-offer-modal-card"><div class="a220-offer-modal-head"><div><strong>🎁 ${esc(offer.name)}</strong><small>${esc(products.map(p=>p.name).join(' + '))}</small></div><button type="button" class="a220-offer-close">×</button></div><div class="a220-offer-options">${tiers.map((t,i)=>{const label=tierLabel(t);const qty=Math.max(1,Number(t.qty)||1);return `<button type="button" class="a220-offer-option" data-tier-index="${i}"><span><strong>${esc(label||`${qty} unidades`)}</strong><small>${qty} unidades</small></span><b>${price(t.price)}</b></button>`}).join('')}</div></div>`;
     modal.style.display='flex';
     modal.querySelector('.a220-offer-close').onclick=()=>modal.style.display='none';
     modal.onclick=e=>{if(e.target===modal)modal.style.display='none'};
@@ -30,7 +31,7 @@
     const products=(data.products||[]).filter(p=>(offer.productIds||[]).map(Number).includes(Number(p.id))&&Number(p.stock)>0);
     if(!products.length){showToast?.('⚠️ Esta oferta no tiene artículos con stock','error');return}
     let p=products[0];
-    if(products.length>1){const choice=prompt(`🎁 ${offer.name}\n${tier.label||`${tier.qty} unidades`} → ${price(tier.price)}\n\nElegí el artículo:\n${products.map((x,i)=>`${i+1}. ${x.name}`).join('\n')}`,'1');if(choice===null)return;p=products[Number(choice)-1];if(!p){showToast?.('⚠️ Selección inválida','error');return}}
+    if(products.length>1){const choice=prompt(`🎁 ${offer.name}\n${tierLabel(tier)||`${tier.qty} unidades`} → ${price(tier.price)}\n\nElegí el artículo:\n${products.map((x,i)=>`${i+1}. ${x.name}`).join('\n')}`,'1');if(choice===null)return;p=products[Number(choice)-1];if(!p){showToast?.('⚠️ Selección inválida','error');return}}
     const qty=Math.max(1,Math.floor(Number(tier.qty)||1));
     if(Number(p.stock)<qty){showToast?.(`⚠️ Stock insuficiente de ${p.name}`,'error');return}
     if(typeof addProductToCart==='function')addProductToCart(p,qty,p.price);
