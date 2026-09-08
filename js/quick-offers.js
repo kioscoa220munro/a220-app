@@ -1,24 +1,26 @@
 // A220 - acceso rápido a ofertas en Ventas
 (function(){
   function getData(){return typeof appData!=='undefined'&&appData?appData:null}
+  function esc(v){return typeof escapeHTML==='function'?escapeHTML(v):String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+  function price(v){return typeof money==='function'?money(v):`$${Number(v||0).toLocaleString('es-AR')}`}
   function render(){
     const box=document.getElementById('a220QuickOffers'),data=getData();
     if(!box||!data)return;
     const offers=Array.isArray(data.offers)?data.offers:[];
     if(!offers.length){box.innerHTML='';box.style.display='none';return}
     box.style.display='block';
-    const esc=typeof escapeHTML==='function'?escapeHTML:(v)=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     box.innerHTML=`<div class="a220-quick-title">🎁 OFERTAS DISPONIBLES <span>${offers.length}</span></div><div class="a220-quick-list">${offers.map(o=>{const ids=(o.productIds||[]).map(Number);const products=(data.products||[]).filter(p=>ids.includes(Number(p.id)));return `<button type="button" class="a220-quick-offer" data-offer-id="${Number(o.id)}"><span class="a220-quick-icon">🎁</span><span class="a220-quick-info"><strong>${esc(o.name)}</strong><small>${esc(products.map(p=>p.name).join(' + '))}</small></span><span class="a220-quick-arrow">›</span></button>`}).join('')}</div>`;
-    box.querySelectorAll('.a220-quick-offer').forEach(btn=>btn.onclick=()=>openOfferOptions(Number(btn.dataset.offerId)));
+    box.querySelectorAll('.a220-quick-offer').forEach(btn=>btn.addEventListener('click',()=>openOfferOptions(Number(btn.dataset.offerId))));
   }
   function openOfferOptions(id){
     const data=getData();if(!data)return;
     const offer=(data.offers||[]).find(o=>Number(o.id)===id);if(!offer)return;
     const tiers=(offer.tiers||[]).slice().sort((a,b)=>Number(a.qty||0)-Number(b.qty||0));
-    if(!tiers.length)return;
+    if(!tiers.length){showToast?.('⚠️ Esta oferta no tiene opciones configuradas','error');return}
     let modal=document.getElementById('a220OfferOptionsModal');
     if(!modal){modal=document.createElement('div');modal.id='a220OfferOptionsModal';modal.className='a220-offer-modal';document.body.appendChild(modal)}
-    modal.innerHTML=`<div class="a220-offer-modal-card"><div class="a220-offer-modal-head"><div><strong>🎁 ${esc(offer.name)}</strong><small>${esc((data.products||[]).filter(p=>(offer.productIds||[]).map(Number).includes(Number(p.id))).map(p=>p.name).join(' + '))}</small></div><button type="button" class="a220-offer-close">×</button></div><div class="a220-offer-options">${tiers.map((t,i)=>`<button type="button" class="a220-offer-option" data-tier-index="${i}"><span><strong>${esc(t.label||`${t.qty} unidades`)}</strong><small>${Number(t.qty)||0} unidades</small></span><b>${typeof money==='function'?money(t.price):`$${Number(t.price||0).toLocaleString('es-AR')}`}</b></button>`).join('')}</div></div>`;
+    const products=(data.products||[]).filter(p=>(offer.productIds||[]).map(Number).includes(Number(p.id)));
+    modal.innerHTML=`<div class="a220-offer-modal-card"><div class="a220-offer-modal-head"><div><strong>🎁 ${esc(offer.name)}</strong><small>${esc(products.map(p=>p.name).join(' + '))}</small></div><button type="button" class="a220-offer-close">×</button></div><div class="a220-offer-options">${tiers.map((t,i)=>`<button type="button" class="a220-offer-option" data-tier-index="${i}"><span><strong>${esc(t.label||`${t.qty} unidades`)}</strong><small>${Number(t.qty)||0} unidades</small></span><b>${price(t.price)}</b></button>`).join('')}</div></div>`;
     modal.style.display='flex';
     modal.querySelector('.a220-offer-close').onclick=()=>modal.style.display='none';
     modal.onclick=e=>{if(e.target===modal)modal.style.display='none'};
@@ -28,7 +30,7 @@
     const products=(data.products||[]).filter(p=>(offer.productIds||[]).map(Number).includes(Number(p.id))&&Number(p.stock)>0);
     if(!products.length){showToast?.('⚠️ Esta oferta no tiene artículos con stock','error');return}
     let p=products[0];
-    if(products.length>1){const choice=prompt(`🎁 ${offer.name}\n${tier.label||`${tier.qty} unidades`} → ${typeof money==='function'?money(tier.price):tier.price}\n\nElegí el artículo:\n${products.map((x,i)=>`${i+1}. ${x.name}`).join('\n')}`,'1');if(choice===null)return;p=products[Number(choice)-1];if(!p){showToast?.('⚠️ Selección inválida','error');return}}
+    if(products.length>1){const choice=prompt(`🎁 ${offer.name}\n${tier.label||`${tier.qty} unidades`} → ${price(tier.price)}\n\nElegí el artículo:\n${products.map((x,i)=>`${i+1}. ${x.name}`).join('\n')}`,'1');if(choice===null)return;p=products[Number(choice)-1];if(!p){showToast?.('⚠️ Selección inválida','error');return}}
     const qty=Math.max(1,Math.floor(Number(tier.qty)||1));
     if(Number(p.stock)<qty){showToast?.(`⚠️ Stock insuficiente de ${p.name}`,'error');return}
     if(typeof addProductToCart==='function')addProductToCart(p,qty,p.price);
