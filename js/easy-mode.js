@@ -155,5 +155,5 @@
     render();s?.focus();
   }
 
-  document.addEventListener('DOMContentLoaded',inject);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',inject);else inject();
 })();
