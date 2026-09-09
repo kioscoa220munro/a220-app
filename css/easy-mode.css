@@ -15,7 +15,7 @@
 .a220-easy-line-name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .a220-easy-qty{width:70px;min-height:42px;text-align:center;font-size:18px;border-radius:9px}
 .a220-easy-line>strong{text-align:right}
-.a220-easy-remove{border:0;background:transparent;font-size:26px;line-height:1;cursor:pointer}
+.a220-easy-remove{border:0;background:transparent;font-size:26px;line-height:1;cursor:pointer;min-width:34px;min-height:42px}
 .a220-easy-total,.a220-easy-change{display:flex;justify-content:space-between;align-items:center;padding:10px 2px;font-size:17px}
 .a220-easy-total strong{font-size:25px}
 .a220-easy-change strong{font-size:23px}
@@ -24,4 +24,31 @@
 .a220-easy-status{text-align:center;min-height:22px;margin-top:8px;font-size:13px;font-weight:700}
 .a220-easy-empty{padding:12px;text-align:center;opacity:.65}
 body.a220-easy-open{overflow:hidden}
-@media(max-width:600px){.a220-easy-head{height:52px}.a220-easy-body{padding:8px 9px 20px}.a220-easy-line{grid-template-columns:minmax(0,1fr) 64px 76px 30px}.a220-easy-qty{width:64px}}
+
+/* Confirmación de sincronización · móvil primero */
+.a220-easy-sync-modal{position:fixed;inset:0;z-index:10020;display:none;align-items:center;justify-content:center;padding:18px;overscroll-behavior:contain}
+.a220-easy-sync-modal.open{display:flex}
+.a220-easy-sync-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.48);backdrop-filter:blur(3px)}
+.a220-easy-sync-card{position:relative;width:min(100%,420px);padding:22px 18px max(18px,env(safe-area-inset-bottom));border-radius:20px;background:var(--panel,#fff);box-shadow:0 18px 55px rgba(0,0,0,.28);text-align:center;animation:a220EasyModalIn .16s ease-out}
+.a220-easy-sync-icon{width:54px;height:54px;margin:0 auto 8px;display:grid;place-items:center;border-radius:50%;background:var(--bg,#f5f7fa);font-size:27px}
+.a220-easy-sync-card h3{margin:5px 0;font-size:21px}
+.a220-easy-sync-card p{margin:7px 0 12px;font-size:16px;line-height:1.35}
+.a220-easy-sync-detail{display:grid;gap:3px;margin:0 0 16px;padding:10px;border-radius:12px;background:var(--bg,#f5f7fa);font-size:13px}
+.a220-easy-sync-detail strong{font-size:20px}
+.a220-easy-sync-detail span{opacity:.7}
+.a220-easy-sync-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.a220-easy-sync-actions .btn{min-height:52px;font-size:15px;font-weight:800}
+body.a220-easy-modal-open{overflow:hidden}
+@keyframes a220EasyModalIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+
+@media(max-width:600px){
+  .a220-easy-head{height:52px}
+  .a220-easy-body{padding:8px 9px calc(20px + env(safe-area-inset-bottom))}
+  .a220-easy-line{grid-template-columns:minmax(0,1fr) 64px 76px 30px}
+  .a220-easy-qty{width:64px}
+  .a220-easy-sync-modal{align-items:flex-end;padding:0}
+  .a220-easy-sync-card{width:100%;border-radius:20px 20px 0 0;padding:20px 14px calc(14px + env(safe-area-inset-bottom))}
+  .a220-easy-sync-actions{grid-template-columns:1fr;gap:8px}
+  .a220-easy-sync-actions .btn{min-height:54px;font-size:16px}
+}
+@media(max-width:360px){.a220-easy-sync-card{padding-left:11px;padding-right:11px}.a220-easy-sync-actions .btn{min-height:52px}}
