@@ -37,11 +37,11 @@
           <label for="a220EasyPaid">Recibido</label>
           <input id="a220EasyPaid" class="a220-easy-input" type="number" min="0" step="1" inputmode="decimal" placeholder="$ recibido">
           <div class="a220-easy-change"><span>Vuelto</span><strong id="a220EasyChange">$0</strong></div>
-          <button type="button" class="btn btn-info btn-block" id="a220EasyChangeBtn">Calcular vuelto</button>
         </div>
         <div class="a220-easy-actions">
           <button type="button" class="btn btn-success btn-block" id="a220EasyFinish">Aceptar venta</button>
-          <button type="button" class="btn btn-outline btn-block" id="a220EasyReload">Recargar / nueva venta</button>
+          <button type="button" class="btn btn-outline btn-block" id="a220EasyClear">Borrar todo</button>
+          <button type="button" class="btn btn-info btn-block" id="a220EasySync">Sincronizar</button>
         </div>
         <div id="a220EasyStatus" class="a220-easy-status" aria-live="polite"></div>
       </div>`;
@@ -52,9 +52,9 @@
     document.getElementById('a220EasySearch').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const first=document.querySelector('#a220EasyResults button');if(first)first.click();}});
     document.getElementById('a220EasyPaid').addEventListener('input',calculateChange);
     document.getElementById('a220EasyPaid').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();calculateChange();document.getElementById('a220EasyFinish').focus();}});
-    document.getElementById('a220EasyChangeBtn').onclick=calculateChange;
     document.getElementById('a220EasyFinish').onclick=finish;
-    document.getElementById('a220EasyReload').onclick=reloadSale;
+    document.getElementById('a220EasyClear').onclick=clearSale;
+    document.getElementById('a220EasySync').onclick=syncSale;
   }
 
   function open(){
@@ -148,11 +148,29 @@
     }
   }
 
-  function reloadSale(){
-    easyCart=[];easyPaid=0;easyChange=0;easyLastSaleId='';
+  function clearSale(){
+    easyCart=[];easyPaid=0;easyChange=0;
     const s=document.getElementById('a220EasySearch'),p=document.getElementById('a220EasyPaid');if(s)s.value='';if(p)p.value='';
     const status=document.getElementById('a220EasyStatus');if(status)status.textContent='';
     render();s?.focus();
+  }
+
+  async function syncSale(){
+    const status=document.getElementById('a220EasyStatus');
+    if(!isLoggedIn){showToast?.('⚠️ Iniciá sesión para sincronizar','error');return}
+    if(typeof syncToGitHub!=='function'){showToast?.('⚠️ Sincronización no disponible','error');return}
+    const button=document.getElementById('a220EasySync');
+    if(button)button.disabled=true;
+    if(status)status.textContent='☁️ Sincronizando datos…';
+    try{
+      const synced=await syncToGitHub();
+      if(!synced)throw new Error('no se pudo sincronizar');
+      if(status)status.textContent='✓ Datos sincronizados.';
+      showToast?.('☁️ Datos sincronizados','success');
+    }catch(e){
+      if(status)status.textContent='⚠️ La venta sigue guardada en este celular. Reintentá al tener conexión.';
+      showToast?.('⚠️ No se pudo sincronizar','error');
+    }finally{if(button)button.disabled=false}
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',inject);else inject();
