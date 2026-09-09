@@ -1,207 +1,36 @@
-// A220 Pro - modo Fácil para celular: venta rápida, táctil y con teclado.
+// A220 Pro - modo Fácil: calculadora rápida, sin guardar ni descontar stock.
 (function(){
   let easyCart=[];
-  let easyPaid=0;
-  let easyChange=0;
-  let easyLastSaleId='';
-
   const esc=v=>typeof escapeHTML==='function'?escapeHTML(v):String(v??'');
   const total=()=>easyCart.reduce((n,i)=>n+i.qty*i.price,0);
+  const getOfferPrice=t=>Number(t?.price||0);
 
   function inject(){
     if(document.getElementById('a220EasyButton'))return;
-    const headerRight=document.querySelector('.header-right');
-    if(!headerRight)return;
-    const b=document.createElement('button');
-    b.id='a220EasyButton';b.className='btn btn-primary';b.type='button';b.textContent='Fácil';b.onclick=open;
-    headerRight.insertBefore(b,headerRight.firstChild);
-
-    const s=document.createElement('section');
-    s.id='a220EasyView';s.className='a220-easy-view';s.setAttribute('aria-hidden','true');
-    s.innerHTML=`<div class="a220-easy-head"><span>Fácil</span><button type="button" class="btn btn-danger" id="a220EasyExit">Salir</button></div>
-      <div class="a220-easy-body">
-        <div class="a220-easy-step active" data-step="product">
-          <label for="a220EasySearch">Producto</label>
-          <input id="a220EasySearch" class="a220-easy-input" autocomplete="off" inputmode="text" placeholder="Escribí el nombre…">
-          <div id="a220EasyResults" class="a220-easy-results"></div>
-        </div>
-        <div class="a220-easy-cart" id="a220EasyCart"></div>
-        <div class="a220-easy-step" data-step="pay">
-          <div class="a220-easy-total"><span>Total</span><strong id="a220EasyTotal">$0</strong></div>
-          <label for="a220EasyPaid">Recibido</label>
-          <input id="a220EasyPaid" class="a220-easy-input" type="number" min="0" step="1" inputmode="decimal" placeholder="$ recibido">
-          <div class="a220-easy-change"><span>Vuelto</span><strong id="a220EasyChange">$0</strong></div>
-        </div>
-        <div class="a220-easy-actions">
-          <button type="button" class="btn btn-success btn-block" id="a220EasyFinish">Aceptar venta</button>
-          <button type="button" class="btn btn-outline btn-block" id="a220EasyClear">Borrar todo</button>
-        </div>
-        <div id="a220EasyStatus" class="a220-easy-status" aria-live="polite"></div>
-      </div>
-      <div class="a220-easy-confirm" id="a220EasyConfirm" aria-hidden="true">
-        <div class="a220-easy-confirm-box">
-          <strong>¿Seguro que querés sincronizar esta venta?</strong>
-          <p>La venta ya quedó guardada en este celular.</p>
-          <div class="a220-easy-confirm-actions">
-            <button type="button" class="btn btn-success" id="a220EasyConfirmYes">Sí, sincronizar</button>
-            <button type="button" class="btn btn-outline" id="a220EasyConfirmNo">No</button>
-          </div>
-        </div>
-      </div>`;
+    const headerRight=document.querySelector('.header-right');if(!headerRight)return;
+    const b=document.createElement('button');b.id='a220EasyButton';b.className='btn btn-primary';b.type='button';b.textContent='Fácil';b.onclick=open;headerRight.insertBefore(b,headerRight.firstChild);
+    const s=document.createElement('section');s.id='a220EasyView';s.className='a220-easy-view';s.setAttribute('aria-hidden','true');
+    s.innerHTML=`<div class="a220-easy-head"><span>Fácil</span><button type="button" class="btn btn-danger" id="a220EasyExit">Salir</button></div><div class="a220-easy-body"><div class="a220-easy-step active"><label for="a220EasySearch">Producto u oferta</label><input id="a220EasySearch" class="a220-easy-input" autocomplete="off" inputmode="text" placeholder="Escribí el nombre…"><div id="a220EasyResults" class="a220-easy-results"></div></div><div class="a220-easy-cart" id="a220EasyCart"></div><div class="a220-easy-step" data-step="pay"><div class="a220-easy-total"><span>Total</span><strong id="a220EasyTotal">$0</strong></div><label for="a220EasyPaid">Recibido</label><input id="a220EasyPaid" class="a220-easy-input" type="number" min="0" step="1" inputmode="decimal" placeholder="$ recibido"><div class="a220-easy-change"><span>Vuelto</span><strong id="a220EasyChange">$0</strong></div></div><div class="a220-easy-actions"><button type="button" class="btn btn-success btn-block" id="a220EasyFinish">Calcular vuelto</button><button type="button" class="btn btn-outline btn-block" id="a220EasyClear">Borrar todo</button></div><div id="a220EasyStatus" class="a220-easy-status" aria-live="polite"></div></div>`;
     document.body.appendChild(s);
-
     document.getElementById('a220EasyExit').onclick=close;
     document.getElementById('a220EasySearch').addEventListener('input',search);
-    document.getElementById('a220EasySearch').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const first=document.querySelector('#a220EasyResults button');if(first)first.click();}});
+    document.getElementById('a220EasySearch').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();document.querySelector('#a220EasyResults button')?.click()}});
     document.getElementById('a220EasyPaid').addEventListener('input',calculateChange);
-    document.getElementById('a220EasyPaid').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();calculateChange();document.getElementById('a220EasyFinish').focus();}});
-    document.getElementById('a220EasyFinish').onclick=finish;
+    document.getElementById('a220EasyPaid').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();calculateChange()}});
+    document.getElementById('a220EasyFinish').onclick=calculateChange;
     document.getElementById('a220EasyClear').onclick=clearSale;
-    document.getElementById('a220EasyConfirmYes').onclick=()=>resolveSyncConfirm(true);
-    document.getElementById('a220EasyConfirmNo').onclick=()=>resolveSyncConfirm(false);
   }
-
-  function open(){
-    if(!appData){showToast?.('⚠️ A220 todavía no está lista','error');return}
-    inject();
-    easyCart=[];easyPaid=0;easyChange=0;easyLastSaleId='';
-    document.getElementById('a220EasyView').classList.add('open');
-    document.getElementById('a220EasyView').setAttribute('aria-hidden','false');
-    document.body.classList.add('a220-easy-open');
-    render();
-    setTimeout(()=>document.getElementById('a220EasySearch')?.focus(),50);
-  }
-
-  function close(){
-    closeSyncConfirm();
-    document.getElementById('a220EasyView')?.classList.remove('open');
-    document.getElementById('a220EasyView')?.setAttribute('aria-hidden','true');
-    document.body.classList.remove('a220-easy-open');
-  }
-
-  function search(){
-    const q=document.getElementById('a220EasySearch').value.trim().toLowerCase();
-    const list=document.getElementById('a220EasyResults');
-    if(!q){list.innerHTML='';return}
-    const found=(appData.products||[]).filter(p=>Number(p.stock)>0&&`${p.name||''} ${p.brand||''} ${p.cat||''}`.toLowerCase().includes(q)).sort((a,b)=>String(a.name).localeCompare(String(b.name),'es',{sensitivity:'base'})).slice(0,8);
-    list.innerHTML=found.map(p=>`<button type="button" class="a220-easy-result" data-id="${p.id}"><span>${esc(p.name)}</span><strong>${money(p.price)}</strong></button>`).join('')||'<div class="a220-easy-empty">Sin coincidencias</div>';
-    list.querySelectorAll('button').forEach(b=>b.onclick=()=>add(Number(b.dataset.id)));
-  }
-
-  function add(id){
-    const p=findProduct(id);if(!p||Number(p.stock)<=0)return;
-    const existing=easyCart.find(i=>i.id===p.id);
-    if(existing){if(existing.qty>=Number(p.stock)){showToast?.('⚠️ Stock insuficiente','error');return}existing.qty++;existing.price=Number(p.price)||0;}
-    else easyCart.push({id:p.id,name:p.name,qty:1,price:Number(p.price)||0});
-    const input=document.getElementById('a220EasySearch');input.value='';document.getElementById('a220EasyResults').innerHTML='';
-    render();
-    const qty=document.querySelector(`#a220EasyCart [data-qty="${p.id}"]`);qty?.focus();qty?.select();
-  }
-
-  function setQty(id,value){
-    const item=easyCart.find(i=>i.id===id),p=findProduct(id);if(!item||!p)return;
-    const qty=Math.max(1,Math.min(Number(p.stock)||1,Number(value)||1));item.qty=qty;render();
-  }
-
-  function remove(id){easyCart=easyCart.filter(i=>i.id!==id);render();}
-
-  function render(){
-    const box=document.getElementById('a220EasyCart');if(!box)return;
-    box.innerHTML=easyCart.map(i=>`<div class="a220-easy-line"><div class="a220-easy-line-name">${esc(i.name)}</div><input class="a220-easy-qty" data-qty="${i.id}" type="number" min="1" inputmode="numeric" value="${i.qty}"><strong>${money(i.qty*i.price)}</strong><button type="button" class="a220-easy-remove" data-remove="${i.id}">×</button></div>`).join('');
-    box.querySelectorAll('[data-qty]').forEach(el=>el.addEventListener('change',()=>setQty(Number(el.dataset.qty),el.value)));
-    box.querySelectorAll('[data-remove]').forEach(el=>el.onclick=()=>remove(Number(el.dataset.remove)));
-    const t=total();document.getElementById('a220EasyTotal').textContent=money(t);
-    const pay=document.querySelector('#a220EasyView [data-step="pay"]');pay?.classList.toggle('active',easyCart.length>0);
-    document.getElementById('a220EasyFinish').disabled=!easyCart.length;
-    calculateChange();
-  }
-
-  function calculateChange(){
-    easyPaid=Number(document.getElementById('a220EasyPaid')?.value)||0;
-    easyChange=Math.max(0,easyPaid-total());
-    const el=document.getElementById('a220EasyChange');if(el)el.textContent=money(easyChange);
-  }
-
-  async function finish(){
-    if(!easyCart.length){showToast?.('⚠️ Agregá un producto','error');return}
-    for(const i of easyCart){const p=findProduct(i.id);if(!p||i.qty>Number(p.stock)){showToast?.(`⚠️ Stock insuficiente: ${i.name}`,'error');return}}
-    const t=total();easyPaid=Number(document.getElementById('a220EasyPaid').value)||0;
-    if(easyPaid<t){showToast?.('⚠️ Falta efectivo','error');document.getElementById('a220EasyPaid').focus();return}
-    const now=new Date().toISOString();
-    const sale={id:crypto.randomUUID(),date:now,total:t,items:structuredClone(easyCart),offers:[],cliente:'Sin cliente',telefono:'',clientId:null,paid:easyPaid,change:easyPaid-t,paymentMethod:'cash'};
-    easyCart.forEach(i=>{const p=findProduct(i.id);p.stock-=i.qty;appData.moves.unshift({id:crypto.randomUUID(),date:now,product:i.name,productId:i.id,qty:i.qty,total:i.qty*i.price,cliente:'Sin cliente',clientId:null,saleId:sale.id})});
-    appData.sales.unshift(sale);logActivity('sale','Venta realizada',`${easyCart.length} artículo(s) · ${money(t)} · efectivo`);
-    const saved=await saveLocalData();
-    easyLastSaleId=sale.id;
-    if(!saved){showToast?.('⚠️ No se pudo guardar la venta','error');return}
-    const verified=await verifyLocalPersistence();
-    if(!verified)return;
-    document.getElementById('a220EasyStatus').textContent='✓ Venta guardada y verificada en este celular.';
-    showToast?.(`💰 Venta registrada: ${money(t)}`,'success');
-    await askSyncSale();
-    render();
-  }
-
-  async function verifyLocalPersistence(){
-    try{
-      const raw=localStorage.getItem(APP_CONFIG.storageKey);if(!raw)throw new Error('sin almacenamiento local');
-      const env=JSON.parse(raw);const restored=await decryptEnvelope(env,a220Password);const ok=restored.data.sales.some(s=>String(s.id)===String(easyLastSaleId));
-      if(ok)return true;
-      throw new Error('venta no encontrada');
-    }catch(e){
-      document.getElementById('a220EasyStatus').textContent='↻ No se pudo verificar. Recargando…';
-      setTimeout(()=>window.location.reload(),250);
-      return false;
-    }
-  }
-
-  let syncResolve=null;
-  function askSyncSale(){
-    if(!isLoggedIn||typeof syncToGitHub!=='function'){
-      document.getElementById('a220EasyStatus').textContent='✓ Venta guardada localmente. Sin conexión para sincronizar.';
-      return Promise.resolve(false);
-    }
-    const modal=document.getElementById('a220EasyConfirm');
-    if(!modal)return Promise.resolve(false);
-    modal.classList.add('open');modal.setAttribute('aria-hidden','false');
-    return new Promise(resolve=>{syncResolve=resolve});
-  }
-
-  function resolveSyncConfirm(value){
-    const resolve=syncResolve;syncResolve=null;closeSyncConfirm();
-    if(resolve)resolve(value);
-    if(value)syncCurrentSale();
-  }
-
-  function closeSyncConfirm(){
-    const modal=document.getElementById('a220EasyConfirm');
-    if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
-  }
-
-  async function syncCurrentSale(){
-    const status=document.getElementById('a220EasyStatus');
-    const yes=document.getElementById('a220EasyConfirmYes');
-    if(yes)yes.disabled=true;
-    if(status)status.textContent='☁️ Sincronizando esta venta…';
-    try{
-      const synced=await syncToGitHub();
-      if(!synced)throw new Error('no se pudo sincronizar');
-      if(status)status.textContent='✓ Venta guardada y sincronizada.';
-      showToast?.('☁️ Venta sincronizada','success');
-    }catch(e){
-      if(status)status.textContent='⚠️ Venta guardada en este celular. Podés sincronizar después.';
-      showToast?.('⚠️ No se pudo sincronizar','error');
-    }finally{if(yes)yes.disabled=false}
-  }
-
-  function clearSale(){
-    easyCart=[];easyPaid=0;easyChange=0;easyLastSaleId='';
-    const s=document.getElementById('a220EasySearch'),p=document.getElementById('a220EasyPaid');
-    if(s)s.value='';if(p)p.value='';
-    const results=document.getElementById('a220EasyResults');if(results)results.innerHTML='';
-    const status=document.getElementById('a220EasyStatus');if(status)status.textContent='';
-    render();s?.focus();
-  }
-
+  function open(){if(!appData){showToast?.('⚠️ A220 todavía no está lista','error');return}easyCart=[];document.getElementById('a220EasyView').classList.add('open');document.body.classList.add('a220-easy-open');render();setTimeout(()=>document.getElementById('a220EasySearch')?.focus(),50)}
+  function close(){document.getElementById('a220EasyView')?.classList.remove('open');document.body.classList.remove('a220-easy-open')}
+  function search(){const q=document.getElementById('a220EasySearch').value.trim().toLowerCase(),list=document.getElementById('a220EasyResults');if(!q){list.innerHTML='';return}const products=(appData.products||[]).filter(p=>`${p.name||''} ${p.brand||''} ${p.cat||''}`.toLowerCase().includes(q)).slice(0,6).map(p=>({type:'product',id:p.id,name:p.name,price:Number(p.price)||0}));const offers=(appData.offers||[]).filter(o=>`${o.name||''} ${(o.tiers||[]).map(t=>t.label||t.name||t.presentation||'').join(' ')}`.toLowerCase().includes(q)).slice(0,6).map((o,oi)=>({type:'offer',id:o.id,name:o.name,offer:o,index:oi}));const found=[...products,...offers].slice(0,8);list.innerHTML=found.map(x=>x.type==='product'?`<button type="button" class="a220-easy-result" data-type="product" data-id="${x.id}"><span>${esc(x.name)}</span><strong>${money(x.price)}</strong></button>`:`<button type="button" class="a220-easy-result" data-type="offer" data-id="${x.id}"><span>🎁 ${esc(x.name)}</span><strong>Oferta</strong></button>`).join('')||'<div class="a220-easy-empty">Sin coincidencias</div>';list.querySelectorAll('button').forEach(b=>b.onclick=()=>b.dataset.type==='offer'?addOffer(Number(b.dataset.id)):addProduct(Number(b.dataset.id)))}
+  function addProduct(id){const p=findProduct(id);if(!p)return;const key='p:'+p.id,existing=easyCart.find(i=>i.key===key);if(existing)existing.qty++;else easyCart.push({key,type:'product',id:p.id,name:p.name,qty:1,price:Number(p.price)||0});afterAdd()}
+  function addOffer(id){const o=(appData.offers||[]).find(x=>Number(x.id)===id);if(!o)return;const tiers=(o.tiers||[]).slice().sort((a,b)=>Number(a.qty||0)-Number(b.qty||0));if(!tiers.length){showToast?.('⚠️ Esta oferta no tiene precio configurado','error');return}if(tiers.length===1){pushOffer(o,tiers[0],0);return}const labels=tiers.map((t,i)=>`${i+1}. ${t.label||t.name||t.presentation||`${t.qty||1} unidades`} — ${money(getOfferPrice(t))}`).join('\n');const choice=prompt(`🎁 ${o.name}\nElegí una opción:\n${labels}`,'1');if(choice===null)return;const idx=Number(choice)-1;if(!tiers[idx]){showToast?.('⚠️ Opción inválida','error');return}pushOffer(o,tiers[idx],idx)}
+  function pushOffer(o,tier,idx){const label=tier.label||tier.name||tier.presentation||`${tier.qty||1} unidades`;const key=`o:${o.id}:${idx}`;const existing=easyCart.find(i=>i.key===key);if(existing)existing.qty++;else easyCart.push({key,type:'offer',id:o.id,name:`🎁 ${o.name} · ${label}`,qty:1,price:getOfferPrice(tier)});afterAdd()}
+  function afterAdd(){const input=document.getElementById('a220EasySearch');input.value='';document.getElementById('a220EasyResults').innerHTML='';render();input.focus()}
+  function setQty(key,value){const item=easyCart.find(i=>i.key===key);if(!item)return;item.qty=Math.max(1,Number(value)||1);render()}
+  function remove(key){easyCart=easyCart.filter(i=>i.key!==key);render()}
+  function render(){const box=document.getElementById('a220EasyCart');if(!box)return;box.innerHTML=easyCart.map(i=>`<div class="a220-easy-line"><div class="a220-easy-line-name">${esc(i.name)}</div><input class="a220-easy-qty" data-key="${esc(i.key)}" type="number" min="1" inputmode="numeric" value="${i.qty}"><strong>${money(i.qty*i.price)}</strong><button type="button" class="a220-easy-remove" data-remove="${esc(i.key)}">×</button></div>`).join('');box.querySelectorAll('[data-key]').forEach(el=>el.addEventListener('change',()=>setQty(el.dataset.key,el.value)));box.querySelectorAll('[data-remove]').forEach(el=>el.onclick=()=>remove(el.dataset.remove));document.getElementById('a220EasyTotal').textContent=money(total());document.querySelector('#a220EasyView [data-step="pay"]')?.classList.toggle('active',easyCart.length>0);document.getElementById('a220EasyFinish').disabled=!easyCart.length;calculateChange()}
+  function calculateChange(){const paid=Number(document.getElementById('a220EasyPaid')?.value)||0,t=total(),change=paid-t,status=document.getElementById('a220EasyStatus');document.getElementById('a220EasyChange').textContent=money(Math.max(0,change));if(!easyCart.length){if(status)status.textContent='';return}if(paid===0){if(status)status.textContent='';return}if(change<0){if(status)status.textContent=`Faltan ${money(Math.abs(change))}`;return}if(status)status.textContent=`✓ Vuelto: ${money(change)} · cálculo rápido, no se guardó nada.`}
+  function clearSale(){easyCart=[];const s=document.getElementById('a220EasySearch'),p=document.getElementById('a220EasyPaid');if(s)s.value='';if(p)p.value='';document.getElementById('a220EasyResults').innerHTML='';document.getElementById('a220EasyStatus').textContent='';render();s?.focus()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',inject);else inject();
 })();
