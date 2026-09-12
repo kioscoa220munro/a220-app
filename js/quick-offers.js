@@ -21,7 +21,7 @@
     let modal=document.getElementById('a220OfferOptionsModal');
     if(!modal){modal=document.createElement('div');modal.id='a220OfferOptionsModal';modal.className='a220-offer-modal';document.body.appendChild(modal)}
     const products=(data.products||[]).filter(p=>(offer.productIds||[]).map(Number).includes(Number(p.id)));
-    modal.innerHTML=`<div class="a220-offer-modal-card"><div class="a220-offer-modal-head"><div><strong>🎁 ${esc(offer.name)}</strong><small>${esc(products.map(p=>p.name).join(' + '))}</small></div><button type="button" class="a220-offer-close">×</button></div><div class="a220-offer-options">${tiers.map((t,i)=>{const label=tierLabel(t);const qty=Math.max(1,Number(t.qty)||1);return `<button type="button" class="a220-offer-option" data-tier-index="${i}"><span><strong>${esc(label||`${qty} unidades`)}</strong><small>${qty} unidades</small></span><b>${price(t.price)}</b></button>`}).join('')}</div></div>`;
+    modal.innerHTML=`<div class="a220-offer-modal-card"><div class="a220-offer-modal-head"><div><strong>🎁 ${esc(offer.name)}</strong><small>${esc(products.map(p=>p.name).join(' + '))}</small></div><button type="button" class="a220-offer-close">×</button></div><div class="a220-offer-options">${tiers.map((t,i)=>{const label=tierLabel(t);const qty=Math.max(1,Number(t.qty)||1);return `<button type="button" class="a220-offer-option" data-tier-index="${i}"><span><strong>${esc(label||`${qty} unidades`)}</strong>${label?'':`<small>${qty} unidades</small>`}</span><b>${price(t.price)}</b></button>`}).join('')}</div></div>`;
     modal.style.display='flex';
     modal.querySelector('.a220-offer-close').onclick=()=>modal.style.display='none';
     modal.onclick=e=>{if(e.target===modal)modal.style.display='none'};
