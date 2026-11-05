@@ -8,3 +8,70 @@
 @media(max-width:480px){.cards{grid-template-columns:1fr}nav button{padding:7px 8px}.panel{padding:11px}h2{font-size:21px}.scan-big{width:100%}.modal-actions{flex-direction:column}.quick-search{flex-direction:column;align-items:stretch}.quick-search .btn{width:100%}.qty-input{width:90px}.a220-quick-list{grid-template-columns:1fr}html,body{font-size:16px}h2{font-size:23px}}
 html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}nav button{font-size:14px}.btn{font-size:14px}.range-btn{font-size:13px}th,td{font-size:13px}th{font-size:11px}.bar-label{font-size:12px}.panel-title span{font-size:12px}.search-result{font-size:13px}.search-result small{font-size:11px}.product-name{font-size:16px}.product-price{font-size:15px}.product-stock{font-size:12px}.toast{font-size:14px}.a220-quick-offers{margin-top:12px}.a220-quick-title{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:16px;margin:9px 0}.a220-quick-title span{font-size:13px;opacity:.65}.a220-quick-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}.a220-quick-offer{width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:12px;border:1px solid #9fc6ec;border-radius:9px;background:#f3f8ff;cursor:pointer;font:inherit}.a220-quick-icon{font-size:23px}.a220-quick-info{min-width:0;flex:1}.a220-quick-info strong,.a220-quick-info small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.a220-quick-info strong{font-size:15px}.a220-quick-info small{font-size:12px;opacity:.65;margin-top:2px}.a220-quick-price{font-size:15px;font-weight:900}@media(max-width:480px){.a220-quick-list{grid-template-columns:1fr}html,body{font-size:16px}h2{font-size:23px}}
 .edit-image-box{margin:10px 0;padding:11px;border:1px solid #e3e9f1;border-radius:10px;background:#f8fafc}.edit-image-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}.edit-image-preview{width:150px;height:150px;border-radius:10px;border:1px dashed #b9c5d4;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}.edit-image-preview img{width:100%;height:100%;object-fit:contain}.image-placeholder{font-size:13px;opacity:.55;text-align:center;padding:10px}.edit-image-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.edit-image-actions .btn{margin:0}.product-thumb{width:26px;height:26px;flex:0 0 26px;border-radius:5px;background:#eef2f7;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;font-size:12px;opacity:1}.product-thumb img{width:100%;height:100%;object-fit:contain;display:block}.product-thumb-empty{opacity:.55}
+
+/* A220 · Acceso privado: contraste alto y lectura clara */
+#loginOverlay{
+  background:
+    radial-gradient(ellipse at 50% 18%,rgba(24,177,203,.22),transparent 42%),
+    radial-gradient(ellipse at 85% 85%,rgba(26,111,181,.16),transparent 38%),
+    linear-gradient(145deg,#030912 0%,#091827 52%,#050d18 100%);
+  padding:22px;
+}
+#loginOverlay::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.32;
+  background:linear-gradient(120deg,transparent 0 48%,rgba(89,226,238,.055) 49%,transparent 50% 100%);
+}
+#loginOverlay .login-box{
+  position:relative;width:min(430px,94vw);padding:clamp(26px,6vw,38px);
+  color:#f2f8ff;text-align:center;
+  background:linear-gradient(145deg,rgba(18,39,57,.97),rgba(7,19,32,.98));
+  border:1px solid transparent;border-radius:25px;
+  background-clip:padding-box;
+  box-shadow:0 28px 90px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,255,255,.1),0 0 32px rgba(27,208,222,.1);
+}
+#loginOverlay .login-box::before{
+  content:"";position:absolute;inset:0;padding:1px;border-radius:25px;pointer-events:none;
+  background:linear-gradient(125deg,rgba(105,224,238,.8),rgba(116,163,196,.2) 42%,rgba(35,218,206,.62));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+}
+#loginOverlay .login-box .brand{
+  justify-content:center;color:#f7fbff;font-size:clamp(34px,8vw,43px);
+  letter-spacing:-2px;text-shadow:0 3px 18px rgba(0,0,0,.25);
+}
+#loginOverlay .login-box .brand span{color:#48e7ec}
+#loginOverlay .login-box .brand-bolt{color:#ff4c55}
+#loginOverlay .login-box .sub{
+  margin-top:5px;color:#b9d0df;opacity:1;font-size:11px;font-weight:750;
+  letter-spacing:.19em;text-transform:uppercase;
+}
+#loginOverlay .login-box p.muted{
+  margin:26px 0 15px;color:#d5e8f4;opacity:1;font-size:14px;font-weight:700;
+  letter-spacing:.04em;
+}
+#loginOverlay #googleLoginBtn{
+  min-height:54px;margin:0;padding:13px 18px;border:1px solid rgba(110,244,239,.55);
+  border-radius:14px;color:#04151d;
+  background:linear-gradient(110deg,#83fff1 0%,#42e2df 48%,#66c8ff 100%);
+  box-shadow:0 8px 24px rgba(30,211,214,.2),inset 0 1px 0 rgba(255,255,255,.72);
+  font-size:15px;font-weight:900;letter-spacing:.01em;
+  transition:filter .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+#loginOverlay #googleLoginBtn:hover{
+  filter:brightness(1.07);transform:translateY(-1px);
+  box-shadow:0 11px 30px rgba(30,211,214,.3),inset 0 1px 0 rgba(255,255,255,.8);
+}
+#loginOverlay #googleLoginBtn:focus-visible{
+  outline:3px solid #fff;outline-offset:4px;
+}
+#loginOverlay #googleLoginBtn:disabled{opacity:.68;cursor:wait;transform:none}
+#loginOverlay #loginError{
+  margin-top:14px;color:#ff9ca5;font-size:13px;font-weight:700;
+  line-height:1.45;overflow-wrap:anywhere;
+}
+@media(max-width:480px){
+  #loginOverlay{padding:16px}
+  #loginOverlay .login-box{padding:28px 22px;border-radius:21px}
+  #loginOverlay .login-box::before{border-radius:21px}
+  #loginOverlay #googleLoginBtn{min-height:52px;font-size:14px}
+}
