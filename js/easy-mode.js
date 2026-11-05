@@ -22,7 +22,7 @@
  }
  function handleEasyUSBScan(e){
   if(!$('a220EasyView')?.classList.contains('open')||e.ctrlKey||e.altKey||e.metaKey)return;
-  const t=e.target;if(t&&(['TEXTAREA','SELECT'].includes(t.tagName)||t.tagName==='INPUT'&&t.id!=='a220EasyBarcode'&&t.id!=='a220EasySearch'))return;
+  const t=e.target;if(t&&(['TEXTAREA','SELECT'].includes(t.tagName)||t.tagName==='INPUT'&&t.id==='a220EasyBarcode'))return;
   if(e.key==='Enter'){if(easyScanBuffer.length>=8){e.preventDefault();e.stopPropagation();lookupBarcode(easyScanBuffer);easyScanBuffer='';clearTimeout(easyScanTimer)}return}
   if(!/^\\d$/.test(e.key))return;
   easyScanBuffer+=e.key;clearTimeout(easyScanTimer);easyScanTimer=setTimeout(()=>{if(easyScanBuffer.length>=8)lookupBarcode(easyScanBuffer);easyScanBuffer=''},220);
