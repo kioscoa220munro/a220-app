@@ -22,3 +22,11 @@ html[data-theme=dark] .a220-easy-view{background:#0e1522;color:#e7edf6}html[data
 .a220-easy-camera-card video{width:100%;max-height:65vh;object-fit:cover;background:#101827;border-radius:10px}
 .a220-easy-camera-card p{font-size:13px;text-align:center;margin:10px 0 2px}
 @media(max-width:420px){.a220-easy-scanbar{grid-template-columns:1fr}.a220-easy-scanbar .btn{width:100%}}
+
+/* Controles de cantidad grandes: un toque por unidad */
+.a220-easy-qty{display:flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}
+.a220-easy-qty button{display:grid;place-items:center;width:42px;height:42px;min-width:42px;padding:0;border:1px solid #b8c7d9;border-radius:10px;background:#edf4ff;color:#1457b8;font-size:25px;font-weight:900;line-height:1;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.a220-easy-qty button:active{transform:scale(.94);background:#dbeafe}
+.a220-easy-qty strong{display:inline-grid;place-items:center;min-width:28px;font-size:17px;font-weight:900;font-variant-numeric:tabular-nums}
+html[data-theme=dark] .a220-easy-qty button{background:#263b59;border-color:#52709a;color:#e7f1ff}
+@media(max-width:700px){.a220-easy-qty{gap:6px}.a220-easy-qty button{width:46px;height:46px;min-width:46px;font-size:27px}.a220-easy-qty strong{min-width:30px;font-size:18px}}
