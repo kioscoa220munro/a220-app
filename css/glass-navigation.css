@@ -158,3 +158,19 @@ main{padding-bottom:115px!important}
 @media(min-width:900px){#a220Dock.a220-cyber-dock{bottom:18px!important;width:min(680px,calc(100% - 40px));border-radius:22px!important}#a220Dock button{min-height:54px}body{padding-bottom:100px!important}}
 @media(max-width:480px){#a220Dock.a220-cyber-dock{width:calc(100% - 16px);bottom:calc(8px + env(safe-area-inset-bottom))!important;padding:6px!important;gap:2px;border-radius:21px!important}#a220Dock button{min-height:54px;padding:6px 2px!important;gap:4px;border-radius:15px!important;font-size:9px!important}#a220Dock button i{font-size:18px}}
 @media(prefers-reduced-motion:reduce){#a220Dock button{transition:none}}
+
+
+/* A220 · Navegación superior fija y legible */
+#a220Dock.a220-cyber-dock{
+  position:sticky!important;top:76px!important;bottom:auto!important;left:auto!important;
+  transform:none!important;z-index:10010!important;width:min(100% - 24px,1180px)!important;
+  margin:12px auto 0!important;border-radius:18px!important;
+}
+body{padding-bottom:0!important}
+main{padding-bottom:24px!important}
+@media(max-width:800px){
+  #a220Dock.a220-cyber-dock{top:64px!important;width:calc(100% - 18px)!important;margin:9px auto 0!important}
+}
+@media(max-width:480px){
+  #a220Dock.a220-cyber-dock{border-radius:16px!important}
+}
