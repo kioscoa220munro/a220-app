@@ -30,7 +30,7 @@
     document.getElementById('a220EasySyncNo').onclick=finishSyncDecision;
     s.querySelector('[data-easy-sync-close]').onclick=finishSyncDecision;
   }
-  function open(){easySaleReady=false;if(!appData){showToast?.('⚠️ A220 todavía no está lista','error');return}easyCart=[];accepting=false;document.getElementById('a220EasyView').classList.add('open');document.body.classList.add('a220-easy-open');document.getElementById('a220ModePro')?.classList.remove('is-active');document.getElementById('a220ModePro')?.setAttribute('aria-pressed','false');document.getElementById('a220ModeEasy')?.classList.add('is-active');document.getElementById('a220ModeEasy')?.setAttribute('aria-pressed','true');render();setTimeout(()=>document.getElementById('a220EasyBarcode')?.focus(),50)}
+  function open(){easySaleReady=false;selectedProductId=null;document.getElementById('a220EasyPaid')&&(document.getElementById('a220EasyPaid').value='');document.getElementById('a220EasyBarcode')&&(document.getElementById('a220EasyBarcode').value='');if(!appData){showToast?.('⚠️ A220 todavía no está lista','error');return}easyCart=[];accepting=false;document.getElementById('a220EasyView').classList.add('open');document.body.classList.add('a220-easy-open');document.getElementById('a220ModePro')?.classList.remove('is-active');document.getElementById('a220ModePro')?.setAttribute('aria-pressed','false');document.getElementById('a220ModeEasy')?.classList.add('is-active');document.getElementById('a220ModeEasy')?.setAttribute('aria-pressed','true');render();setTimeout(()=>document.getElementById('a220EasyBarcode')?.focus(),50)}
   function close(){if(accepting)return;document.getElementById('a220EasyView')?.classList.remove('open');document.body.classList.remove('a220-easy-open');document.getElementById('a220ModeEasy')?.classList.remove('is-active');document.getElementById('a220ModeEasy')?.setAttribute('aria-pressed','false');document.getElementById('a220ModePro')?.classList.add('is-active');document.getElementById('a220ModePro')?.setAttribute('aria-pressed','true');closeSyncModal()}
   let selectedProductId=null;
   const imageOf=p=>String(p&&p.image||'').trim();
@@ -66,13 +66,13 @@
   }
   function openSyncModal(){const m=document.getElementById('a220EasySyncModal');if(!m)return;m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.classList.add('a220-easy-modal-open');setTimeout(()=>document.getElementById('a220EasySyncYes')?.focus(),50)}
   function closeSyncModal(){const m=document.getElementById('a220EasySyncModal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.classList.remove('a220-easy-modal-open')}
-  function finishSyncDecision(){closeSyncModal();accepting=false;easyCart=[];document.getElementById('a220EasyPaid').value='';render();document.getElementById('a220EasySearch')?.focus();showToast?.('💾 Venta guardada localmente','success')}
+  function finishSyncDecision(){closeSyncModal();accepting=false;easyCart=[];document.getElementById('a220EasyPaid').value='';render();document.getElementById('a220EasyBarcode')?.focus();showToast?.('💾 Venta guardada localmente','success')}
   async function syncAcceptedSale(){
     const yes=document.getElementById('a220EasySyncYes'),no=document.getElementById('a220EasySyncNo');if(!yes||!no)return;
     yes.disabled=true;no.disabled=true;yes.textContent='Sincronizando…';
     try{const ok=typeof syncToGitHub==='function'?await syncToGitHub():false;if(ok){closeSyncModal();showToast?.('☁️ Venta sincronizada','success')}else showToast?.('⚠️ No se pudo sincronizar. La venta sigue guardada localmente','error')}catch(e){console.error('A220 Fácil sync:',e);showToast?.('⚠️ No se pudo sincronizar. La venta sigue guardada localmente','error')}
-    finally{yes.disabled=false;no.disabled=false;yes.textContent='Sí, sincronizar';no.textContent='No, dejar local';accepting=false;easyCart=[];document.getElementById('a220EasyPaid').value='';render();document.getElementById('a220EasySearch')?.focus()}
+    finally{yes.disabled=false;no.disabled=false;yes.textContent='Sí, sincronizar';no.textContent='No, dejar local';accepting=false;easyCart=[];document.getElementById('a220EasyPaid').value='';render();document.getElementById('a220EasyBarcode')?.focus()}
   }
-  function clearSale(){easyCart=[];const s=document.getElementById('a220EasySearch'),p=document.getElementById('a220EasyPaid');if(s)s.value='';if(p)p.value='';document.getElementById('a220EasyResults').innerHTML='';document.getElementById('a220EasyStatus').textContent='';render();s?.focus()}
+  function clearSale(){easyCart=[];selectedProductId=null;const s=document.getElementById('a220EasySearch'),p=document.getElementById('a220EasyPaid');if(s)s.value='';if(p)p.value='';document.getElementById('a220EasyResults').innerHTML='';document.getElementById('a220EasyStatus').textContent='';render();document.getElementById('a220EasyBarcode')?.focus()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',inject);else inject();
 })();
