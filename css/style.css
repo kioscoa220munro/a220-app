@@ -98,3 +98,79 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
 #productos input:focus{border-color:#20f4e2}
 #productos .table-wrap th{color:#c7d8e4;opacity:1}
 #productos .table-wrap td{color:#edf5fa}
+
+
+/* A220 PRO · Punto de venta reorganizado: búsqueda breve, cuenta clara y cobro directo */
+#ventas.view.active{
+  display:grid!important;
+  grid-template-columns:minmax(220px,.82fr) minmax(360px,1.28fr) minmax(245px,.9fr)!important;
+  grid-template-rows:auto auto auto auto;
+  align-items:start!important;gap:10px!important;
+}
+#ventas.view.active>div:nth-of-type(1){grid-column:1/-1!important;grid-row:1!important;margin:0!important}
+#ventas.view.active>div:nth-of-type(2){grid-column:1!important;grid-row:2!important;margin:0!important}
+#ventas.view.active>div:nth-of-type(3){grid-column:1!important;grid-row:3!important;margin:0!important}
+#ventas.view.active>div:nth-of-type(4){grid-column:2!important;grid-row:2 / span 2!important;position:static!important;max-height:none!important;overflow:visible!important;margin:0!important}
+#ventas.view.active>div:nth-of-type(5){grid-column:3!important;grid-row:2!important;margin:0!important}
+#ventas.view.active>button[onclick="finishSale()"]{grid-column:3!important;grid-row:3!important;align-self:start!important;margin:0!important;min-height:48px;font-size:14px}
+#ventas.view.active>#a220UndoSaleButton{grid-column:3!important;grid-row:4!important;margin:0!important}
+#ventas.view.active>#a220SinglePrintButton{grid-column:1/-1!important;grid-row:5!important}
+#ventas .panel{padding:12px!important;border-radius:15px!important}
+#ventas .page-head h2{font-size:22px}
+#ventas .quick-product-panel label{margin:0 0 6px!important;font-size:12px}
+#ventas .quick-search{display:flex!important;gap:6px!important;align-items:center!important}
+#ventas .quick-search input{min-width:0!important;height:42px!important;margin:0!important;padding:9px 11px!important;font-size:13px!important}
+#ventas .quick-search .btn{flex:0 0 auto!important;height:42px!important;margin:0!important;padding:0 12px!important}
+#ventas .quick-product-panel .field-note{margin-top:7px;font-size:10px;line-height:1.35;color:#b9cbd8;opacity:1}
+#ventas .sale-selection-panel>label{margin:5px 0 3px;font-size:11px}
+#ventas #saleProduct{min-height:40px;margin:0 0 7px;font-size:12px}
+#ventas .product-preview{min-height:76px;align-items:center;gap:10px;padding:9px;border-radius:11px}
+#ventas .product-image{width:58px;height:58px;flex-basis:58px}
+#ventas .product-name{font-size:13px}
+#ventas .product-price{font-size:15px;color:#66f1df}
+#ventas .product-stock{font-size:10px}
+#ventas .qty-selector{margin:4px 0 8px}
+#ventas .qty-btn{width:34px;height:34px}
+#ventas .qty-input{width:64px;height:34px;padding:4px}
+#ventas #salePrice{height:38px;margin:2px 0 5px}
+#ventas .sale-selection-panel>.btn{min-height:42px;margin-top:5px!important}
+#ventas .cart-panel h3,#ventas .payment-panel h3{font-size:14px;margin:0 0 8px}
+#ventas .cart-panel .table-wrap{max-height:calc(100vh - 340px);min-height:130px;overflow:auto;border-radius:10px}
+#ventas .cart-panel table{width:100%;table-layout:auto}
+#ventas .cart-panel th,#ventas .cart-panel td{padding:7px 6px;font-size:11px;vertical-align:middle}
+#ventas .cart-panel th:first-child,#ventas .cart-panel td:first-child{min-width:145px;white-space:normal}
+#ventas .a220-pro-cart-product{display:flex;align-items:center;gap:7px;min-width:0}
+#ventas .a220-pro-cart-thumb{width:34px;height:34px;flex:0 0 34px;object-fit:contain;border-radius:8px;background:#102334}
+#ventas .a220-pro-cart-noimg{display:grid;place-items:center;font-size:17px}
+#ventas .a220-pro-cart-product>span:last-child{display:grid;gap:3px;min-width:0}
+#ventas .a220-pro-cart-product strong{font-size:11px;line-height:1.2}
+#ventas .a220-pro-cart-product small{font-size:9px;line-height:1.25;color:#aec3d1;overflow-wrap:anywhere}
+#ventas .a220-pro-cart-qty{display:flex;align-items:center;justify-content:center;gap:5px}
+#ventas .a220-pro-cart-qty button{width:25px;height:27px;border:1px solid #426075;border-radius:7px;background:#102334;color:#fff;font-weight:900;cursor:pointer}
+#ventas .a220-pro-cart-qty strong{min-width:14px;text-align:center}
+#ventas .cart-panel .tot{font-size:22px;padding:9px 3px 0;border-top:1px solid #365064}
+#ventas .payment-panel input,#ventas .payment-panel select{min-height:39px;margin:3px 0 7px}
+#ventas .payment-panel label{margin:6px 0 3px}
+#ventas #cashPaymentFields{padding:8px;border-radius:10px;background:#0a1927;border:1px solid #29445a}
+#ventas #cashPaymentFields .btn{margin-top:4px}
+#ventas #vueltoDisplay{color:#65f0c6;font-size:16px}
+#ventas .payment-panel #clienteNombre,#ventas .payment-panel #clienteTelefono{font-size:12px}
+@media(max-width:1100px){
+  #ventas.view.active{grid-template-columns:minmax(220px,.85fr) minmax(320px,1.15fr)!important}
+  #ventas.view.active>div:nth-of-type(1){grid-column:1/-1!important}
+  #ventas.view.active>div:nth-of-type(2){grid-column:1!important;grid-row:2!important}
+  #ventas.view.active>div:nth-of-type(3){grid-column:1!important;grid-row:3!important}
+  #ventas.view.active>div:nth-of-type(4){grid-column:2!important;grid-row:2 / span 2!important}
+  #ventas.view.active>div:nth-of-type(5){grid-column:1!important;grid-row:4!important}
+  #ventas.view.active>button[onclick="finishSale()"]{grid-column:2!important;grid-row:4!important}
+  #ventas.view.active>#a220UndoSaleButton{grid-column:2!important;grid-row:5!important}
+}
+@media(max-width:760px){
+  #ventas.view.active{display:flex!important;flex-direction:column!important;gap:8px!important}
+  #ventas.view.active>div:nth-of-type(n){width:100%;margin:0!important;max-height:none!important;overflow:visible!important}
+  #ventas.view.active>button[onclick="finishSale()"],#ventas.view.active>#a220UndoSaleButton{width:100%;margin:0!important}
+  #ventas .cart-panel .table-wrap{max-height:none;min-height:100px}
+  #ventas .cart-panel th:first-child,#ventas .cart-panel td:first-child{min-width:120px}
+  #ventas .cart-panel th,#ventas .cart-panel td{padding:6px 4px;font-size:10px}
+  #ventas .a220-pro-cart-thumb{width:29px;height:29px;flex-basis:29px}
+}
