@@ -1,7 +1,7 @@
 // A220 Pro - modo Fácil: calculadora rápida con venta local y sincronización opcional.
 (function(){
   let easyCart=[];
-  let accepting=false;
+  let accepting=false;\n  let easySaleReady=false;
   const esc=v=>typeof escapeHTML==='function'?escapeHTML(v):String(v??'');
   const total=()=>easyCart.reduce((n,i)=>n+i.qty*i.price,0);
   const getOfferPrice=t=>Number(t?.price||0);
@@ -21,7 +21,7 @@
     document.getElementById('a220EasyBarcode').addEventListener('change',e=>{if(e.currentTarget.value.trim())a220EasyAddByBarcode(e.currentTarget.value)});
     document.getElementById('a220EasyAdd').onclick=addSelectedProduct;
     document.getElementById('a220EasyCamera').onclick=()=>startScanner();
-    document.getElementById('a220EasyPrint').onclick=()=>{if(typeof printLastSale==='function')printLastSale();else showToast?.('Módulo de impresión todavía no está listo','error')};
+    document.getElementById('a220EasyPrint').onclick=()=>{if(!easySaleReady){showToast?.('Primero cobrá la venta actual','info');return}if(typeof printLastSale==='function')printLastSale();else showToast?.('Módulo de impresión todavía no está listo','error')};
     document.getElementById('a220EasyPaid').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();acceptSale()}});
     document.getElementById('a220EasyFinish').onclick=acceptSale;
     document.getElementById('a220EasyClear').onclick=clearSale;
@@ -29,7 +29,7 @@
     document.getElementById('a220EasySyncNo').onclick=finishSyncDecision;
     s.querySelector('[data-easy-sync-close]').onclick=finishSyncDecision;
   }
-  function open(){if(!appData){showToast?.('⚠️ A220 todavía no está lista','error');return}easyCart=[];accepting=false;document.getElementById('a220EasyView').classList.add('open');document.body.classList.add('a220-easy-open');document.getElementById('a220ModePro')?.classList.remove('is-active');document.getElementById('a220ModePro')?.setAttribute('aria-pressed','false');document.getElementById('a220ModeEasy')?.classList.add('is-active');document.getElementById('a220ModeEasy')?.setAttribute('aria-pressed','true');render();setTimeout(()=>document.getElementById('a220EasyBarcode')?.focus(),50)}
+  function open(){easySaleReady=false;if(!appData){showToast?.('⚠️ A220 todavía no está lista','error');return}easyCart=[];accepting=false;document.getElementById('a220EasyView').classList.add('open');document.body.classList.add('a220-easy-open');document.getElementById('a220ModePro')?.classList.remove('is-active');document.getElementById('a220ModePro')?.setAttribute('aria-pressed','false');document.getElementById('a220ModeEasy')?.classList.add('is-active');document.getElementById('a220ModeEasy')?.setAttribute('aria-pressed','true');render();setTimeout(()=>document.getElementById('a220EasyBarcode')?.focus(),50)}
   function close(){if(accepting)return;document.getElementById('a220EasyView')?.classList.remove('open');document.body.classList.remove('a220-easy-open');document.getElementById('a220ModeEasy')?.classList.remove('is-active');document.getElementById('a220ModeEasy')?.setAttribute('aria-pressed','false');document.getElementById('a220ModePro')?.classList.add('is-active');document.getElementById('a220ModePro')?.setAttribute('aria-pressed','true');closeSyncModal()}
   let selectedProductId=null;
   const imageOf=p=>String(p&&p.image||'').trim();
@@ -61,7 +61,7 @@
     for(const item of easyCart){if(item.type!=='product')continue;const p=findProduct(item.id),qty=Math.max(1,Number(item.qty)||1);p.stock-=qty;appData.moves.unshift({id:crypto.randomUUID(),date:now,product:item.name,productId:item.id,qty,total:qty*Number(item.price||0),cliente:'Sin cliente',clientId:null,saleId:sale.id})}
     appData.sales.unshift(sale);logActivity('sale','Venta rápida realizada',`${easyCart.length} línea(s) · ${money(t)}`);
     try{if(typeof saveLocalData==='function')saveLocalData();else throw new Error('Guardado local no disponible')}catch(e){console.error('A220 Fácil local save:',e);accepting=false;showToast?.('❌ No se pudo guardar la venta local','error');return}
-    renderAll?.();document.getElementById('a220EasyStatus').textContent='✓ Venta guardada en este dispositivo';document.getElementById('a220EasySyncDetail').innerHTML=`<strong>${money(t)}</strong><span>${easyCart.length} línea(s) · efectivo ${money(paid)} · vuelto ${money(Math.max(0,paid-t))}</span>`;openSyncModal();
+    renderAll?.();easySaleReady=true;document.getElementById('a220EasyStatus').textContent='✓ Venta guardada en este dispositivo';document.getElementById('a220EasySyncDetail').innerHTML=`<strong>${money(t)}</strong><span>${easyCart.length} línea(s) · efectivo ${money(paid)} · vuelto ${money(Math.max(0,paid-t))}</span>`;openSyncModal();
   }
   function openSyncModal(){const m=document.getElementById('a220EasySyncModal');if(!m)return;m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.classList.add('a220-easy-modal-open');setTimeout(()=>document.getElementById('a220EasySyncYes')?.focus(),50)}
   function closeSyncModal(){const m=document.getElementById('a220EasySyncModal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.classList.remove('a220-easy-modal-open')}
