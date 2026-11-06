@@ -121,3 +121,5 @@ body.a220-easy-modal-open{overflow:hidden}
 .a220-easy-scan-confirm{padding:14px;color:#fff;font-weight:900}
 @media(max-width:900px){.a220-easy-workspace{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.a220-easy-products{grid-column:1/-1;min-height:0}.a220-easy-ticket,.a220-easy-payment{min-height:0}}
 @media(max-width:620px){.a220-easy-workspace{grid-template-columns:1fr;padding:8px;gap:9px}.a220-easy-column{min-height:0;padding:11px}.a220-easy-products,.a220-easy-ticket,.a220-easy-payment{grid-column:1}.a220-easy-cart{max-height:38vh}.a220-easy-head{height:56px}}
+
+body.a220-easy-open #scannerContainer.active{z-index:10030!important}
