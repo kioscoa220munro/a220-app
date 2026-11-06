@@ -235,3 +235,19 @@ main{padding-bottom:24px!important}
   #a220Dock.a220-cyber-dock button{flex:1 1 0!important;min-height:30px!important;height:30px!important;gap:3px!important;padding:3px 2px!important;font-size:8px!important;border-radius:7px!important}
   #a220Dock.a220-cyber-dock button i{font-size:11px!important}
 }
+
+
+/* A220 · Encabezado y navegación fijos durante el desplazamiento */
+header{
+  position:sticky!important;top:0!important;z-index:10020!important;
+  height:76px!important;min-height:76px!important;box-sizing:border-box!important;
+}
+#a220Dock.a220-cyber-dock{
+  position:sticky!important;top:76px!important;bottom:auto!important;
+  z-index:10010!important;margin-top:0!important;
+  /* Conserva la barra horizontal compacta; queda inmediatamente debajo del header */
+}
+@media(max-width:800px){
+  header{height:64px!important;min-height:64px!important}
+  #a220Dock.a220-cyber-dock{top:64px!important}
+}
