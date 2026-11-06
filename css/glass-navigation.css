@@ -174,3 +174,19 @@ main{padding-bottom:24px!important}
 @media(max-width:480px){
   #a220Dock.a220-cyber-dock{border-radius:16px!important}
 }
+
+
+/* A220 · Contraste reforzado en Nuevo artículo y catálogo */
+#productos .panel{color:#f1f7fc}
+#productos .panel h3,#productos .panel label,#productos .panel .edit-image-head strong,#productos .panel #pSourceInfo{color:#f1f7fc;opacity:1}
+#productos .panel .muted,#productos .panel .field-note{color:#c5d7e4;opacity:1}
+#productos .edit-image-box{background:#102031;color:#f1f7fc;border-color:#426075}
+#productos .edit-image-preview{background:#f7fafc;border:1px dashed #8296a8}
+#productos .edit-image-preview .image-placeholder{color:#26384a;opacity:1;font-weight:700}
+#productos .edit-image-head #pImageInfo{color:#d5e6f1;opacity:1}
+#productos .catalog-head .muted{color:#c5d7e4;opacity:1}
+#productos input{color:#f1f7fc;background:#071522;border-color:#526a7d}
+#productos input::placeholder{color:#b5c6d2;opacity:1}
+#productos input:focus{border-color:#20f4e2}
+#productos .table-wrap th{color:#c7d8e4;opacity:1}
+#productos .table-wrap td{color:#edf5fa}
