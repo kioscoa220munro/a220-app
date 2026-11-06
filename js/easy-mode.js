@@ -1,7 +1,8 @@
 // A220 Pro - modo Fácil: calculadora rápida con venta local y sincronización opcional.
 (function(){
   let easyCart=[];
-  let accepting=false;\n  let easySaleReady=false;
+  let accepting=false;
+  let easySaleReady=false;
   const esc=v=>typeof escapeHTML==='function'?escapeHTML(v):String(v??'');
   const total=()=>easyCart.reduce((n,i)=>n+i.qty*i.price,0);
   const getOfferPrice=t=>Number(t?.price||0);
