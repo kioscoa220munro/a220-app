@@ -125,3 +125,36 @@ html[data-theme=light] .product-thumb,html[data-theme=dark] .product-thumb{backg
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}
 }
+/* A220 Cyber Neon Dock */
+#a220Dock.a220-cyber-dock{
+ position:fixed!important;left:50%!important;top:auto!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;
+ transform:translateX(-50%);z-index:10010!important;display:flex!important;align-items:center;justify-content:space-around;
+ width:min(760px,calc(100% - 28px));margin:0!important;padding:8px!important;gap:5px;overflow:visible!important;
+ border:1px solid transparent!important;border-radius:25px!important;
+ background:linear-gradient(145deg,rgba(5,15,26,.94),rgba(11,29,44,.88)) padding-box,
+ linear-gradient(110deg,rgba(239,32,41,.7),rgba(32,244,226,.95),rgba(20,156,255,.8),rgba(239,32,41,.65)) border-box!important;
+ box-shadow:0 12px 38px rgba(0,0,0,.5),0 0 28px rgba(32,244,226,.13),inset 0 1px 0 rgba(255,255,255,.13)!important;
+ backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);
+}
+#a220Dock button{
+ position:relative;display:flex;flex:1 1 0;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+ min-width:0;min-height:58px;padding:7px 4px!important;border:1px solid transparent!important;border-radius:17px!important;
+ background:transparent!important;color:#9bb5c7!important;font-size:10px!important;font-weight:800!important;letter-spacing:.035em;
+ transition:transform .22s ease,color .22s ease,box-shadow .22s ease,background .22s ease;
+}
+#a220Dock button i{font-size:19px;line-height:1;color:#9eb9ca;transition:all .22s ease}
+#a220Dock button span{line-height:1.1}
+#a220Dock button.active{
+ color:#eaffff!important;border-color:rgba(32,244,226,.35)!important;
+ background:linear-gradient(180deg,rgba(32,244,226,.18),rgba(20,156,255,.08))!important;
+ box-shadow:inset 0 0 18px rgba(32,244,226,.12),0 0 18px rgba(32,244,226,.18)!important;
+ transform:translateY(-4px);
+}
+#a220Dock button.active i{color:#42fff0;text-shadow:0 0 8px #20f4e2,0 0 20px rgba(32,244,226,.8)}
+#a220Dock button.active:before{content:"";position:absolute;top:-4px;width:18px;height:3px;border-radius:9px;background:#4affef;box-shadow:0 0 10px #20f4e2}
+#a220Dock button:active{transform:scale(.94)}
+body{padding-bottom:104px!important}
+main{padding-bottom:115px!important}
+@media(min-width:900px){#a220Dock.a220-cyber-dock{bottom:18px!important;width:min(680px,calc(100% - 40px));border-radius:22px!important}#a220Dock button{min-height:54px}body{padding-bottom:100px!important}}
+@media(max-width:480px){#a220Dock.a220-cyber-dock{width:calc(100% - 16px);bottom:calc(8px + env(safe-area-inset-bottom))!important;padding:6px!important;gap:2px;border-radius:21px!important}#a220Dock button{min-height:54px;padding:6px 2px!important;gap:4px;border-radius:15px!important;font-size:9px!important}#a220Dock button i{font-size:18px}}
+@media(prefers-reduced-motion:reduce){#a220Dock button{transition:none}}
