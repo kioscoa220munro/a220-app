@@ -295,3 +295,31 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
   #ventas.view.active>div:nth-of-type(4){grid-column:3!important;grid-row:2!important}
   #ventas.view.active>div:nth-of-type(5){grid-column:3!important;grid-row:3!important}
 }
+
+
+/* Venta PRO · distribución definitiva por zonas (evita reglas antiguas por posición) */
+@media(min-width:761px){
+  #ventas.view.active{
+    display:grid!important;
+    grid-template-columns:minmax(0,.82fr) minmax(0,1fr) minmax(0,1.2fr)!important;
+    grid-template-rows:auto auto auto auto auto;
+    align-items:start!important;
+    gap:10px!important;
+  }
+  #ventas.view.active>.page-head{grid-column:1/-1!important;grid-row:1!important}
+  #ventas.view.active>.quick-product-panel{grid-column:1!important;grid-row:2!important}
+  #ventas.view.active>.sale-selection-panel{grid-column:2!important;grid-row:2 / span 2!important;align-self:start!important;min-width:0!important;height:auto!important}
+  #ventas.view.active>.cart-panel{grid-column:3!important;grid-row:2!important;min-width:0!important}
+  #ventas.view.active>.payment-panel{grid-column:3!important;grid-row:3!important;min-width:0!important}
+  #ventas.view.active>button[onclick="finishSale()"]{grid-column:3!important;grid-row:4!important;width:100%!important}
+  #ventas.view.active>#a220UndoSaleButton{grid-column:3!important;grid-row:5!important}
+  #ventas.view.active>#a220SinglePrintButton{grid-column:1/-1!important;grid-row:6!important}
+}
+@media(max-width:760px){
+  #ventas.view.active{display:flex!important;flex-direction:column!important}
+  #ventas.view.active>.page-head,
+  #ventas.view.active>.quick-product-panel,
+  #ventas.view.active>.sale-selection-panel,
+  #ventas.view.active>.cart-panel,
+  #ventas.view.active>.payment-panel{width:100%!important}
+}
