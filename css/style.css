@@ -267,10 +267,7 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
 .a220-visual-chart{width:100%;overflow-x:auto;overscroll-behavior-x:contain}
 .a220-visual-chart svg{display:block;width:100%;min-width:360px;height:auto}
 .a220-vgrid{stroke:#29445a;stroke-width:1;stroke-dasharray:3 6;opacity:.8}
-.a220-vbar{fill:url(#a220VisualGradient);filter:drop-shadow(0 0 5px #48c9ff35)}
-.a220-vbar.day{fill:url(#a220VisualGradient2)}
-.a220-vbar.product{fill:url(#a220VisualGradient3)}
-.a220-vbar.inventory{fill:url(#a220VisualGradient4)}
+.a220-vbar{filter:drop-shadow(0 0 5px #48c9ff35)}
 .a220-visual-chart svg{background-image:linear-gradient(transparent,transparent)}
 .a220-visual-chart svg defs{display:block}
 .a220-visual-empty{height:190px;display:flex;align-items:center;justify-content:center;gap:9px;opacity:.55}
