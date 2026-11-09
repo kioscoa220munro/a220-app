@@ -237,3 +237,17 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
 .stats-empty strong{color:#e7edf6}
 .stats-empty.compact{padding:16px}
 @media(max-width:800px){.stats-visual-grid{grid-template-columns:1fr}.stats-column-chart{gap:6px}.stats-column-item{width:38px}.stats-column-track{width:23px}}
+
+/* A220 Estadísticas · SVG charts de datos reales */
+.stats-svg-scroll{width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding:8px 2px 4px}
+.stats-svg{display:block;width:100%;min-width:560px;height:auto;overflow:visible}
+.stats-rank-svg{display:block;width:100%;min-width:560px;height:auto;overflow:visible}
+.stats-svg .chart-grid{stroke:#34475e;stroke-width:1;stroke-dasharray:3 5}
+.stats-svg .chart-axis{fill:#9eb0c8;font-size:10px}
+.stats-svg .chart-label{fill:#c4d2e4;font-size:10px}
+.stats-svg .chart-value{fill:#eaf7ff;font-size:9px;font-weight:700}
+.stats-rank-svg .rank-name{fill:#e4edf8;font-size:13px}
+.stats-rank-svg .rank-value{fill:#78ddff;font-size:12px;font-weight:800}
+.stats-visual-panel{background:linear-gradient(145deg,rgba(16,32,51,.98),rgba(7,17,30,.98));border:1px solid #29445e;box-shadow:0 10px 30px rgba(0,0,0,.16)}
+#a220QuickOffers{position:relative;display:block;width:min(1180px,calc(100% - 28px));margin:18px auto 24px;clear:both}
+@media(max-width:700px){.stats-svg{min-width:650px}.stats-rank-svg{min-width:620px}.stats-visual-panel{padding:12px}}
