@@ -212,3 +212,28 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
   #ventas.view.active>button[onclick="finishSale()"],#ventas.view.active>#a220UndoSaleButton{width:100%;margin:0!important}
   #ventas .cart-panel .table-wrap{max-height:none;min-height:100px}
 }
+
+/* Estadísticas: gráficos visuales */
+.stats-visual-grid{grid-template-columns:1fr 1fr;align-items:stretch}
+.stats-visual-panel{min-width:0;overflow:hidden}
+.stats-columns{min-height:210px;padding:12px 2px 2px;overflow-x:auto}
+.stats-column-chart{height:190px;display:flex;align-items:stretch;gap:8px;min-width:max-content}
+.stats-column-item{width:42px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px;min-width:0}
+.stats-column-value{font-size:9px;font-weight:800;color:#8ea6c8;white-space:nowrap;max-width:64px;overflow:hidden;text-overflow:ellipsis}
+.stats-column-track{height:125px;width:25px;display:flex;align-items:flex-end;justify-content:center;background:#25354d;border-radius:8px 8px 4px 4px;overflow:hidden}
+.stats-column-track i{display:block;width:100%;min-height:4px;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,#55d8ff,#2875e8);box-shadow:0 0 14px #36bdf455}
+.stats-column-item>span{font-size:9px;color:#aab8ce;white-space:nowrap}
+.stats-ranking{display:grid;gap:12px;padding:12px 2px}
+.stats-rank-row{display:flex;align-items:center;gap:10px}
+.stats-rank-number{width:25px;height:25px;display:grid;place-items:center;border-radius:8px;background:#243650;color:#69d9ff;font-weight:900;font-size:11px;flex:0 0 25px}
+.stats-rank-main{min-width:0;flex:1}
+.stats-rank-label{display:flex;justify-content:space-between;gap:8px;font-size:11px;margin-bottom:5px}
+.stats-rank-label strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stats-rank-label b{white-space:nowrap;color:#70d8ff}
+.stats-rank-track{height:9px;background:#25354d;border-radius:99px;overflow:hidden}
+.stats-rank-track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#2875e8,#55d8ff)}
+.stats-empty{padding:25px 12px;text-align:center;color:#aab8ce;display:grid;gap:7px;justify-items:center}
+.stats-empty-icon{font-size:28px}
+.stats-empty strong{color:#e7edf6}
+.stats-empty.compact{padding:16px}
+@media(max-width:800px){.stats-visual-grid{grid-template-columns:1fr}.stats-column-chart{gap:6px}.stats-column-item{width:38px}.stats-column-track{width:23px}}
