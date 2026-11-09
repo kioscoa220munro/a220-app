@@ -275,3 +275,14 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
 .a220-visual-empty span:nth-child(2){height:55px;animation-delay:.15s}.a220-visual-empty span:nth-child(3){height:83px;animation-delay:.3s}.a220-visual-empty span:nth-child(4){height:44px;animation-delay:.45s}.a220-visual-empty span:nth-child(5){height:68px;animation-delay:.6s}.a220-visual-empty span:nth-child(6){height:25px;animation-delay:.75s}
 @keyframes a220IdleBars{to{transform:scaleY(.35);opacity:.45}}
 @media(max-width:760px){.a220-stats-grid{grid-template-columns:1fr}.a220-stats-head{align-items:flex-start}.a220-stats-reset{padding:10px 12px}.a220-stats-card{min-height:220px}}
+
+/* Articulos: bloque de imagen fijo al margen izquierdo del formulario */
+@media(min-width:801px){
+ #productos.view.active>.panel:first-of-type{grid-template-columns:minmax(190px,220px) minmax(0,1fr) minmax(0,1fr)!important;}
+ #productos.view.active>.panel:first-of-type>.edit-image-box{grid-column:1!important;grid-row:2 / span 6!important;align-self:start;height:auto;min-height:0;margin:3px 8px 0 0;}
+ #productos.view.active>.panel:first-of-type>#pSourceInfo{grid-column:1!important;grid-row:8!important;}
+ #productos.view.active>.panel:first-of-type .edit-image-preview{width:100%;max-width:190px;height:190px;}
+ #productos.view.active>.panel:first-of-type .edit-image-head{align-items:flex-start;flex-direction:column;}
+ #productos.view.active>.panel:first-of-type .edit-image-actions{flex-direction:column;align-items:stretch;}
+ #productos.view.active>.panel:first-of-type .edit-image-actions>*{width:100%;text-align:center;}
+}
