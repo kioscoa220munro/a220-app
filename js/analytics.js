@@ -25,7 +25,7 @@ function a220VisualChart(values,kind){
  const max=Math.max(1,...vals),step=PW/Math.max(1,vals.length),bw=Math.max(5,Math.min(18,step*.58));
  const grid=[0,1,2,3].map(i=>{const y=T+PH*i/3;return '<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" class="a220-vgrid"/>'}).join('');
  const bars=vals.map((v,i)=>{const h=v?Math.max(3,v/max*(PH-4)):0,x=L+i*step+(step-bw)/2,y=T+PH-h;return '<rect class="a220-vbar '+(kind||'')+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="'+Math.min(6,bw/2)+'"/>'}).join('');
- return '<div class="a220-visual-chart"><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Visualización estadística">'+grid+bars+'</svg></div>';
+ return '<div class="a220-visual-chart"><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Visualización estadística"><defs><linearGradient id="a220VisualGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#63e6ff"/><stop offset="100%" stop-color="#2875e8"/></linearGradient><linearGradient id="a220VisualGradient2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8ef7d0"/><stop offset="100%" stop-color="#168c91"/></linearGradient><linearGradient id="a220VisualGradient3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#bba2ff"/><stop offset="100%" stop-color="#6a5be8"/></linearGradient><linearGradient id="a220VisualGradient4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffd37a"/><stop offset="100%" stop-color="#e17b35"/></linearGradient></defs>'+grid+bars+'</svg></div>';
 }
 function a220EmptyVisual(){
  return '<div class="a220-visual-empty" aria-label="Sin actividad"><span></span><span></span><span></span><span></span><span></span><span></span><i></i></div>';
