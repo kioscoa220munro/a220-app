@@ -1,35 +1,109 @@
-// A220 Pro - inteligencia de inventario y estadísticas
-function renderStatsColumns(id,items,empty){
- const el=document.getElementById(id);if(!el)return;
- if(!items.length){el.innerHTML='<div class="stats-empty"><strong>'+empty+'</strong><span>El gráfico se completará automáticamente con las ventas registradas.</span></div>';return}
- const W=Math.max(420,items.length*42),H=250,L=48,R=12,T=18,B=42,PH=H-T-B,PW=W-L-R,max=Math.max(1,...items.map(x=>Number(x.value)||0)),step=max/4;
- const bars=items.map((x,i)=>{const val=Number(x.value)||0,h=Math.max(val?3:0,(val/max)*PH),bw=Math.min(25,PW/items.length*.62),xx=L+i*(PW/items.length)+(PW/items.length-bw)/2,yy=T+PH-h,label=String(x.label||'');return '<g><title>'+escapeHTML(label)+': '+escapeHTML(money(val))+'</title><rect x="'+xx+'" y="'+yy+'" width="'+bw+'" height="'+h+'" rx="5" fill="url(#statsBlue)"/>'+(items.length<=14?'<text x="'+(xx+bw/2)+'" y="'+Math.max(12,yy-6)+'" text-anchor="middle" class="chart-value">'+escapeHTML(money(val))+'</text>':'')+'<text x="'+(xx+bw/2)+'" y="'+(H-17)+'" text-anchor="middle" class="chart-label">'+escapeHTML(label)+'</text></g>'}).join('');
- const grid=[0,1,2,3,4].map(i=>{const y=T+PH-(i/4)*PH;return '<g><line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" class="chart-grid"/><text x="'+(L-7)+'" y="'+(y+4)+'" text-anchor="end" class="chart-axis">'+escapeHTML(money(step*i))+'</text></g>'}).join('');
- el.innerHTML='<div class="stats-svg-scroll"><svg class="stats-svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Gráfico de ventas"><defs><linearGradient id="statsBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#63e6ff"/><stop offset="100%" stop-color="#2875e8"/></linearGradient></defs>'+grid+bars+'</svg></div>';
-}
-function renderStatsRanking(id,items,empty){
- const el=document.getElementById(id);if(!el)return;
- if(!items.length){el.innerHTML='<div class="stats-empty"><strong>'+empty+'</strong><span>El ranking aparecerá cuando se registren ventas.</span></div>';return}
- const W=760,row=46,H=items.length*row+12,L=190,R=72,PW=W-L-R,max=Math.max(1,...items.map(x=>Number(x.value)||0));
- const rows=items.map((x,i)=>{const y=8+i*row,w=(Number(x.value)/max)*PW;return '<g><text x="0" y="'+(y+20)+'" class="rank-name">'+(i+1)+'. '+escapeHTML(x.label)+'</text><rect x="'+L+'" y="'+(y+5)+'" width="'+PW+'" height="19" rx="8" fill="#24364d"/><rect x="'+L+'" y="'+(y+5)+'" width="'+Math.max(3,w)+'" height="19" rx="8" fill="url(#rankBlue)"/><text x="'+(W-4)+'" y="'+(y+20)+'" text-anchor="end" class="rank-value">'+x.value+' un.</text></g>'}).join('');
- el.innerHTML='<div class="stats-svg-scroll"><svg class="stats-rank-svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Ranking de productos"><defs><linearGradient id="rankBlue"><stop offset="0%" stop-color="#2875e8"/><stop offset="100%" stop-color="#63e6ff"/></linearGradient></defs>'+rows+'</svg></div>';
-}
-
+// A220 Pro · Estadísticas visuales anónimas
 let a220StatsRange='30d',a220StatsClock=null;
-function a220CurrentPeriodStart(){return new Date(appData?.statsCurrentStartedAt||appData?.sales?.[0]?.date||Date.now())}
-function a220CurrentPeriodSales(){const start=a220CurrentPeriodStart();return (appData?.sales||[]).filter(s=>new Date(s.date)>=start)}
-function a220FormatElapsed(ms){const sec=Math.max(0,Math.floor(ms/1000)),d=Math.floor(sec/86400),h=Math.floor(sec%86400/3600),m=Math.floor(sec%3600/60),s=sec%60;return (d?d+'d ':'')+[h,m,s].map(x=>String(x).padStart(2,'0')).join(':')}
-async function a220ResetStatsPeriod(){if(!appData)return;const current=a220CurrentPeriodSales();if(!confirm('¿Cerrar este período y comenzar uno nuevo? Las ventas y el historial general se conservan.'))return;const start=appData.statsCurrentStartedAt||new Date().toISOString(),end=new Date().toISOString();const summary={id:crypto.randomUUID(),startedAt:start,endedAt:end,sales:current.length,revenue:current.reduce((n,s)=>n+Number(s.total||0),0),units:current.reduce((n,s)=>n+(s.items||[]).reduce((m,i)=>m+Number(i.qty||0),0),0)};appData.statsPeriods=Array.isArray(appData.statsPeriods)?appData.statsPeriods:[];appData.statsPeriods.unshift(summary);appData.statsCurrentStartedAt=end;const ok=await saveLocalData(false);if(!ok){appData.statsPeriods.shift();appData.statsCurrentStartedAt=start;return}a220StatsRange='30d';a220Analytics();showToast('Nuevo período iniciado','success')}
-function a220RenderPeriodHistory(){const el=document.getElementById('statsPeriodHistory');if(!el)return;const rows=appData?.statsPeriods||[];el.innerHTML=rows.length?rows.slice(0,12).map(p=>`<div class="alert-row"><strong>${new Date(p.startedAt).toLocaleDateString('es-AR')} → ${new Date(p.endedAt).toLocaleDateString('es-AR')}</strong><span>${p.sales} tickets · ${p.units} un. · ${money(p.revenue)}</span></div>`).join(''):'<div class="muted">Los períodos cerrados aparecerán acá.</div>'}
-function a220UpdatePeriodClock(){const el=document.getElementById('statsElapsed');if(el)el.textContent=a220FormatElapsed(Date.now()-a220CurrentPeriodStart().getTime())}
-function a220SalesRange(range){const now=new Date();const start=new Date(now);if(range==='today')start.setHours(0,0,0,0);else if(range==='7d'){start.setDate(start.getDate()-6);start.setHours(0,0,0,0)}else if(range==='30d'){start.setDate(start.getDate()-29);start.setHours(0,0,0,0)}else if(range==='month'){start.setDate(1);start.setHours(0,0,0,0)}else if(range==='year'){start.setMonth(0,1);start.setHours(0,0,0,0)}const periodStart=a220CurrentPeriodStart();if(start<periodStart)start.setTime(periodStart.getTime());return (appData?.sales||[]).filter(s=>{const d=new Date(s.date);return d>=start&&d<=now})}
-function a220Analytics(){if(!appData)return;let v=document.getElementById('estadisticas');if(!v){v=document.createElement('section');v.id='estadisticas';v.className='view';v.innerHTML='<div class="stats-top"><div><div class="eyebrow">A220 · LIVE</div><h2>Panel de rendimiento</h2><div class="stats-counter"><span class="stats-live-dot"></span><strong id="statsElapsed">00:00:00</strong><small>PERÍODO ACTUAL</small></div></div><button class="stats-reset" type="button" onclick="a220ResetStatsPeriod()">↻ RESET</button></div><div class="range" id="statsRanges"><button class="range-btn" data-r="today">Hoy</button><button class="range-btn" data-r="7d">7 días</button><button class="range-btn active" data-r="30d">30 días</button><button class="range-btn" data-r="month">Mes</button><button class="range-btn" data-r="year">Año</button></div><div class="cards"><div class="card"><span>💰</span><div>Ventas<strong id="stVentas">$0</strong></div></div><div class="card"><span>🧾</span><div>Tickets<strong id="stTickets">0</strong></div></div><div class="card"><span>📦</span><div>Unidades<strong id="stUnidades">0</strong></div></div><div class="card"><span>📈</span><div>Ganancia<strong id="stGanancia">$0</strong></div></div></div><div class="dash-grid stats-visual-grid"><div class="panel stats-visual-panel"><div class="panel-title"><h3>Ventas por hora</h3><span>Facturación</span></div><div id="statsHourBars" class="stats-columns"></div></div><div class="panel stats-visual-panel"><div class="panel-title"><h3>Ventas por día</h3><span>Últimos 14 días · facturación</span></div><div id="statsDayBars" class="stats-columns"></div></div></div><div class="panel stats-visual-panel"><div class="panel-title"><h3>Productos más vendidos</h3><span>Top 10 · unidades</span></div><div id="statsProducts" class="stats-ranking"></div></div><div class="panel"><div class="panel-title"><h3>Inteligencia de inventario</h3><span>Recomendaciones</span></div><div id="inventoryAnalysis"></div></div><div class="panel"><div class="panel-title"><h3>Clientes</h3><span>Identificación opcional</span></div><div id="customerAnalysis"></div></div>';document.querySelector('main')?.appendChild(v)}
-const sales=a220SalesRange(a220StatsRange);let total=0,units=0,profit=0;const byHour=Array.from({length:24},(_,h)=>({label:String(h).padStart(2,'0')+'h',value:0})),byProduct={},customers={};sales.forEach(s=>{total+=Number(s.total||0);s.items?.forEach(i=>{const q=Number(i.qty||0);units+=q;byHour[new Date(s.date).getHours()].value+=Number(i.total||0);byProduct[i.name]=(byProduct[i.name]||0)+q;const p=findProduct(i.id);profit+=(Number(i.price||0)-Number(p?.cost||0))*q});const c=String(s.cliente||'Sin cliente').trim()||'Sin cliente';if(c!=='Sin cliente')customers[c]=(customers[c]||{count:0,total:0,units:0}),customers[c].count++,customers[c].total+=Number(s.total||0),customers[c].units+=(s.items||[]).reduce((n,i)=>n+Number(i.qty||0),0)});
-const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};set('stVentas',money(total));set('stTickets',sales.length);set('stUnidades',units);set('stGanancia',money(profit));renderStatsColumns('statsHourBars',byHour.filter(x=>x.value>0),'Sin ventas por hora todavía');renderStatsRanking('statsProducts',Object.entries(byProduct).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([label,value])=>({label,value})),'Todavía no hay productos vendidos');
-const byDay={};sales.forEach(s=>{const d=new Date(s.date),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');byDay[key]=(byDay[key]||0)+Number(s.total||0)});renderStatsColumns('statsDayBars',Object.keys(byDay).sort().map(k=>({label:k.slice(8)+'/'+k.slice(5,7),value:byDay[k]})).slice(-14),'Sin ventas por día todavía');
-const inv=document.getElementById('inventoryAnalysis');if(inv){const rows=(appData.products||[]).map(p=>{const sold=sales.reduce((n,s)=>n+(s.items||[]).filter(i=>Number(i.id)===Number(p.id)).reduce((m,i)=>m+Number(i.qty||0),0),0);const daily=sales.length?sold/Math.max(1,Math.ceil((Date.now()-new Date(sales[sales.length-1]?.date||Date.now()).getTime())/86400000)):0;const target=Math.max(Number(p.minStock||0),Math.ceil(daily*7));const delta=target-Number(p.stock||0);const excess=Math.max(0,Number(p.stock||0)-target);return {...p,sold,daily,target,delta,excess}}).filter(x=>x.delta>0||x.excess>0||x.sold>0).sort((a,b)=>(b.excess-a.excess)||(b.delta-a.delta)).slice(0,40);inv.innerHTML=rows.length?rows.map(p=>`<div class="alert-row"><strong>${escapeHTML(p.name)}</strong><span>Stock ${p.stock} · Vendidos ${p.sold} · Objetivo ${p.target} · ${p.delta>0?'Comprar +'+p.delta:'Exceso '+p.excess}</span></div>`).join(''):'<div class="muted">Todavía no hay datos suficientes.</div>'}
-a220UpdatePeriodClock();a220RenderPeriodHistory();clearInterval(a220StatsClock);a220StatsClock=setInterval(a220UpdatePeriodClock,1000);const ca=document.getElementById('customerAnalysis');if(ca){const rows=Object.entries(customers).sort((a,b)=>b[1].total-a[1].total).slice(0,20);ca.innerHTML=rows.length?rows.map(([name,x])=>`<div class="alert-row"><strong>${escapeHTML(name)}</strong><span>${x.count} compras · ${x.units} un. · ${money(x.total)}</span></div>`).join(''):'<div class="muted">Las ventas sin cliente identificado no se asignan a una persona.</div>'}}
-function a220PurchaseItems(){const sales=a220SalesRange('30d');return (appData?.products||[]).map(p=>{const sold=sales.reduce((n,s)=>n+(s.items||[]).filter(i=>Number(i.id)===Number(p.id)).reduce((m,i)=>m+Number(i.qty||0),0),0);const daily=sold/30;const target=Math.max(Number(p.minStock||0),Math.ceil(daily*7));const buy=Math.max(0,target-Number(p.stock||0));return {...p,sold,target,buy}}).filter(p=>p.buy>0)}
-function injectAnalyticsUI(){document.querySelectorAll('#statsRanges .range-btn').forEach(b=>b.onclick=()=>{a220StatsRange=b.dataset.r;document.querySelectorAll('#statsRanges .range-btn').forEach(x=>x.classList.toggle('active',x===b));a220Analytics()})}
-// Estados vacíos más claros: nunca dejar un panel sin explicación.
-const a220AnalyticsOriginal=a220Analytics;a220Analytics=function(){a220AnalyticsOriginal();setTimeout(()=>{const h=document.getElementById('statsHourBars'),p=document.getElementById('statsProducts'),i=document.getElementById('inventoryAnalysis'),c=document.getElementById('customerAnalysis');if(h&&!h.children.length)h.innerHTML='<div class="stats-empty"><div class="stats-empty-icon">📊</div><strong>Aún no hay ventas</strong><span>Cuando registres ventas, acá vas a ver en qué horas se vende más.</span></div>';if(p&&!p.children.length)p.innerHTML='<div class="stats-empty"><div class="stats-empty-icon">🛒</div><strong>Aún no hay productos vendidos</strong><span>El ranking aparecerá automáticamente después de la primera venta.</span></div>';if(i&&!i.children.length)i.innerHTML='<div class="stats-empty compact"><strong>Sin recomendaciones todavía</strong><span>Se mostrarán cuando haya movimientos de stock o ventas para analizar.</span></div>';if(c&&!c.children.length)c.innerHTML='<div class="stats-empty compact"><strong>Aún no hay clientes identificados</strong><span>Si cargás un nombre en una venta, aparecerá acá.</span></div>'},0)};
+
+function a220CurrentPeriodStart(){
+ return new Date(appData?.statsCurrentStartedAt||appData?.sales?.[0]?.date||Date.now());
+}
+function a220CurrentPeriodSales(){
+ const start=a220CurrentPeriodStart();
+ return (appData?.sales||[]).filter(s=>new Date(s.date)>=start);
+}
+function a220SalesRange(range){
+ const now=new Date(),start=new Date(now);
+ if(range==='today')start.setHours(0,0,0,0);
+ else if(range==='7d'){start.setDate(start.getDate()-6);start.setHours(0,0,0,0)}
+ else if(range==='30d'){start.setDate(start.getDate()-29);start.setHours(0,0,0,0)}
+ else if(range==='month'){start.setDate(1);start.setHours(0,0,0,0)}
+ else if(range==='year'){start.setMonth(0,1);start.setHours(0,0,0,0)}
+ const baseline=a220CurrentPeriodStart();
+ if(start<baseline)start.setTime(baseline.getTime());
+ return (appData?.sales||[]).filter(s=>{const d=new Date(s.date);return d>=start&&d<=now});
+}
+function a220VisualChart(values,kind){
+ const vals=(values||[]).map(v=>Math.max(0,Number(v)||0));
+ const W=Math.max(420,vals.length*26),H=190,L=12,R=12,T=14,B=12,PH=H-T-B,PW=W-L-R;
+ const max=Math.max(1,...vals),step=PW/Math.max(1,vals.length),bw=Math.max(5,Math.min(18,step*.58));
+ const grid=[0,1,2,3].map(i=>{const y=T+PH*i/3;return '<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" class="a220-vgrid"/>'}).join('');
+ const bars=vals.map((v,i)=>{const h=v?Math.max(3,v/max*(PH-4)):0,x=L+i*step+(step-bw)/2,y=T+PH-h;return '<rect class="a220-vbar '+(kind||'')+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="'+Math.min(6,bw/2)+'"/>'}).join('');
+ return '<div class="a220-visual-chart"><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Visualización estadística">'+grid+bars+'</svg></div>';
+}
+function a220EmptyVisual(){
+ return '<div class="a220-visual-empty" aria-label="Sin actividad"><span></span><span></span><span></span><span></span><span></span><span></span><i></i></div>';
+}
+function a220CleanStatsNavigation(){
+ const nav=document.getElementById('a220Dock');if(!nav)return;
+ nav.querySelectorAll('button').forEach(b=>{
+  const key=String(b.dataset.view||'').toLowerCase(),label=(b.textContent||'').trim().toLowerCase();
+  if(key==='stats'||key==='stat'||label==='stats'||label==='stat')b.remove();
+ });
+ const items=[...nav.querySelectorAll('button[data-view="estadisticas"]')];
+ items.slice(1).forEach(b=>b.remove());
+ const legacy=document.querySelectorAll('main>#stats,main>#stat,main>#stats-view');
+ legacy.forEach(el=>el.remove());
+}
+async function a220ResetStatsPeriod(){
+ if(!appData)return;
+ if(!confirm('¿Reiniciar todas las estadísticas desde cero? Se conservarán las ventas, los artículos, el stock y los comprobantes. Solo se reiniciará el período estadístico.'))return;
+ const previousStart=appData.statsCurrentStartedAt;
+ const previousPeriods=Array.isArray(appData.statsPeriods)?appData.statsPeriods.slice():[];
+ appData.statsCurrentStartedAt=new Date().toISOString();
+ appData.statsPeriods=[];
+ const ok=await saveLocalData(false);
+ if(!ok){
+  appData.statsCurrentStartedAt=previousStart;
+  appData.statsPeriods=previousPeriods;
+  return;
+ }
+ a220StatsRange='30d';
+ a220Analytics();
+ showToast('Estadísticas reiniciadas desde cero','success');
+}
+function a220Analytics(){
+ if(!appData)return;
+ a220CleanStatsNavigation();
+ let view=document.getElementById('estadisticas');
+ if(!view){
+  view=document.createElement('section');
+  view.id='estadisticas';view.className='view';
+  view.innerHTML='<div class="a220-stats-head"><div><div class="eyebrow">A220 · ANÁLISIS VISUAL</div><h2>Estadísticas</h2><p>Indicadores gráficos de actividad</p></div><button class="a220-stats-reset" type="button" onclick="a220ResetStatsPeriod()">↻ Reiniciar</button></div><div class="range a220-stats-ranges" id="statsRanges"><button class="range-btn" data-r="today">Hoy</button><button class="range-btn" data-r="7d">Semana</button><button class="range-btn active" data-r="30d">Mes</button><button class="range-btn" data-r="year">Año</button></div><div class="a220-stats-grid"><article class="a220-stats-card"><div class="a220-stats-card-head"><span class="a220-stats-symbol">◷</span><h3>Ritmo de ventas</h3></div><div id="statsHourBars"></div></article><article class="a220-stats-card"><div class="a220-stats-card-head"><span class="a220-stats-symbol">⌁</span><h3>Actividad diaria</h3></div><div id="statsDayBars"></div></article><article class="a220-stats-card"><div class="a220-stats-card-head"><span class="a220-stats-symbol">▥</span><h3>Composición de ventas</h3></div><div id="statsProducts"></div></article><article class="a220-stats-card"><div class="a220-stats-card-head"><span class="a220-stats-symbol">◉</span><h3>Estado del inventario</h3></div><div id="inventoryAnalysis"></div></article></div>';
+  document.querySelector('main')?.appendChild(view);
+ }
+ const sales=a220SalesRange(a220StatsRange);
+ const byHour=Array.from({length:24},()=>0),byProduct={},byDay={};
+ sales.forEach(s=>{
+  const hour=new Date(s.date).getHours();
+  (s.items||[]).forEach(item=>{
+   const qty=Math.max(0,Number(item.qty)||0);
+   byHour[hour]+=Math.max(0,Number(item.total)||0);
+   byProduct[item.id]=(byProduct[item.id]||0)+qty;
+  });
+  const d=new Date(s.date),key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  byDay[key]=(byDay[key]||0)+Math.max(0,Number(s.total)||0);
+ });
+ const hourValues=byHour.filter((v,i)=>v>0||byHour.some(x=>x>0)).slice(0,24);
+ const dayValues=Object.keys(byDay).sort().slice(-14).map(k=>byDay[k]);
+ const productValues=Object.values(byProduct).sort((x,y)=>y-x).slice(0,12);
+ const setVisual=(id,values,kind)=>{const el=document.getElementById(id);if(el)el.innerHTML=values.some(v=>v>0)?a220VisualChart(values,kind):a220EmptyVisual()};
+ setVisual('statsHourBars',hourValues,'hour');
+ setVisual('statsDayBars',dayValues,'day');
+ setVisual('statsProducts',productValues,'product');
+ const products=appData.products||[];
+ const stockGroups=[products.filter(p=>Number(p.stock||0)<=Number(p.minStock||0)).length,products.filter(p=>Number(p.stock||0)>Number(p.minStock||0)&&Number(p.stock||0)<=Math.max(Number(p.minStock||0)*3,5)).length,products.filter(p=>Number(p.stock||0)>Math.max(Number(p.minStock||0)*3,5)).length];
+ setVisual('inventoryAnalysis',stockGroups,'inventory');
+ document.querySelectorAll('#statsRanges .range-btn').forEach(b=>b.classList.toggle('active',b.dataset.r===a220StatsRange));
+}
+function injectAnalyticsUI(){
+ a220CleanStatsNavigation();
+ document.querySelectorAll('#statsRanges .range-btn').forEach(b=>b.onclick=()=>{
+  a220StatsRange=b.dataset.r;
+  a220Analytics();
+ });
+}
+function a220PurchaseItems(){
+ const sales=a220SalesRange('30d');
+ return (appData?.products||[]).map(p=>{
+  const sold=sales.reduce((n,s)=>n+(s.items||[]).filter(i=>Number(i.id)===Number(p.id)).reduce((m,i)=>m+Number(i.qty||0),0),0);
+  const target=Math.max(Number(p.minStock||0),Math.ceil((sold/30)*7));
+  return {...p,sold,target,buy:Math.max(0,target-Number(p.stock||0))};
+ }).filter(p=>p.buy>0);
+}
