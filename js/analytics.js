@@ -1,6 +1,19 @@
 // A220 Pro - inteligencia de inventario y estadísticas
-function renderStatsColumns(id,items,empty){const el=document.getElementById(id);if(!el)return;if(!items.length){el.innerHTML='<div class="stats-empty compact"><strong>'+empty+'</strong></div>';return}const max=Math.max(1,...items.map(x=>Number(x.value)||0));el.innerHTML='<div class="stats-column-chart">'+items.map(x=>'<div class="stats-column-item" title="'+escapeHTML(x.label)+': '+money(x.value)+'"><div class="stats-column-value">'+money(x.value)+'</div><div class="stats-column-track"><i style="height:'+Math.max(3,(Number(x.value)/max)*100)+'%"></i></div><span>'+escapeHTML(x.label)+'</span></div>').join('')+'</div>'}
-function renderStatsRanking(id,items,empty){const el=document.getElementById(id);if(!el)return;if(!items.length){el.innerHTML='<div class="stats-empty compact"><strong>'+empty+'</strong></div>';return}const max=Math.max(1,...items.map(x=>Number(x.value)||0));el.innerHTML=items.map((x,i)=>'<div class="stats-rank-row"><span class="stats-rank-number">'+(i+1)+'</span><div class="stats-rank-main"><div class="stats-rank-label"><strong>'+escapeHTML(x.label)+'</strong><b>'+x.value+' un.</b></div><div class="stats-rank-track"><i style="width:'+Math.max(3,(Number(x.value)/max)*100)+'%"></i></div></div></div>').join('')}
+function renderStatsColumns(id,items,empty){
+ const el=document.getElementById(id);if(!el)return;
+ if(!items.length){el.innerHTML='<div class="stats-empty"><strong>'+empty+'</strong><span>El gráfico se completará automáticamente con las ventas registradas.</span></div>';return}
+ const W=Math.max(420,items.length*42),H=250,L=48,R=12,T=18,B=42,PH=H-T-B,PW=W-L-R,max=Math.max(1,...items.map(x=>Number(x.value)||0)),step=max/4;
+ const bars=items.map((x,i)=>{const val=Number(x.value)||0,h=Math.max(val?3:0,(val/max)*PH),bw=Math.min(25,PW/items.length*.62),xx=L+i*(PW/items.length)+(PW/items.length-bw)/2,yy=T+PH-h,label=String(x.label||'');return '<g><title>'+escapeHTML(label)+': '+escapeHTML(money(val))+'</title><rect x="'+xx+'" y="'+yy+'" width="'+bw+'" height="'+h+'" rx="5" fill="url(#statsBlue)"/>'+(items.length<=14?'<text x="'+(xx+bw/2)+'" y="'+Math.max(12,yy-6)+'" text-anchor="middle" class="chart-value">'+escapeHTML(money(val))+'</text>':'')+'<text x="'+(xx+bw/2)+'" y="'+(H-17)+'" text-anchor="middle" class="chart-label">'+escapeHTML(label)+'</text></g>'}).join('');
+ const grid=[0,1,2,3,4].map(i=>{const y=T+PH-(i/4)*PH;return '<g><line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" class="chart-grid"/><text x="'+(L-7)+'" y="'+(y+4)+'" text-anchor="end" class="chart-axis">'+escapeHTML(money(step*i))+'</text></g>'}).join('');
+ el.innerHTML='<div class="stats-svg-scroll"><svg class="stats-svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Gráfico de ventas"><defs><linearGradient id="statsBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#63e6ff"/><stop offset="100%" stop-color="#2875e8"/></linearGradient></defs>'+grid+bars+'</svg></div>';
+}
+function renderStatsRanking(id,items,empty){
+ const el=document.getElementById(id);if(!el)return;
+ if(!items.length){el.innerHTML='<div class="stats-empty"><strong>'+empty+'</strong><span>El ranking aparecerá cuando se registren ventas.</span></div>';return}
+ const W=760,row=46,H=items.length*row+12,L=190,R=72,PW=W-L-R,max=Math.max(1,...items.map(x=>Number(x.value)||0));
+ const rows=items.map((x,i)=>{const y=8+i*row,w=(Number(x.value)/max)*PW;return '<g><text x="0" y="'+(y+20)+'" class="rank-name">'+(i+1)+'. '+escapeHTML(x.label)+'</text><rect x="'+L+'" y="'+(y+5)+'" width="'+PW+'" height="19" rx="8" fill="#24364d"/><rect x="'+L+'" y="'+(y+5)+'" width="'+Math.max(3,w)+'" height="19" rx="8" fill="url(#rankBlue)"/><text x="'+(W-4)+'" y="'+(y+20)+'" text-anchor="end" class="rank-value">'+x.value+' un.</text></g>'}).join('');
+ el.innerHTML='<div class="stats-svg-scroll"><svg class="stats-rank-svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Ranking de productos"><defs><linearGradient id="rankBlue"><stop offset="0%" stop-color="#2875e8"/><stop offset="100%" stop-color="#63e6ff"/></linearGradient></defs>'+rows+'</svg></div>';
+}
 
 let a220StatsRange='30d',a220StatsClock=null;
 function a220CurrentPeriodStart(){return new Date(appData?.statsCurrentStartedAt||appData?.sales?.[0]?.date||Date.now())}
