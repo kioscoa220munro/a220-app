@@ -87,7 +87,8 @@ function a220Analytics(){
  setVisual('statsHourBars',hourValues,'hour');
  setVisual('statsDayBars',dayValues,'day');
  setVisual('statsProducts',productValues,'product');
- const products=appData.products||[];
+ const soldIds=new Set(sales.flatMap(s=>(s.items||[]).map(item=>Number(item.id))));
+ const products=(appData.products||[]).filter(p=>soldIds.has(Number(p.id)));
  const stockGroups=[products.filter(p=>Number(p.stock||0)<=Number(p.minStock||0)).length,products.filter(p=>Number(p.stock||0)>Number(p.minStock||0)&&Number(p.stock||0)<=Math.max(Number(p.minStock||0)*3,5)).length,products.filter(p=>Number(p.stock||0)>Math.max(Number(p.minStock||0)*3,5)).length];
  setVisual('inventoryAnalysis',stockGroups,'inventory');
  document.querySelectorAll('#statsRanges .range-btn').forEach(b=>b.classList.toggle('active',b.dataset.r===a220StatsRange));
