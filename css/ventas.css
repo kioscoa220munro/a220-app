@@ -22,6 +22,9 @@
   gap: 10px;
   align-items: start;
 }
+.sale-layout > .sale-client-panel {
+  grid-column: 1 / -1;
+}
 .sale-col {
   display: flex;
   flex-direction: column;
@@ -164,13 +167,70 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
-@media (min-width: 900px) {
+
+/* Cliente: una sola fila (título | nombre | teléfono) en pantallas anchas */
+@media (min-width: 700px) {
+  .sale-client-panel {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    align-items: center;
+    gap: 6px 14px;
+  }
+  .sale-client-panel .sale-client-heading {
+    grid-column: 1;
+    margin: 0;
+    justify-content: flex-start;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .sale-client-panel .sale-client-fields {
+    grid-column: 2;
+  }
+}
+
+/* Tablet: Cliente arriba; búsqueda y artículo a la izquierda, carrito y cobro a la derecha */
+@media (min-width: 700px) and (max-width: 1099px) {
   .sale-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    grid-template-rows: auto max-content 1fr;
+    gap: 12px;
+  }
+  .sale-col-search {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .sale-col-select {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .sale-col-checkout {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+  }
+}
+
+/* Escritorio: 3 columnas bajo Cliente → Buscar | Artículo | Carrito y cobro */
+@media (min-width: 1100px) {
+  .sale-layout {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1.15fr);
     gap: 14px;
   }
-  .sale-col-side {
+  .sale-col-search {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .sale-col-select {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .sale-col-checkout {
+    grid-column: 3;
+    grid-row: 2;
     position: sticky;
     top: 8px;
+  }
+  .search-list {
+    max-height: 55vh;
+    overflow: auto;
   }
 }
