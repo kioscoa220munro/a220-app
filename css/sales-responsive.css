@@ -92,7 +92,7 @@
 #ventas.view.active .sale-checkout-column h3{font-size:15px!important}
 
 /* Escritorio: tres columnas reales y proporcionadas */
-@media(min-width:900px){
+@media(min-width:768px){
   #ventas.view.active{
     grid-template-columns:minmax(0,.92fr) minmax(0,1fr) minmax(0,1.12fr)!important;
     column-gap:12px!important;row-gap:10px!important;
@@ -106,7 +106,7 @@
 }
 
 /* Tablet: operación a la izquierda, cobro a la derecha */
-@media(min-width:640px) and (max-width:899px){
+@media(min-width:640px) and (max-width:767px){
   #ventas.view.active{grid-template-columns:minmax(0,1fr) minmax(0,1.08fr)!important;column-gap:10px!important}
   #ventas.view.active>.page-head,
   #ventas.view.active>.sale-client-panel{grid-column:1/-1!important}
