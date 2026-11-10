@@ -66,13 +66,13 @@
   }
   function openSyncModal(){const m=document.getElementById('a220EasySyncModal');if(!m)return;m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.classList.add('a220-easy-modal-open');setTimeout(()=>document.getElementById('a220EasySyncYes')?.focus(),50)}
   function closeSyncModal(){const m=document.getElementById('a220EasySyncModal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.classList.remove('a220-easy-modal-open')}
-  function finishSyncDecision(){closeSyncModal();accepting=false;easyCart=[];document.getElementById('a220EasyPaid').value='';render();document.getElementById('a220EasyBarcode')?.focus();showToast?.('💾 Venta guardada localmente','success')}
+  function finishSyncDecision(){closeSyncModal();accepting=false;easyCart=[];document.getElementById('a220EasyPaid').value='';render();document.getElementById('a220EasySearch')?.focus();showToast?.('💾 Venta guardada localmente','success')}
   async function syncAcceptedSale(){
     const yes=document.getElementById('a220EasySyncYes'),no=document.getElementById('a220EasySyncNo');if(!yes||!no)return;
     yes.disabled=true;no.disabled=true;yes.textContent='Sincronizando…';
     try{const ok=typeof syncToGitHub==='function'?await syncToGitHub():false;if(ok){closeSyncModal();showToast?.('☁️ Venta sincronizada','success')}else showToast?.('⚠️ No se pudo sincronizar. La venta sigue guardada localmente','error')}catch(e){console.error('A220 Fácil sync:',e);showToast?.('⚠️ No se pudo sincronizar. La venta sigue guardada localmente','error')}
-    finally{yes.disabled=false;no.disabled=false;yes.textContent='Sí, sincronizar';no.textContent='No, dejar local';accepting=false;easyCart=[];document.getElementById('a220EasyPaid').value='';render();document.getElementById('a220EasyBarcode')?.focus()}
+    finally{yes.disabled=false;no.disabled=false;yes.textContent='Sí, sincronizar';no.textContent='No, dejar local';accepting=false;easyCart=[];document.getElementById('a220EasyPaid').value='';render();document.getElementById('a220EasySearch')?.focus()}
   }
-  function clearSale(){easyCart=[];selectedProductId=null;const s=document.getElementById('a220EasySearch'),p=document.getElementById('a220EasyPaid');if(s)s.value='';if(p)p.value='';document.getElementById('a220EasyResults').innerHTML='';document.getElementById('a220EasyStatus').textContent='';render();document.getElementById('a220EasyBarcode')?.focus()}
+  function clearSale(){easyCart=[];selectedProductId=null;const s=document.getElementById('a220EasySearch'),p=document.getElementById('a220EasyPaid');if(s)s.value='';if(p)p.value='';document.getElementById('a220EasyResults').innerHTML='';document.getElementById('a220EasyStatus').textContent='';render();document.getElementById('a220EasySearch')?.focus()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',inject);else inject();
 })();
