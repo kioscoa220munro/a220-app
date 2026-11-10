@@ -354,3 +354,34 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
  #ventas.view.active .sale-checkout-column .cart-panel .table-wrap{max-height:48vh!important;overflow:auto!important}
 }
 @media(max-width:420px){#ventas.view.active{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)!important;gap:6px!important}#ventas.view.active .sale-checkout-column .panel{padding:9px!important}}
+
+/* Venta PRO · corrección comprobada por estructura real de columnas */
+@media(max-width:1100px){
+ #ventas.view.active{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.08fr)!important;
+  grid-auto-rows:max-content!important;
+  align-items:start!important;
+  gap:9px!important;
+ }
+ #ventas.view.active>.page-head,
+ #ventas.view.active>.sale-client-panel{grid-column:1/-1!important;grid-row:auto!important;width:100%!important}
+ #ventas.view.active>.sale-products-column{grid-column:1!important;grid-row:3!important;min-width:0!important}
+ #ventas.view.active>.sale-selected-column{grid-column:1!important;grid-row:4!important;min-width:0!important}
+ #ventas.view.active>.sale-checkout-column{grid-column:2!important;grid-row:3 / span 2!important;min-width:0!important;align-self:start!important}
+ #ventas.view.active>.sale-products-column,
+ #ventas.view.active>.sale-selected-column,
+ #ventas.view.active>.sale-checkout-column{display:flex!important;flex-direction:column!important;gap:9px!important;width:auto!important}
+ #ventas.view.active .sale-checkout-column>.panel,
+ #ventas.view.active .sale-checkout-column>.a220-sale-actions,
+ #ventas.view.active .sale-checkout-column>#a220UndoSaleButton{width:100%!important;min-width:0!important;margin:0!important}
+ #ventas.view.active .sale-checkout-column .cart-panel .table-wrap{max-height:42vh!important;min-height:100px!important;overflow:auto!important}
+}
+@media(max-width:420px){
+ #ventas.view.active{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)!important;gap:6px!important}
+ #ventas.view.active .sale-checkout-column>.panel{padding:8px!important}
+ #ventas.view.active .sale-checkout-column .cart-panel th,
+ #ventas.view.active .sale-checkout-column .cart-panel td{padding:4px 2px!important;font-size:9px!important}
+ #ventas.view.active .sale-checkout-column .cart-panel th:first-child,
+ #ventas.view.active .sale-checkout-column .cart-panel td:first-child{min-width:75px!important}
+}
