@@ -241,3 +241,42 @@
   #ventas.view.active.view.active > div.sale-client-panel > div#saleClientSuggestions{grid-column:1/-1!important;grid-row:3!important}
   #ventas.view.active.view.active .sale-checkout-column .cart-panel .table-wrap{max-height:none!important}
 }
+
+
+/* A220 · distribución solicitada: búsqueda izquierda, carrito centro, cobro derecha */
+@media(min-width:1101px){
+  #ventas.view.active.view.active{
+    grid-template-columns:minmax(250px,.95fr) minmax(360px,1.25fr) minmax(270px,.9fr)!important;
+    align-items:start!important;
+  }
+  /* El contenedor de cobro deja que carrito y pago ocupen columnas independientes */
+  #ventas.view.active.view.active > div.sale-checkout-column{display:contents!important}
+  #ventas.view.active.view.active > div.sale-products-column{grid-column:1!important;grid-row:3!important}
+  #ventas.view.active.view.active > div.sale-selected-column{grid-column:1!important;grid-row:4!important}
+  #ventas.view.active.view.active > div.sale-checkout-column > .cart-panel{
+    grid-column:2!important;grid-row:3/span 2!important;
+    align-self:start!important;width:100%!important;min-width:0!important;
+  }
+  #ventas.view.active.view.active > div.sale-checkout-column > .payment-panel,
+  #ventas.view.active.view.active > div.sale-checkout-column > .a220-sale-actions{
+    grid-column:3!important;grid-row:auto!important;
+    align-self:start!important;width:100%!important;min-width:0!important;
+  }
+  #ventas.view.active.view.active > div.sale-checkout-column > .payment-panel{grid-row:3!important}
+  #ventas.view.active.view.active > div.sale-checkout-column > .a220-sale-actions{grid-row:4!important}
+  /* En el panel de artículo se conserva lo necesario para operar y se quita texto repetido */
+  #ventas.view.active.view.active .sale-selection-panel > label:first-child,
+  #ventas.view.active.view.active .sale-selection-panel > select,
+  #ventas.view.active.view.active .sale-selection-panel > .field-note{display:none!important}
+  #ventas.view.active.view.active .sale-selection-panel .product-preview{
+    display:flex!important;justify-content:center!important;align-items:center!important;
+    min-height:112px!important;padding:8px!important;margin:0 0 10px!important;
+  }
+  #ventas.view.active.view.active .sale-selection-panel .product-preview .product-name,
+  #ventas.view.active.view.active .sale-selection-panel .product-preview .product-meta,
+  #ventas.view.active.view.active .sale-selection-panel .product-preview .product-description{display:none!important}
+  #ventas.view.active.view.active .sale-selection-panel .product-preview img{
+    display:block!important;max-width:100%!important;width:auto!important;
+    max-height:150px!important;object-fit:contain!important;margin:auto!important;
+  }
+}
