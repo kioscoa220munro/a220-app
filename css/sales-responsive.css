@@ -174,3 +174,76 @@
    grid-column:1/-1!important;grid-row:3!important;
  }
 }
+
+/* A220 POS · distribución solicitada: cliente arriba; operación izquierda; caja derecha */
+#ventas.view.active{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-auto-flow:row!important;
+  grid-auto-rows:max-content!important;
+  align-items:start!important;
+  gap:12px!important;
+}
+#ventas.view.active > .page-head,
+#ventas.view.active > .sale-client-panel,
+#ventas.view.active > .sale-products-column,
+#ventas.view.active > .sale-selected-column,
+#ventas.view.active > .sale-checkout-column{
+  grid-column:1!important;
+  grid-row:auto!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+}
+#ventas.view.active > .sale-products-column,
+#ventas.view.active > .sale-selected-column,
+#ventas.view.active > .sale-checkout-column{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:12px!important;
+}
+#ventas.view.active > .sale-client-panel{
+  grid-column:1/-1!important;
+  display:grid!important;
+  grid-template-columns:minmax(130px,.65fr) minmax(0,2fr) minmax(0,1.2fr)!important;
+  grid-template-rows:auto auto!important;
+  align-items:center!important;
+  gap:9px 12px!important;
+  width:100%!important;
+  padding:12px 14px!important;
+  box-sizing:border-box!important;
+}
+#ventas.view.active > .sale-client-panel .sale-client-heading{grid-column:1!important;grid-row:1!important;min-width:0!important}
+#ventas.view.active > .sale-client-panel #clienteNombre{grid-column:2!important;grid-row:1!important;width:100%!important;min-width:0!important}
+#ventas.view.active > .sale-client-panel #clienteTelefono{grid-column:3!important;grid-row:1!important;width:100%!important;min-width:0!important}
+#ventas.view.active > .sale-client-panel #saleClientSuggestions{grid-column:2/-1!important;grid-row:2!important;width:100%!important;min-width:0!important}
+#ventas.view.active .sale-products-column,
+#ventas.view.active .sale-selected-column,
+#ventas.view.active .sale-checkout-column,
+#ventas.view.active .sale-products-column>.panel,
+#ventas.view.active .sale-selected-column>.panel,
+#ventas.view.active .sale-checkout-column>.panel{min-width:0!important;max-width:100%!important;width:100%!important;box-sizing:border-box!important}
+@media(min-width:640px){
+ #ventas.view.active{
+   grid-template-columns:minmax(0,1fr) minmax(0,1.12fr)!important;
+   column-gap:14px!important;
+   row-gap:12px!important;
+ }
+ #ventas.view.active>.page-head,
+ #ventas.view.active>.sale-client-panel{grid-column:1/-1!important;grid-row:auto!important}
+ #ventas.view.active>.sale-products-column{grid-column:1!important;grid-row:3!important}
+ #ventas.view.active>.sale-selected-column{grid-column:1!important;grid-row:4!important}
+ #ventas.view.active>.sale-checkout-column{grid-column:2!important;grid-row:3 / span 2!important;align-self:start!important}
+}
+@media(max-width:639px){
+ #ventas.view.active>.sale-client-panel{
+   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+   gap:8px!important;
+ }
+ #ventas.view.active>.sale-client-panel .sale-client-heading{grid-column:1/-1!important;grid-row:1!important}
+ #ventas.view.active>.sale-client-panel #clienteNombre{grid-column:1!important;grid-row:2!important}
+ #ventas.view.active>.sale-client-panel #clienteTelefono{grid-column:2!important;grid-row:2!important}
+ #ventas.view.active>.sale-client-panel #saleClientSuggestions{grid-column:1/-1!important;grid-row:3!important}
+}
