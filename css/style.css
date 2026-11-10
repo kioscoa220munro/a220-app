@@ -494,8 +494,8 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
  }
  #productos.view.active>.panel:first-of-type>h3{grid-column:1/-1!important;grid-row:1!important}
  #productos.view.active>.panel:first-of-type>.grid2{display:contents!important}
- #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pCat){grid-column:1!important;grid-row:2!important}
- #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pName){grid-column:2!important;grid-row:2!important}
+ #productos.view.active>.panel:first-of-type>.grid2>#pCat{grid-column:1!important;grid-row:2!important}
+ #productos.view.active>.panel:first-of-type>.grid2>#pName{grid-column:2!important;grid-row:2!important}
  #productos.view.active>.panel:first-of-type>.edit-image-box{
   grid-column:3!important;grid-row:2/span 4!important;
   min-width:0!important;min-height:0!important;height:100%!important;margin:0!important;
@@ -505,14 +505,13 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
  #productos.view.active>.panel:first-of-type>.edit-image-box .edit-image-preview{
   width:min(100%,190px)!important;height:155px!important;flex:0 0 auto;
  }
- #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pCost){grid-column:1!important;grid-row:3!important}
- #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pPrice){grid-column:2!important;grid-row:3!important}
- #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pStock){grid-column:1!important;grid-row:4!important}
- #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pMinStock){grid-column:2!important;grid-row:4!important}
- #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pBarcode){grid-column:1!important;grid-row:5!important}
+ #productos.view.active>.panel:first-of-type>.grid2>#pCost{grid-column:1!important;grid-row:3!important}
+ #productos.view.active>.panel:first-of-type>.grid2>#pPrice{grid-column:2!important;grid-row:3!important}
+ #productos.view.active>.panel:first-of-type>.grid2>#pStock{grid-column:1!important;grid-row:4!important}
+ #productos.view.active>.panel:first-of-type>.grid2>#pMinStock{grid-column:2!important;grid-row:4!important}
+ #productos.view.active>.panel:first-of-type>.grid2>#pBarcode{grid-column:1!important;grid-row:5!important}
  #productos.view.active>.panel:first-of-type>#pSourceInfo{grid-column:3!important;grid-row:6!important;margin:0!important}
  #productos.view.active>.panel:first-of-type>button.btn-primary{grid-column:1!important;grid-row:6!important}
  #productos.view.active>.panel:first-of-type>button.btn-outline{grid-column:2!important;grid-row:6!important}
- #productos.view.active>.panel:first-of-type>.grid2>div{min-width:0!important}
- #productos.view.active>.panel:first-of-type input{min-width:0!important}
+ #productos.view.active>.panel:first-of-type>.grid2>input{min-width:0!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important}
 }
