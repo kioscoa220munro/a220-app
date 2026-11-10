@@ -1,19 +1,253 @@
 // A220 Pro - artículos y costos
-let selectedProductId=null;
-let selectedImageDraft=null;
-function productSourceLabel(p){const source=p.source||'A220';return source==='Open Food Facts'?'<span class="tag tag-source">Datos externos</span>':'<span class="tag tag-local">A220</span>'}
-function priceOriginLabel(p){if(p.priceOrigin==='manual')return'<span class="tag tag-manual">Modificado por vos</span>';if(Number(p.priceReference)>0)return`<span class="tag tag-price">Precio de referencia · ${money(p.priceReference)}</span>`;return'<span class="tag tag-price">Precio A220</span>'}
-function productImageCell(p){const src=String(p.image||'').trim();if(!src)return'<span class="product-thumb product-thumb-empty" title="Sin imagen">🖼️</span>';return`<span class="product-thumb" title="Tiene imagen"><img src="${escapeHTML(src)}" alt="" onerror="this.style.display='none';this.parentElement.classList.add('product-thumb-empty');this.parentElement.textContent='🖼️'" loading="lazy"></span>`}
-function renderProducts(){const tbody=document.getElementById('productsTable');if(!tbody||!appData)return;const q=(document.getElementById('productFilter')?.value||'').toLowerCase().trim(),rows=appData.products.filter(p=>!q||`${p.name} ${p.cat} ${p.barcode} ${p.brand}`.toLowerCase().includes(q));tbody.innerHTML=rows.map(p=>`<tr><td><div style="display:flex;align-items:center;gap:9px;min-width:0">${productImageCell(p)}<div><strong>${escapeHTML(p.name)}</strong><div class="muted">${escapeHTML(p.brand||'')}</div></div></div></td><td>${escapeHTML(p.cat)}</td><td>${money(p.cost)}</td><td><strong>${money(p.price)}</strong><div>${priceOriginLabel(p)}</div></td><td class="${p.stock<=p.minStock?'stock-low':'stock-ok'}">${p.stock}</td><td>${escapeHTML(p.barcode||'—')}</td><td>${productSourceLabel(p)} <button class="btn btn-xs btn-outline" onclick="editProduct(${p.id})">Editar</button> <button class="btn btn-xs btn-danger" onclick="deleteProduct(${p.id})">Borrar</button></td></tr>`).join('')||'<tr><td colspan="8">No hay artículos.</td></tr>'}
-function renderEditImage(){const box=document.getElementById('pImagePreview');if(!box)return;const src=String(selectedImageDraft||'').trim();box.innerHTML=src?`<img src="${escapeHTML(src)}" alt="Imagen del artículo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="image-placeholder" style="display:none">🖼️ Imagen no disponible</span>`:'<span class="image-placeholder">🖼️ Sin imagen</span>';const info=document.getElementById('pImageInfo');if(info)info.textContent=src?'Imagen seleccionada · se guardará al tocar Guardar artículo':'Sin imagen seleccionada'}
-function clearProductForm(){selectedProductId=null;selectedImageDraft=null;['pName','pCat','pCost','pPrice','pStock','pMinStock','pBarcode'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});document.getElementById('pCat').value='General';document.getElementById('pStock').value='0';document.getElementById('pMinStock').value='0';document.getElementById('pSourceInfo').textContent='Carga manual';document.getElementById('productFormTitle').textContent='Nuevo artículo';const file=document.getElementById('pManualImageInput');if(file)file.value='';renderEditImage()}
-async function lookupExternalProductImage(barcode){const code=String(barcode||'').trim();if(!code)return null;try{const response=await fetch(`${A220_API_URL}/catalog?barcode=${encodeURIComponent(code)}`,{cache:'no-store'});const data=await response.json().catch(()=>({}));if(!response.ok)return null;const product=data?.product;const image=String(product?.image||'').trim();return image?{image,source:String(product?.source||'Open Food Facts'),sourceUrl:String(product?.sourceUrl||'')} : null}catch(e){console.warn('A220 external image lookup:',e);return null}}
-async function searchEditProductImage(){const barcode=document.getElementById('pBarcode')?.value.trim();if(!barcode){showToast('⚠️ Ingresá un código de barras primero','error');return}const btn=document.getElementById('pSearchImageBtn');if(btn){btn.disabled=true;btn.textContent='Buscando…'}try{const result=await lookupExternalProductImage(barcode);if(!result?.image){showToast('❌ No se encontró una imagen para ese código','error');return}selectedImageDraft=result.image;document.getElementById('pSourceInfo').innerHTML=`${result.source||'Open Food Facts'} · imagen seleccionada`;renderEditImage();showToast('🖼️ Imagen encontrada. Revisá y guardá el artículo','success')}finally{if(btn){btn.disabled=false;btn.textContent='🔎 Buscar imagen'}}}
-function prepareManualImage(file){return new Promise((resolve,reject)=>{if(!file||!file.type.startsWith('image/'))return reject(new Error('Seleccioná una imagen válida'));const reader=new FileReader();reader.onerror=()=>reject(new Error('No se pudo leer la imagen'));reader.onload=()=>{const src=String(reader.result||'');const img=new Image();img.onload=()=>{const max=1000,scale=Math.min(1,max/Math.max(img.naturalWidth||img.width||1,img.naturalHeight||img.height||1)),w=Math.max(1,Math.round((img.naturalWidth||img.width)*scale)),h=Math.max(1,Math.round((img.naturalHeight||img.height)*scale)),canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');if(!ctx)return reject(new Error('No se pudo procesar la imagen'));ctx.drawImage(img,0,0,w,h);const compressed=canvas.toDataURL('image/webp',0.8);resolve(compressed.length<src.length?compressed:src)};img.onerror=()=>reject(new Error('No se pudo procesar la imagen'));img.src=src};reader.readAsDataURL(file)})}
-async function handleManualProductImage(event){const file=event?.target?.files?.[0];if(!file)return;try{if(file.size>12*1024*1024)throw new Error('La imagen es demasiado grande. Usá una de hasta 12 MB');showToast('⏳ Procesando imagen…','info');selectedImageDraft=await prepareManualImage(file);document.getElementById('pSourceInfo').textContent='Imagen cargada manualmente · optimizada';renderEditImage();showToast('📷 Imagen cargada. Ahora guardá el artículo','success')}catch(e){selectedImageDraft=null;renderEditImage();showToast('❌ '+(e?.message||'No se pudo cargar la imagen'),'error')}finally{if(event?.target)event.target.value=''}}
-function removeEditProductImage(){selectedImageDraft='';const file=document.getElementById('pManualImageInput');if(file)file.value='';renderEditImage();document.getElementById('pSourceInfo').textContent='Imagen quitada · guardá el artículo para confirmar'}
-async function saveProduct(){const name=document.getElementById('pName').value.trim();if(!name){showToast('⚠️ El nombre es obligatorio','error');return}const old=selectedProductId?appData.products.find(x=>x.id===selectedProductId):null,payload={name,cat:document.getElementById('pCat').value.trim()||'General',cost:Number(document.getElementById('pCost').value)||0,price:Number(document.getElementById('pPrice').value)||0,stock:Math.max(0,Number(document.getElementById('pStock').value)||0),minStock:Math.max(0,Number(document.getElementById('pMinStock').value)||0),barcode:document.getElementById('pBarcode').value.trim(),image:selectedImageDraft!==null?selectedImageDraft:(old?.image||''),imageSource:selectedImageDraft!==null?(selectedImageDraft?'manual':''):(old?.imageSource||''),imageSourceUrl:selectedImageDraft!==null?'':(old?.imageSourceUrl||''),brand:old?.brand||'',quantity:old?.quantity||'',source:old?.source||'A220',sourceUrl:old?.sourceUrl||'',priceReference:Number(old?.priceReference)||0,priceOrigin:'manual'};if(selectedProductId){const p=appData.products.find(x=>x.id===selectedProductId);if(!p)return;Object.assign(p,payload);logActivity('edit','Artículo modificado',name)}else{payload.id=nextId(appData.products);appData.products.push(payload);logActivity('create','Artículo creado',name)}const saved=await saveLocalData();if(!saved)return;clearProductForm();showToast('✅ Artículo guardado','success')}
-function editProduct(id){const p=appData.products.find(x=>x.id===id);if(!p)return;selectedProductId=id;selectedImageDraft=String(p.image||'');document.getElementById('pName').value=p.name;document.getElementById('pCat').value=p.cat;document.getElementById('pCost').value=p.cost;document.getElementById('pPrice').value=p.price;document.getElementById('pStock').value=p.stock;document.getElementById('pMinStock').value=p.minStock;document.getElementById('pBarcode').value=p.barcode;document.getElementById('pSourceInfo').innerHTML=(p.source||'A220')+(p.sourceUrl?' · catálogo externo':'')+(Number(p.priceReference)>0?` · referencia ${money(p.priceReference)}`:'');document.getElementById('productFormTitle').textContent='Editar artículo';const file=document.getElementById('pManualImageInput');if(file)file.value='';renderEditImage();showView('productos');window.scrollTo({top:0,behavior:'smooth'})}
-function deleteProduct(id){const p=appData.products.find(x=>x.id===id);if(!p)return;if(!confirm(`¿Borrar \"${p.name}\"? Las ventas históricas no se borran.`))return;appData.products=appData.products.filter(x=>x.id!==id);logActivity('delete','Artículo eliminado',p.name);saveLocalData();showToast('🗑️ Artículo eliminado','success')}
-function setupProductFieldLabels(){const grid=document.querySelector('#productos .grid2');if(!grid||grid.dataset.labelsReady)return;const labels={pName:'Nombre',pCat:'Categoría',pCost:'Costo',pPrice:'Precio de venta',pStock:'Stock',pMinStock:'Stock mínimo',pBarcode:'Código de barras'};Object.entries(labels).forEach(([id,text])=>{const input=document.getElementById(id);if(!input||input.parentElement!==grid)return;const wrap=document.createElement('div');wrap.style.cssText='display:flex;flex-direction:column;min-width:0';const label=document.createElement('label');label.textContent=text;label.htmlFor=id;label.style.cssText='margin:0 0 2px;font-size:13px;font-weight:800';input.placeholder='';wrap.appendChild(label);grid.replaceChild(wrap,input);wrap.appendChild(input)});grid.dataset.labelsReady='1'}
-document.addEventListener('DOMContentLoaded',setupProductFieldLabels);
+let selectedProductId = null;
+let selectedImageDraft = null;
+function productSourceLabel(p) {
+  const source = p.source || 'A220';
+  return source === 'Open Food Facts' ? '<span class="tag tag-source">Datos externos</span>' : '<span class="tag tag-local">A220</span>';
+}
+function priceOriginLabel(p) {
+  if (p.priceOrigin === 'manual') return '<span class="tag tag-manual">Modificado por vos</span>';
+  if (Number(p.priceReference) > 0) return `<span class="tag tag-price">Precio de referencia · ${money(p.priceReference)}</span>`;
+  return '<span class="tag tag-price">Precio A220</span>';
+}
+function productImageCell(p) {
+  const src = String(p.image || '').trim();
+  if (!src) return '<span class="product-thumb product-thumb-empty" title="Sin imagen">🖼️</span>';
+  return `<span class="product-thumb" title="Tiene imagen"><img src="${escapeHTML(src)}" alt="" onerror="this.style.display='none';this.parentElement.classList.add('product-thumb-empty');this.parentElement.textContent='🖼️'" loading="lazy"></span>`;
+}
+function renderProducts() {
+  const tbody = document.getElementById('productsTable');
+  if (!tbody || !appData) return;
+  const q = (document.getElementById('productFilter')?.value || '').toLowerCase().trim(),
+    rows = appData.products.filter((p) => !q || `${p.name} ${p.cat} ${p.barcode} ${p.brand}`.toLowerCase().includes(q));
+  tbody.innerHTML =
+    rows
+      .map(
+        (p) =>
+          `<tr><td><div style="display:flex;align-items:center;gap:9px;min-width:0">${productImageCell(p)}<div><strong>${escapeHTML(p.name)}</strong><div class="muted">${escapeHTML(p.brand || '')}</div></div></div></td><td>${escapeHTML(p.cat)}</td><td>${money(p.cost)}</td><td><strong>${money(p.price)}</strong><div>${priceOriginLabel(p)}</div></td><td class="${p.stock <= p.minStock ? 'stock-low' : 'stock-ok'}">${p.stock}</td><td>${escapeHTML(p.barcode || '—')}</td><td>${productSourceLabel(p)} <button class="btn btn-xs btn-outline" onclick="editProduct(${p.id})">Editar</button> <button class="btn btn-xs btn-danger" onclick="deleteProduct(${p.id})">Borrar</button></td></tr>`,
+      )
+      .join('') || '<tr><td colspan="8">No hay artículos.</td></tr>';
+}
+function renderEditImage() {
+  const box = document.getElementById('pImagePreview');
+  if (!box) return;
+  const src = String(selectedImageDraft || '').trim();
+  box.innerHTML = src
+    ? `<img src="${escapeHTML(src)}" alt="Imagen del artículo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="image-placeholder" style="display:none">🖼️ Imagen no disponible</span>`
+    : '<span class="image-placeholder">🖼️ Sin imagen</span>';
+  const info = document.getElementById('pImageInfo');
+  if (info) info.textContent = src ? 'Imagen seleccionada · se guardará al tocar Guardar artículo' : 'Sin imagen seleccionada';
+}
+function clearProductForm() {
+  selectedProductId = null;
+  selectedImageDraft = null;
+  ['pName', 'pCat', 'pCost', 'pPrice', 'pStock', 'pMinStock', 'pBarcode'].forEach((id) => {
+    const e = document.getElementById(id);
+    if (e) e.value = '';
+  });
+  document.getElementById('pCat').value = 'General';
+  document.getElementById('pStock').value = '0';
+  document.getElementById('pMinStock').value = '0';
+  document.getElementById('pSourceInfo').textContent = 'Carga manual';
+  document.getElementById('productFormTitle').textContent = 'Nuevo artículo';
+  const file = document.getElementById('pManualImageInput');
+  if (file) file.value = '';
+  renderEditImage();
+}
+async function lookupExternalProductImage(barcode) {
+  const code = String(barcode || '').trim();
+  if (!code) return null;
+  try {
+    const response = await fetch(`${A220_API_URL}/catalog?barcode=${encodeURIComponent(code)}`, { cache: 'no-store' });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) return null;
+    const product = data?.product;
+    const image = String(product?.image || '').trim();
+    return image ? { image, source: String(product?.source || 'Open Food Facts'), sourceUrl: String(product?.sourceUrl || '') } : null;
+  } catch (e) {
+    console.warn('A220 external image lookup:', e);
+    return null;
+  }
+}
+async function searchEditProductImage() {
+  const barcode = document.getElementById('pBarcode')?.value.trim();
+  if (!barcode) {
+    showToast('⚠️ Ingresá un código de barras primero', 'error');
+    return;
+  }
+  const btn = document.getElementById('pSearchImageBtn');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Buscando…';
+  }
+  try {
+    const result = await lookupExternalProductImage(barcode);
+    if (!result?.image) {
+      showToast('❌ No se encontró una imagen para ese código', 'error');
+      return;
+    }
+    selectedImageDraft = result.image;
+    document.getElementById('pSourceInfo').innerHTML = `${result.source || 'Open Food Facts'} · imagen seleccionada`;
+    renderEditImage();
+    showToast('🖼️ Imagen encontrada. Revisá y guardá el artículo', 'success');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '🔎 Buscar imagen';
+    }
+  }
+}
+function prepareManualImage(file) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type.startsWith('image/')) return reject(new Error('Seleccioná una imagen válida'));
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('No se pudo leer la imagen'));
+    reader.onload = () => {
+      const src = String(reader.result || '');
+      const img = new Image();
+      img.onload = () => {
+        const max = 1000,
+          scale = Math.min(1, max / Math.max(img.naturalWidth || img.width || 1, img.naturalHeight || img.height || 1)),
+          w = Math.max(1, Math.round((img.naturalWidth || img.width) * scale)),
+          h = Math.max(1, Math.round((img.naturalHeight || img.height) * scale)),
+          canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return reject(new Error('No se pudo procesar la imagen'));
+        ctx.drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL('image/webp', 0.8);
+        resolve(compressed.length < src.length ? compressed : src);
+      };
+      img.onerror = () => reject(new Error('No se pudo procesar la imagen'));
+      img.src = src;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+async function handleManualProductImage(event) {
+  const file = event?.target?.files?.[0];
+  if (!file) return;
+  try {
+    if (file.size > 12 * 1024 * 1024) throw new Error('La imagen es demasiado grande. Usá una de hasta 12 MB');
+    showToast('⏳ Procesando imagen…', 'info');
+    selectedImageDraft = await prepareManualImage(file);
+    document.getElementById('pSourceInfo').textContent = 'Imagen cargada manualmente · optimizada';
+    renderEditImage();
+    showToast('📷 Imagen cargada. Ahora guardá el artículo', 'success');
+  } catch (e) {
+    selectedImageDraft = null;
+    renderEditImage();
+    showToast('❌ ' + (e?.message || 'No se pudo cargar la imagen'), 'error');
+  } finally {
+    if (event?.target) event.target.value = '';
+  }
+}
+function removeEditProductImage() {
+  selectedImageDraft = '';
+  const file = document.getElementById('pManualImageInput');
+  if (file) file.value = '';
+  renderEditImage();
+  document.getElementById('pSourceInfo').textContent = 'Imagen quitada · guardá el artículo para confirmar';
+}
+async function saveProduct() {
+  const name = document.getElementById('pName').value.trim();
+  if (!name) {
+    showToast('⚠️ El nombre es obligatorio', 'error');
+    return;
+  }
+  const old = selectedProductId ? appData.products.find((x) => x.id === selectedProductId) : null,
+    payload = {
+      name,
+      cat: document.getElementById('pCat').value.trim() || 'General',
+      cost: Number(document.getElementById('pCost').value) || 0,
+      price: Number(document.getElementById('pPrice').value) || 0,
+      stock: Math.max(0, Number(document.getElementById('pStock').value) || 0),
+      minStock: Math.max(0, Number(document.getElementById('pMinStock').value) || 0),
+      barcode: document.getElementById('pBarcode').value.trim(),
+      image: selectedImageDraft !== null ? selectedImageDraft : old?.image || '',
+      imageSource: selectedImageDraft !== null ? (selectedImageDraft ? 'manual' : '') : old?.imageSource || '',
+      imageSourceUrl: selectedImageDraft !== null ? '' : old?.imageSourceUrl || '',
+      brand: old?.brand || '',
+      quantity: old?.quantity || '',
+      source: old?.source || 'A220',
+      sourceUrl: old?.sourceUrl || '',
+      priceReference: Number(old?.priceReference) || 0,
+      priceOrigin: 'manual',
+    };
+  if (selectedProductId) {
+    const p = appData.products.find((x) => x.id === selectedProductId);
+    if (!p) return;
+    Object.assign(p, payload);
+    logActivity('edit', 'Artículo modificado', name);
+  } else {
+    payload.id = nextId(appData.products);
+    appData.products.push(payload);
+    logActivity('create', 'Artículo creado', name);
+  }
+  const saved = await saveLocalData();
+  if (!saved) return;
+  clearProductForm();
+  showToast('✅ Artículo guardado', 'success');
+}
+function editProduct(id) {
+  const p = appData.products.find((x) => x.id === id);
+  if (!p) return;
+  selectedProductId = id;
+  selectedImageDraft = String(p.image || '');
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pCat').value = p.cat;
+  document.getElementById('pCost').value = p.cost;
+  document.getElementById('pPrice').value = p.price;
+  document.getElementById('pStock').value = p.stock;
+  document.getElementById('pMinStock').value = p.minStock;
+  document.getElementById('pBarcode').value = p.barcode;
+  document.getElementById('pSourceInfo').innerHTML =
+    (p.source || 'A220') +
+    (p.sourceUrl ? ' · catálogo externo' : '') +
+    (Number(p.priceReference) > 0 ? ` · referencia ${money(p.priceReference)}` : '');
+  document.getElementById('productFormTitle').textContent = 'Editar artículo';
+  const file = document.getElementById('pManualImageInput');
+  if (file) file.value = '';
+  renderEditImage();
+  showView('productos');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function deleteProduct(id) {
+  const p = appData.products.find((x) => x.id === id);
+  if (!p) return;
+  if (!confirm(`¿Borrar \"${p.name}\"? Las ventas históricas no se borran.`)) return;
+  appData.products = appData.products.filter((x) => x.id !== id);
+  logActivity('delete', 'Artículo eliminado', p.name);
+  saveLocalData();
+  showToast('🗑️ Artículo eliminado', 'success');
+}
+function setupProductFieldLabels() {
+  const grid = document.querySelector('#productos .grid2');
+  if (!grid || grid.dataset.labelsReady) return;
+  const labels = {
+    pName: 'Nombre',
+    pCat: 'Categoría',
+    pCost: 'Costo',
+    pPrice: 'Precio de venta',
+    pStock: 'Stock',
+    pMinStock: 'Stock mínimo',
+    pBarcode: 'Código de barras',
+  };
+  Object.entries(labels).forEach(([id, text]) => {
+    const input = document.getElementById(id);
+    if (!input || input.parentElement !== grid) return;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;flex-direction:column;min-width:0';
+    const label = document.createElement('label');
+    label.textContent = text;
+    label.htmlFor = id;
+    label.style.cssText = 'margin:0 0 2px;font-size:13px;font-weight:800';
+    input.placeholder = '';
+    wrap.appendChild(label);
+    grid.replaceChild(wrap, input);
+    wrap.appendChild(input);
+  });
+  grid.dataset.labelsReady = '1';
+}
+document.addEventListener('DOMContentLoaded', setupProductFieldLabels);

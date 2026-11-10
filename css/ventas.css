@@ -1,47 +1,176 @@
 /* A220 PRO · Solapa Ventas
    Móvil: Agregar artículo > Carrito > Cliente > Cobro.
    Escritorio: izquierda busca y elige, derecha arma y cobra (queda a la vista). */
-#ventas .page-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-#ventas .page-head h2{margin:0;font-size:21px}
-#ventas .scan-big{flex:0 0 auto}
-
-.sale-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;align-items:start}
-.sale-col{display:flex;flex-direction:column;gap:10px;min-width:0}
-#ventas .panel{margin:0;padding:12px;min-width:0;box-sizing:border-box}
-#ventas .panel h3{margin:0 0 9px;font-size:16px;line-height:1.25}
-#ventas label{display:block;margin:8px 0 5px;font-size:12px;font-weight:700}
-#ventas input,#ventas select{width:100%;min-width:0;min-height:42px;padding:9px 10px;font-size:16px;box-sizing:border-box}
-#ventas button,#ventas .btn{min-height:40px;touch-action:manipulation}
-#ventas .field-note{font-size:11px;line-height:1.35;margin-top:7px;overflow-wrap:anywhere}
-
-.quick-search{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}
-.qty-selector{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:6px}
-.qty-selector .qty-btn{min-height:42px;padding:6px}
-.qty-selector .qty-input{text-align:center}
-.product-preview{overflow-wrap:anywhere}
-
-.cart-panel .table-wrap{max-height:42vh;overflow:auto}
-.cart-panel table{width:100%;min-width:390px}
-.cart-panel th,.cart-panel td{padding:6px 5px;font-size:12px;white-space:nowrap}
-.cart-panel .cart-empty{text-align:center;white-space:normal;padding:18px 8px}
-.cart-panel .tot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:9px;font-weight:800}
-.cart-panel .tot span{font-size:22px}
-
-.sale-client-panel .sale-client-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.sale-client-panel .sale-client-heading h3{margin:0;font-size:14px}
-.sale-client-fields{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:7px}
-.sale-client-fields #saleClientSuggestions{grid-column:1/-1}
-
-.a220-checkout-summary{padding:9px;display:grid;gap:7px}
-.a220-checkout-final strong{font-size:24px}
-.a220-sale-actions{display:grid;grid-template-columns:1fr;gap:7px;width:100%}
-.a220-sale-actions button{width:100%;white-space:normal}
-
-@media(max-width:479px){
-  .quick-search{grid-template-columns:minmax(0,1fr)}
-  .sale-client-fields{grid-template-columns:minmax(0,1fr)}
+#ventas .page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
 }
-@media(min-width:900px){
-  .sale-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px}
-  .sale-col-side{position:sticky;top:8px}
+#ventas .page-head h2 {
+  margin: 0;
+  font-size: 21px;
+}
+#ventas .scan-big {
+  flex: 0 0 auto;
+}
+
+.sale-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+.sale-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+#ventas .panel {
+  margin: 0;
+  padding: 12px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+#ventas .panel h3 {
+  margin: 0 0 9px;
+  font-size: 16px;
+  line-height: 1.25;
+}
+#ventas label {
+  display: block;
+  margin: 8px 0 5px;
+  font-size: 12px;
+  font-weight: 700;
+}
+#ventas input,
+#ventas select {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+#ventas button,
+#ventas .btn {
+  min-height: 40px;
+  touch-action: manipulation;
+}
+#ventas .field-note {
+  font-size: 11px;
+  line-height: 1.35;
+  margin-top: 7px;
+  overflow-wrap: anywhere;
+}
+
+.quick-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px;
+}
+.qty-selector {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  gap: 6px;
+}
+.qty-selector .qty-btn {
+  min-height: 42px;
+  padding: 6px;
+}
+.qty-selector .qty-input {
+  text-align: center;
+}
+.product-preview {
+  overflow-wrap: anywhere;
+}
+
+.cart-panel .table-wrap {
+  max-height: 42vh;
+  overflow: auto;
+}
+.cart-panel table {
+  width: 100%;
+  min-width: 390px;
+}
+.cart-panel th,
+.cart-panel td {
+  padding: 6px 5px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.cart-panel .cart-empty {
+  text-align: center;
+  white-space: normal;
+  padding: 18px 8px;
+}
+.cart-panel .tot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 9px;
+  font-weight: 800;
+}
+.cart-panel .tot span {
+  font-size: 22px;
+}
+
+.sale-client-panel .sale-client-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.sale-client-panel .sale-client-heading h3 {
+  margin: 0;
+  font-size: 14px;
+}
+.sale-client-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 7px;
+}
+.sale-client-fields #saleClientSuggestions {
+  grid-column: 1/-1;
+}
+
+.a220-checkout-summary {
+  padding: 9px;
+  display: grid;
+  gap: 7px;
+}
+.a220-checkout-final strong {
+  font-size: 24px;
+}
+.a220-sale-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 7px;
+  width: 100%;
+}
+.a220-sale-actions button {
+  width: 100%;
+  white-space: normal;
+}
+
+@media (max-width: 479px) {
+  .quick-search {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sale-client-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (min-width: 900px) {
+  .sale-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 14px;
+  }
+  .sale-col-side {
+    position: sticky;
+    top: 8px;
+  }
 }

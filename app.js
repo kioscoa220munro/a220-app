@@ -1,22 +1,426 @@
 // A220 Pro - interfaz, dashboard, actividad, lector USB, caja, ticket e inteligencia de inventario
-let dashboardRange='today',a220BarcodeBuffer='',a220BarcodeTimer=null,a220QuickScanTimer=null,a220ScannerArmed=false;
-function a220NormalizeBarcode(value){return String(value??'').trim().replace(/\D/g,'')}
-function a220ProcessUSBCode(code){const normalized=a220NormalizeBarcode(code);if(normalized.length<8)return false;clearTimeout(a220BarcodeTimer);a220BarcodeBuffer='';a220ScannerArmed=false;if(typeof processScan==='function'){Promise.resolve(processScan(normalized)).catch(e=>console.error('A220 scanner:',e));return true}return false}
-function armA220Scanner(){a220ScannerArmed=true;clearTimeout(a220BarcodeTimer);a220BarcodeBuffer='';const active=document.querySelector('.view.active')?.id;if(active==='productos'){const el=document.getElementById('pBarcode');el?.focus();el?.select()}else if(active==='ventas'){const el=document.getElementById('buscarProducto');el?.focus();el?.select()}showToast?.('🔫 Lector listo · escaneá el código','info')}
-function handleUSBBarcode(e){if(!isLoggedIn||!appData)return;const active=document.querySelector('.view.active')?.id;if(!['ventas','productos'].includes(active))return;const t=e.target;if(t&&['TEXTAREA','SELECT','BUTTON'].includes(t.tagName))return;const isScannerField=t?.tagName==='INPUT'&&['buscarProducto','pBarcode'].includes(t.id);if(e.key==='Enter'){if(a220BarcodeBuffer.length>=8){a220ProcessUSBCode(a220BarcodeBuffer);e.preventDefault();e.stopPropagation()}return}if(!/^[0-9]$/.test(e.key))return;if(!a220ScannerArmed&&!isScannerField)return;e.preventDefault();e.stopPropagation();a220BarcodeBuffer+=e.key;clearTimeout(a220BarcodeTimer);a220BarcodeTimer=setTimeout(()=>{if(a220BarcodeBuffer.length>=8)a220ProcessUSBCode(a220BarcodeBuffer);else a220BarcodeBuffer=''},500)}
-function handleQuickBarcodeInput(e){const input=e.target;if(!input||input.id!=='buscarProducto'||a220ScannerArmed)return;const raw=input.value.trim();clearTimeout(a220QuickScanTimer);if(/^\d{8,14}$/.test(raw)){a220QuickScanTimer=setTimeout(()=>{if(document.querySelector('.view.active')?.id==='ventas')a220ProcessUSBCode(raw)},180)}else{try{filterSaleProducts()}catch(err){}}}
-function focusProductSearch(){const input=document.getElementById('buscarProducto');if(!input)return;const raw=input.value.trim();if(/^\d{8,14}$/.test(raw)){a220ProcessUSBCode(raw);return}armA220Scanner()}
-function configureA220ScannerMode(){const isPC=window.matchMedia?.('(pointer:fine)').matches||window.innerWidth>=900;if(isPC){document.querySelectorAll('.scan-big').forEach(b=>{b.textContent='🔫 Lector de código';b.onclick=armA220Scanner});const camera=document.getElementById('scannerContainer');if(camera)camera.dataset.pcDisabled='true'}}
-function showView(id,btn){if(id==='estadisticas'&&typeof a220Analytics==='function')a220Analytics();const target=document.getElementById(id);if(!target)return false;document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));target.classList.add('active');a220ScannerArmed=false;a220BarcodeBuffer='';clearTimeout(a220BarcodeTimer);document.querySelectorAll('#a220Dock button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');queueMicrotask(()=>{try{if(id==='inicio'&&typeof renderDashboard==='function')renderDashboard();if(id==='inicio'&&typeof injectAnalyticsUI==='function')injectAnalyticsUI();if(id==='estadisticas'&&typeof a220Analytics==='function'){injectAnalyticsUI();a220Analytics()}if(id==='productos'&&typeof renderProducts==='function')renderProducts();if(id==='ventas'){if(typeof renderSaleProducts==='function')renderSaleProducts();if(typeof renderCart==='function')renderCart();setTimeout(()=>document.getElementById('buscarProducto')?.focus(),60)}if(id==='movimientos'&&typeof renderMoves==='function')renderMoves();if(id==='caja'&&typeof renderCash==='function')renderCash();if(id==='tickets'&&typeof renderTicketHistory==='function')renderTicketHistory()}catch(e){console.error('A220 render:',e)}});return true}
-function salesInRange(range){const now=new Date(),start=new Date(now),end=new Date(now);if(range==='today')start.setHours(0,0,0,0);else if(range==='7d'){start.setDate(start.getDate()-6);start.setHours(0,0,0,0)}else if(range==='30d'){start.setDate(start.getDate()-29);start.setHours(0,0,0,0)}else if(range==='month'){start.setDate(1);start.setHours(0,0,0,0)}end.setHours(23,59,59,999);return appData&&Array.isArray(appData.sales)?appData.sales.filter(s=>{const d=new Date(s.date);return d>=start&&d<=end}):[]}
-function renderBarList(id,items,empty){const el=document.getElementById(id);if(!el)return;if(!items.length){el.innerHTML=`<div class="muted">${empty||'Sin datos'}</div>`;return}const max=Math.max(...items.map(x=>x.value),1);el.innerHTML=items.map(x=>`<div class="bar-row"><div class="bar-label"><span>${typeof escapeHTML==='function'?escapeHTML(x.label):String(x.label)}</span><strong>${typeof money==='function'?money(x.value):x.value}</strong></div><div class="bar-track"><i style="width:${Math.max(4,(x.value/max)*100)}%"></i></div></div>`).join('')}
-function renderActivity(){if(!appData)return;let panel=document.getElementById('activityPanel');if(!panel){panel=document.createElement('div');panel.id='activityPanel';panel.className='panel';panel.innerHTML='<div class="panel-title"><h3>Actividad reciente</h3><span>Últimos cambios</span></div><div id="activityList"></div>';const anchor=document.getElementById('alertas')?.closest('.panel');if(anchor?.parentElement)anchor.parentElement.appendChild(panel);else document.querySelector('#inicio')?.appendChild(panel)}const list=document.getElementById('activityList');if(!list)return;const rows=(appData.activities||[]).slice(0,20);list.innerHTML=rows.length?rows.map(a=>`<div class="alert-row"><span>${escapeHTML(new Date(a.date).toLocaleString('es-AR'))}</span><strong>${escapeHTML(a.label)}</strong><span>${escapeHTML(a.detail||'')}</span></div>`).join(''):'<div class="muted">Todavía no hay cambios registrados.</div>'}
-function renderDashboard(){if(!appData)return;const sales=salesInRange(dashboardRange),total=sales.reduce((n,s)=>n+Number(s.total||0),0),units=sales.reduce((n,s)=>n+(s.items||[]).reduce((m,i)=>m+Number(i.qty||0),0),0),average=sales.length?total/sales.length:0,profit=sales.reduce((n,s)=>n+(s.items||[]).reduce((m,i)=>{const p=typeof findProduct==='function'?findProduct(i.id):null;return m+((Number(i.price||0)-Number(p?.cost||0))*Number(i.qty||0))},0),0);const values={dVentas:money(total),dProductos:String((appData.products||[]).length),dBajo:String((appData.products||[]).filter(p=>Number(p.stock||0)<=Number(p.minStock||0)).length),dUnidades:String(units),dTickets:String(sales.length),dTicketProm:money(average),dGanancia:money(profit),dashRangeLabel:({today:'Hoy','7d':'Últimos 7 días','30d':'Últimos 30 días',month:'Este mes'})[dashboardRange]||'Período'};Object.keys(values).forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=values[id]});const hourly=Array.from({length:24},(_,h)=>({label:String(h).padStart(2,'0')+'h',value:0}));sales.forEach(s=>{hourly[new Date(s.date).getHours()].value+=Number(s.total||0)});renderBarList('hourBars',hourly.filter(x=>x.value>0),'No hay ventas en este período');const days={};sales.forEach(s=>{const d=new Date(s.date),k=d.toISOString().slice(0,10);days[k]=(days[k]||0)+Number(s.total||0)});renderBarList('dayBars',Object.keys(days).sort().map(k=>({label:new Date(k+'T12:00:00').toLocaleDateString('es-AR',{weekday:'short',day:'2-digit',month:'2-digit'}),value:days[k]})),'No hay ventas en este período');const top={};sales.forEach(s=>(s.items||[]).forEach(i=>{const n=i.name||'Producto';top[n]=(top[n]||0)+Number(i.total||0)}));renderBarList('topBars',Object.keys(top).sort((a,b)=>top[b]-top[a]).slice(0,8).map(n=>({label:n,value:top[n]})),'No hay productos vendidos');const alerts=document.getElementById('alertas'),low=(appData.products||[]).filter(p=>Number(p.stock||0)<=Number(p.minStock||0));if(alerts)alerts.innerHTML=low.length?low.map(p=>`<div class="alert-row">⚠️ <strong>${escapeHTML(p.name)}</strong><span>${Number(p.stock||0)} en stock</span></div>`).join(''):'<div class="muted">Sin alertas.</div>';renderActivity();if(typeof renderCash==='function')renderCash();if(typeof injectAnalyticsUI==='function')injectAnalyticsUI()}
-function setDashboardRange(range){dashboardRange=range;document.querySelectorAll('.range-btn').forEach(b=>b.classList.toggle('active',b.dataset.range===range));renderDashboard()}
-function renderAll(){if(!isLoggedIn||!appData)return;try{renderDashboard()}catch(e){}try{renderProducts()}catch(e){}try{renderSaleProducts()}catch(e){}try{renderMoves()}catch(e){}try{renderCart()}catch(e){}try{renderCash()}catch(e){}try{if(typeof renderTicketHistory==='function')renderTicketHistory()}catch(e){}try{if(typeof a220Analytics==='function'&&document.getElementById('estadisticas')?.classList.contains('active'))a220Analytics()}catch(e){}}
-function toggleTheme(){document.documentElement.dataset.theme='dark';localStorage.setItem(APP_CONFIG.themeKey,'dark');showToast?.('A220 mantiene el tema oscuro de alto contraste','success')}
-function injectA220Modules(){['js/cash.js','js/ticket.js?v=20261109-ticket-black-final2','js/analytics.js?v=20261109-visualonly-reset1','js/ticket-history.js'].forEach(src=>{if(!document.querySelector(`script[src="${src}"]`)){const s=document.createElement('script');s.src=src;s.onload=()=>{if(src.includes('cash')&&typeof renderCash==='function')renderCash();if(src.includes('analytics')&&typeof injectAnalyticsUI==='function'){injectAnalyticsUI();if(document.getElementById('estadisticas')?.classList.contains('active'))a220Analytics()}if(src.includes('ticket-history')&&typeof ensureA220TicketHistoryUI==='function')ensureA220TicketHistoryUI()};document.body.appendChild(s)}});const nav=document.getElementById('a220Dock');if(nav&&!document.querySelector('#a220Dock button[data-a220-cash]')){const b=document.createElement('button');b.dataset.a220Cash='1';b.innerHTML='<i class="fa-solid fa-cash-register"></i><span>Caja</span>';b.dataset.view='caja';b.onclick=()=>showView('caja',b);nav.insertBefore(b,nav.lastElementChild)}if(!document.getElementById('caja')){const sec=document.createElement('section');sec.id='caja';sec.className='view';sec.innerHTML='<h2>💰 Caja</h2><div class="panel"><h3>Estado: <span id="cashStatus">CERRADA</span></h3><div class="cards"><div class="card">Inicio<strong id="cashOpening">$0</strong></div><div class="card">Ventas<strong id="cashSales">$0</strong></div><div class="card">Esperado<strong id="cashExpected">$0</strong></div><div class="card">Cierre<strong id="cashClosing">—</strong></div><div class="card">Diferencia<strong id="cashDifference">—</strong></div></div><button class="btn btn-success" onclick="openCash()">Abrir caja</button> <button class="btn btn-outline" onclick="cashMove(\'in\')">Ingreso</button> <button class="btn btn-outline" onclick="cashMove(\'out\')">Egreso</button> <button class="btn btn-danger" onclick="closeCash()">Cerrar caja</button></div>';document.querySelector('main')?.appendChild(sec)}}
-function boot(){document.documentElement.dataset.theme='dark';localStorage.setItem(APP_CONFIG.themeKey,'dark');injectA220Modules();configureA220ScannerMode();const search=document.getElementById('buscarProducto');if(search){search.addEventListener('input',handleQuickBarcodeInput);search.addEventListener('keydown',e=>{if(e.key==='Enter'){const raw=search.value.trim();if(/^\d{8,14}$/.test(raw)){e.preventDefault();e.stopPropagation();a220ProcessUSBCode(raw)}}})}const sale=document.getElementById('saleProduct');if(sale)sale.addEventListener('change',()=>{try{updateSalePreview()}catch(e){}});const price=document.getElementById('salePrice');if(price)price.addEventListener('input',()=>{try{updateSalePreview()}catch(e){}});const productFilter=document.getElementById('productFilter');if(productFilter)productFilter.addEventListener('input',()=>{try{renderProducts()}catch(e){}});document.querySelectorAll('.range-btn').forEach(b=>b.addEventListener('click',()=>setDashboardRange(b.dataset.range)));document.addEventListener('keydown',handleUSBBarcode,true);try{bootAuth()}catch(e){console.error(e)}}
-document.addEventListener('DOMContentLoaded',boot);
+let dashboardRange = 'today',
+  a220BarcodeBuffer = '',
+  a220BarcodeTimer = null,
+  a220QuickScanTimer = null,
+  a220ScannerArmed = false;
+function a220NormalizeBarcode(value) {
+  return String(value ?? '')
+    .trim()
+    .replace(/\D/g, '');
+}
+function a220ProcessUSBCode(code) {
+  const normalized = a220NormalizeBarcode(code);
+  if (normalized.length < 8) return false;
+  clearTimeout(a220BarcodeTimer);
+  a220BarcodeBuffer = '';
+  a220ScannerArmed = false;
+  if (typeof processScan === 'function') {
+    Promise.resolve(processScan(normalized)).catch((e) => console.error('A220 scanner:', e));
+    return true;
+  }
+  return false;
+}
+function armA220Scanner() {
+  a220ScannerArmed = true;
+  clearTimeout(a220BarcodeTimer);
+  a220BarcodeBuffer = '';
+  const active = document.querySelector('.view.active')?.id;
+  if (active === 'productos') {
+    const el = document.getElementById('pBarcode');
+    el?.focus();
+    el?.select();
+  } else if (active === 'ventas') {
+    const el = document.getElementById('buscarProducto');
+    el?.focus();
+    el?.select();
+  }
+  showToast?.('🔫 Lector listo · escaneá el código', 'info');
+}
+function handleUSBBarcode(e) {
+  if (!isLoggedIn || !appData) return;
+  const active = document.querySelector('.view.active')?.id;
+  if (!['ventas', 'productos'].includes(active)) return;
+  const t = e.target;
+  if (t && ['TEXTAREA', 'SELECT', 'BUTTON'].includes(t.tagName)) return;
+  const isScannerField = t?.tagName === 'INPUT' && ['buscarProducto', 'pBarcode'].includes(t.id);
+  if (e.key === 'Enter') {
+    if (a220BarcodeBuffer.length >= 8) {
+      a220ProcessUSBCode(a220BarcodeBuffer);
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    return;
+  }
+  if (!/^[0-9]$/.test(e.key)) return;
+  if (!a220ScannerArmed && !isScannerField) return;
+  e.preventDefault();
+  e.stopPropagation();
+  a220BarcodeBuffer += e.key;
+  clearTimeout(a220BarcodeTimer);
+  a220BarcodeTimer = setTimeout(() => {
+    if (a220BarcodeBuffer.length >= 8) a220ProcessUSBCode(a220BarcodeBuffer);
+    else a220BarcodeBuffer = '';
+  }, 500);
+}
+function handleQuickBarcodeInput(e) {
+  const input = e.target;
+  if (!input || input.id !== 'buscarProducto' || a220ScannerArmed) return;
+  const raw = input.value.trim();
+  clearTimeout(a220QuickScanTimer);
+  if (/^\d{8,14}$/.test(raw)) {
+    a220QuickScanTimer = setTimeout(() => {
+      if (document.querySelector('.view.active')?.id === 'ventas') a220ProcessUSBCode(raw);
+    }, 180);
+  } else {
+    try {
+      filterSaleProducts();
+    } catch (err) {}
+  }
+}
+function focusProductSearch() {
+  const input = document.getElementById('buscarProducto');
+  if (!input) return;
+  const raw = input.value.trim();
+  if (/^\d{8,14}$/.test(raw)) {
+    a220ProcessUSBCode(raw);
+    return;
+  }
+  armA220Scanner();
+}
+function configureA220ScannerMode() {
+  const isPC = window.matchMedia?.('(pointer:fine)').matches || window.innerWidth >= 900;
+  if (isPC) {
+    document.querySelectorAll('.scan-big').forEach((b) => {
+      b.textContent = '🔫 Lector de código';
+      b.onclick = armA220Scanner;
+    });
+    const camera = document.getElementById('scannerContainer');
+    if (camera) camera.dataset.pcDisabled = 'true';
+  }
+}
+function showView(id, btn) {
+  if (id === 'estadisticas' && typeof a220Analytics === 'function') a220Analytics();
+  const target = document.getElementById(id);
+  if (!target) return false;
+  document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+  target.classList.add('active');
+  a220ScannerArmed = false;
+  a220BarcodeBuffer = '';
+  clearTimeout(a220BarcodeTimer);
+  document.querySelectorAll('#a220Dock button').forEach((b) => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  queueMicrotask(() => {
+    try {
+      if (id === 'inicio' && typeof renderDashboard === 'function') renderDashboard();
+      if (id === 'inicio' && typeof injectAnalyticsUI === 'function') injectAnalyticsUI();
+      if (id === 'estadisticas' && typeof a220Analytics === 'function') {
+        injectAnalyticsUI();
+        a220Analytics();
+      }
+      if (id === 'productos' && typeof renderProducts === 'function') renderProducts();
+      if (id === 'ventas') {
+        if (typeof renderSaleProducts === 'function') renderSaleProducts();
+        if (typeof renderCart === 'function') renderCart();
+        setTimeout(() => document.getElementById('buscarProducto')?.focus(), 60);
+      }
+      if (id === 'movimientos' && typeof renderMoves === 'function') renderMoves();
+      if (id === 'caja' && typeof renderCash === 'function') renderCash();
+      if (id === 'tickets' && typeof renderTicketHistory === 'function') renderTicketHistory();
+    } catch (e) {
+      console.error('A220 render:', e);
+    }
+  });
+  return true;
+}
+function salesInRange(range) {
+  const now = new Date(),
+    start = new Date(now),
+    end = new Date(now);
+  if (range === 'today') start.setHours(0, 0, 0, 0);
+  else if (range === '7d') {
+    start.setDate(start.getDate() - 6);
+    start.setHours(0, 0, 0, 0);
+  } else if (range === '30d') {
+    start.setDate(start.getDate() - 29);
+    start.setHours(0, 0, 0, 0);
+  } else if (range === 'month') {
+    start.setDate(1);
+    start.setHours(0, 0, 0, 0);
+  }
+  end.setHours(23, 59, 59, 999);
+  return appData && Array.isArray(appData.sales)
+    ? appData.sales.filter((s) => {
+        const d = new Date(s.date);
+        return d >= start && d <= end;
+      })
+    : [];
+}
+function renderBarList(id, items, empty) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (!items.length) {
+    el.innerHTML = `<div class="muted">${empty || 'Sin datos'}</div>`;
+    return;
+  }
+  const max = Math.max(...items.map((x) => x.value), 1);
+  el.innerHTML = items
+    .map(
+      (x) =>
+        `<div class="bar-row"><div class="bar-label"><span>${typeof escapeHTML === 'function' ? escapeHTML(x.label) : String(x.label)}</span><strong>${typeof money === 'function' ? money(x.value) : x.value}</strong></div><div class="bar-track"><i style="width:${Math.max(4, (x.value / max) * 100)}%"></i></div></div>`,
+    )
+    .join('');
+}
+function renderActivity() {
+  if (!appData) return;
+  let panel = document.getElementById('activityPanel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'activityPanel';
+    panel.className = 'panel';
+    panel.innerHTML = '<div class="panel-title"><h3>Actividad reciente</h3><span>Últimos cambios</span></div><div id="activityList"></div>';
+    const anchor = document.getElementById('alertas')?.closest('.panel');
+    if (anchor?.parentElement) anchor.parentElement.appendChild(panel);
+    else document.querySelector('#inicio')?.appendChild(panel);
+  }
+  const list = document.getElementById('activityList');
+  if (!list) return;
+  const rows = (appData.activities || []).slice(0, 20);
+  list.innerHTML = rows.length
+    ? rows
+        .map(
+          (a) =>
+            `<div class="alert-row"><span>${escapeHTML(new Date(a.date).toLocaleString('es-AR'))}</span><strong>${escapeHTML(a.label)}</strong><span>${escapeHTML(a.detail || '')}</span></div>`,
+        )
+        .join('')
+    : '<div class="muted">Todavía no hay cambios registrados.</div>';
+}
+function renderDashboard() {
+  if (!appData) return;
+  const sales = salesInRange(dashboardRange),
+    total = sales.reduce((n, s) => n + Number(s.total || 0), 0),
+    units = sales.reduce((n, s) => n + (s.items || []).reduce((m, i) => m + Number(i.qty || 0), 0), 0),
+    average = sales.length ? total / sales.length : 0,
+    profit = sales.reduce(
+      (n, s) =>
+        n +
+        (s.items || []).reduce((m, i) => {
+          const p = typeof findProduct === 'function' ? findProduct(i.id) : null;
+          return m + (Number(i.price || 0) - Number(p?.cost || 0)) * Number(i.qty || 0);
+        }, 0),
+      0,
+    );
+  const values = {
+    dVentas: money(total),
+    dProductos: String((appData.products || []).length),
+    dBajo: String((appData.products || []).filter((p) => Number(p.stock || 0) <= Number(p.minStock || 0)).length),
+    dUnidades: String(units),
+    dTickets: String(sales.length),
+    dTicketProm: money(average),
+    dGanancia: money(profit),
+    dashRangeLabel: { today: 'Hoy', '7d': 'Últimos 7 días', '30d': 'Últimos 30 días', month: 'Este mes' }[dashboardRange] || 'Período',
+  };
+  Object.keys(values).forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = values[id];
+  });
+  const hourly = Array.from({ length: 24 }, (_, h) => ({ label: String(h).padStart(2, '0') + 'h', value: 0 }));
+  sales.forEach((s) => {
+    hourly[new Date(s.date).getHours()].value += Number(s.total || 0);
+  });
+  renderBarList(
+    'hourBars',
+    hourly.filter((x) => x.value > 0),
+    'No hay ventas en este período',
+  );
+  const days = {};
+  sales.forEach((s) => {
+    const d = new Date(s.date),
+      k = d.toISOString().slice(0, 10);
+    days[k] = (days[k] || 0) + Number(s.total || 0);
+  });
+  renderBarList(
+    'dayBars',
+    Object.keys(days)
+      .sort()
+      .map((k) => ({
+        label: new Date(k + 'T12:00:00').toLocaleDateString('es-AR', { weekday: 'short', day: '2-digit', month: '2-digit' }),
+        value: days[k],
+      })),
+    'No hay ventas en este período',
+  );
+  const top = {};
+  sales.forEach((s) =>
+    (s.items || []).forEach((i) => {
+      const n = i.name || 'Producto';
+      top[n] = (top[n] || 0) + Number(i.total || 0);
+    }),
+  );
+  renderBarList(
+    'topBars',
+    Object.keys(top)
+      .sort((a, b) => top[b] - top[a])
+      .slice(0, 8)
+      .map((n) => ({ label: n, value: top[n] })),
+    'No hay productos vendidos',
+  );
+  const alerts = document.getElementById('alertas'),
+    low = (appData.products || []).filter((p) => Number(p.stock || 0) <= Number(p.minStock || 0));
+  if (alerts)
+    alerts.innerHTML = low.length
+      ? low
+          .map((p) => `<div class="alert-row">⚠️ <strong>${escapeHTML(p.name)}</strong><span>${Number(p.stock || 0)} en stock</span></div>`)
+          .join('')
+      : '<div class="muted">Sin alertas.</div>';
+  renderActivity();
+  if (typeof renderCash === 'function') renderCash();
+  if (typeof injectAnalyticsUI === 'function') injectAnalyticsUI();
+}
+function setDashboardRange(range) {
+  dashboardRange = range;
+  document.querySelectorAll('.range-btn').forEach((b) => b.classList.toggle('active', b.dataset.range === range));
+  renderDashboard();
+}
+function renderAll() {
+  if (!isLoggedIn || !appData) return;
+  try {
+    renderDashboard();
+  } catch (e) {}
+  try {
+    renderProducts();
+  } catch (e) {}
+  try {
+    renderSaleProducts();
+  } catch (e) {}
+  try {
+    renderMoves();
+  } catch (e) {}
+  try {
+    renderCart();
+  } catch (e) {}
+  try {
+    renderCash();
+  } catch (e) {}
+  try {
+    if (typeof renderTicketHistory === 'function') renderTicketHistory();
+  } catch (e) {}
+  try {
+    if (typeof a220Analytics === 'function' && document.getElementById('estadisticas')?.classList.contains('active')) a220Analytics();
+  } catch (e) {}
+}
+function toggleTheme() {
+  document.documentElement.dataset.theme = 'dark';
+  localStorage.setItem(APP_CONFIG.themeKey, 'dark');
+  showToast?.('A220 mantiene el tema oscuro de alto contraste', 'success');
+}
+function injectA220Modules() {
+  [
+    'js/cash.js',
+    'js/ticket.js?v=20261109-ticket-black-final2',
+    'js/analytics.js?v=20261109-visualonly-reset1',
+    'js/ticket-history.js',
+  ].forEach((src) => {
+    if (!document.querySelector(`script[src="${src}"]`)) {
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = () => {
+        if (src.includes('cash') && typeof renderCash === 'function') renderCash();
+        if (src.includes('analytics') && typeof injectAnalyticsUI === 'function') {
+          injectAnalyticsUI();
+          if (document.getElementById('estadisticas')?.classList.contains('active')) a220Analytics();
+        }
+        if (src.includes('ticket-history') && typeof ensureA220TicketHistoryUI === 'function') ensureA220TicketHistoryUI();
+      };
+      document.body.appendChild(s);
+    }
+  });
+  const nav = document.getElementById('a220Dock');
+  if (nav && !document.querySelector('#a220Dock button[data-a220-cash]')) {
+    const b = document.createElement('button');
+    b.dataset.a220Cash = '1';
+    b.innerHTML = '<i class="fa-solid fa-cash-register"></i><span>Caja</span>';
+    b.dataset.view = 'caja';
+    b.onclick = () => showView('caja', b);
+    nav.insertBefore(b, nav.lastElementChild);
+  }
+  if (!document.getElementById('caja')) {
+    const sec = document.createElement('section');
+    sec.id = 'caja';
+    sec.className = 'view';
+    sec.innerHTML =
+      '<h2>💰 Caja</h2><div class="panel"><h3>Estado: <span id="cashStatus">CERRADA</span></h3><div class="cards"><div class="card">Inicio<strong id="cashOpening">$0</strong></div><div class="card">Ventas<strong id="cashSales">$0</strong></div><div class="card">Esperado<strong id="cashExpected">$0</strong></div><div class="card">Cierre<strong id="cashClosing">—</strong></div><div class="card">Diferencia<strong id="cashDifference">—</strong></div></div><button class="btn btn-success" onclick="openCash()">Abrir caja</button> <button class="btn btn-outline" onclick="cashMove(\'in\')">Ingreso</button> <button class="btn btn-outline" onclick="cashMove(\'out\')">Egreso</button> <button class="btn btn-danger" onclick="closeCash()">Cerrar caja</button></div>';
+    document.querySelector('main')?.appendChild(sec);
+  }
+}
+function boot() {
+  document.documentElement.dataset.theme = 'dark';
+  localStorage.setItem(APP_CONFIG.themeKey, 'dark');
+  injectA220Modules();
+  configureA220ScannerMode();
+  const search = document.getElementById('buscarProducto');
+  if (search) {
+    search.addEventListener('input', handleQuickBarcodeInput);
+    search.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const raw = search.value.trim();
+        if (/^\d{8,14}$/.test(raw)) {
+          e.preventDefault();
+          e.stopPropagation();
+          a220ProcessUSBCode(raw);
+        }
+      }
+    });
+  }
+  const sale = document.getElementById('saleProduct');
+  if (sale)
+    sale.addEventListener('change', () => {
+      try {
+        updateSalePreview();
+      } catch (e) {}
+    });
+  const price = document.getElementById('salePrice');
+  if (price)
+    price.addEventListener('input', () => {
+      try {
+        updateSalePreview();
+      } catch (e) {}
+    });
+  const productFilter = document.getElementById('productFilter');
+  if (productFilter)
+    productFilter.addEventListener('input', () => {
+      try {
+        renderProducts();
+      } catch (e) {}
+    });
+  document.querySelectorAll('.range-btn').forEach((b) => b.addEventListener('click', () => setDashboardRange(b.dataset.range)));
+  document.addEventListener('keydown', handleUSBBarcode, true);
+  try {
+    bootAuth();
+  } catch (e) {
+    console.error(e);
+  }
+}
+document.addEventListener('DOMContentLoaded', boot);
 
-document.addEventListener('DOMContentLoaded',()=>{if(!document.querySelector('link[href*="css/glass-navigation.css"]')){const g=document.createElement('link');g.rel='stylesheet';g.href='css/glass-navigation.css?v=20261106-tabs3col';g.dataset.a220Glass='1';document.head.appendChild(g)}if(!document.querySelector('link[data-a220-easy]')){const l=document.createElement('link');l.rel='stylesheet';l.href='css/easy-mode.css?v=20261106-offersbelow-hideprobar';l.dataset.a220Easy='1';document.head.appendChild(l)}if(!document.querySelector('script[data-a220-easy]')){const s=document.createElement('script');s.src='js/easy-mode.js?v=20261106-pos3col';s.dataset.a220Easy='1';document.body.appendChild(s)}});
+document.addEventListener('DOMContentLoaded', () => {
+  if (!document.querySelector('link[href*="css/glass-navigation.css"]')) {
+    const g = document.createElement('link');
+    g.rel = 'stylesheet';
+    g.href = 'css/glass-navigation.css?v=20261106-tabs3col';
+    g.dataset.a220Glass = '1';
+    document.head.appendChild(g);
+  }
+  if (!document.querySelector('link[data-a220-easy]')) {
+    const l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.href = 'css/easy-mode.css?v=20261106-offersbelow-hideprobar';
+    l.dataset.a220Easy = '1';
+    document.head.appendChild(l);
+  }
+  if (!document.querySelector('script[data-a220-easy]')) {
+    const s = document.createElement('script');
+    s.src = 'js/easy-mode.js?v=20261106-pos3col';
+    s.dataset.a220Easy = '1';
+    document.body.appendChild(s);
+  }
+});

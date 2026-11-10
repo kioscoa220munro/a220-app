@@ -1,13 +1,28 @@
 /* A220 PRO · navegación táctil horizontal (el layout de Ventas vive en ventas.css) */
 /* Navegación táctil horizontal */
-#a220Dock.a220-cyber-dock{
-  display:flex!important;flex-flow:row nowrap!important;justify-content:flex-start!important;
-  align-items:center!important;overflow-x:auto!important;overflow-y:hidden!important;
-  -webkit-overflow-scrolling:touch!important;overscroll-behavior-x:contain!important;
-  scrollbar-width:thin!important;max-width:100%!important;
+#a220Dock.a220-cyber-dock {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-x: contain !important;
+  scrollbar-width: thin !important;
+  max-width: 100% !important;
 }
-#a220Dock.a220-cyber-dock button{
-  flex:0 0 auto!important;min-width:max-content!important;min-height:44px!important;
-  height:44px!important;padding:8px 12px!important;white-space:nowrap!important;
+#a220Dock.a220-cyber-dock button {
+  flex: 0 0 auto !important;
+  min-width: max-content !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  padding: 8px 12px !important;
+  white-space: nowrap !important;
 }
-@media(max-width:767px){#a220Dock.a220-cyber-dock{width:calc(100% - 16px)!important;gap:5px!important}}
+@media (max-width: 767px) {
+  #a220Dock.a220-cyber-dock {
+    width: calc(100% - 16px) !important;
+    gap: 5px !important;
+  }
+}
