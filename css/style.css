@@ -482,3 +482,37 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
  #ventas.view.active .quick-search button{width:auto!important}
  #ventas.view.active .a220-sale-actions{grid-template-columns:1fr!important}
 }
+
+
+/* A220 Artículos · formulario compacto en tres columnas */
+@media(min-width:801px){
+ #productos.view.active>.panel:first-of-type{
+  display:grid!important;
+  grid-template-columns:minmax(0,.9fr) minmax(0,.9fr) minmax(220px,1.05fr)!important;
+  grid-template-rows:auto auto auto auto auto auto!important;
+  gap:7px 12px!important;align-items:start!important;
+ }
+ #productos.view.active>.panel:first-of-type>h3{grid-column:1/-1!important;grid-row:1!important}
+ #productos.view.active>.panel:first-of-type>.grid2{display:contents!important}
+ #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pCat){grid-column:1!important;grid-row:2!important}
+ #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pName){grid-column:2!important;grid-row:2!important}
+ #productos.view.active>.panel:first-of-type>.edit-image-box{
+  grid-column:3!important;grid-row:2/span 4!important;
+  min-width:0!important;min-height:0!important;height:100%!important;margin:0!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+ }
+ #productos.view.active>.panel:first-of-type>.edit-image-box .edit-image-head{width:100%;flex-wrap:wrap}
+ #productos.view.active>.panel:first-of-type>.edit-image-box .edit-image-preview{
+  width:min(100%,190px)!important;height:155px!important;flex:0 0 auto;
+ }
+ #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pCost){grid-column:1!important;grid-row:3!important}
+ #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pPrice){grid-column:2!important;grid-row:3!important}
+ #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pStock){grid-column:1!important;grid-row:4!important}
+ #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pMinStock){grid-column:2!important;grid-row:4!important}
+ #productos.view.active>.panel:first-of-type>.grid2>div:has(>#pBarcode){grid-column:1!important;grid-row:5!important}
+ #productos.view.active>.panel:first-of-type>#pSourceInfo{grid-column:3!important;grid-row:6!important;margin:0!important}
+ #productos.view.active>.panel:first-of-type>button.btn-primary{grid-column:1!important;grid-row:6!important}
+ #productos.view.active>.panel:first-of-type>button.btn-outline{grid-column:2!important;grid-row:6!important}
+ #productos.view.active>.panel:first-of-type>.grid2>div{min-width:0!important}
+ #productos.view.active>.panel:first-of-type input{min-width:0!important}
+}
