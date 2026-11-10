@@ -251,3 +251,25 @@ header{
   header{height:64px!important;min-height:64px!important}
   #a220Dock.a220-cyber-dock{top:64px!important}
 }
+
+
+/* A220 POS · navegación horizontal usable en pantallas táctiles */
+#a220Dock.a220-cyber-dock{
+ display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+ justify-content:flex-start!important;align-items:center!important;
+ width:calc(100% - 16px)!important;max-width:1180px!important;
+ overflow-x:auto!important;overflow-y:hidden!important;
+ -webkit-overflow-scrolling:touch!important;overscroll-behavior-x:contain!important;
+ scroll-snap-type:x proximity!important;scrollbar-width:thin!important;
+}
+#a220Dock.a220-cyber-dock button{
+ flex:0 0 auto!important;width:auto!important;min-width:max-content!important;
+ min-height:44px!important;height:44px!important;padding:8px 13px!important;
+ white-space:nowrap!important;font-size:12px!important;scroll-snap-align:start;
+}
+#a220Dock.a220-cyber-dock button span{display:inline!important;white-space:nowrap!important}
+#a220Dock.a220-cyber-dock::-webkit-scrollbar{height:3px!important}
+@media(max-width:767px){
+ #a220Dock.a220-cyber-dock{justify-content:flex-start!important;gap:5px!important;padding:5px!important}
+ #a220Dock.a220-cyber-dock button{min-width:max-content!important;padding:8px 12px!important}
+}
