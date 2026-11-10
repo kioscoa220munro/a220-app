@@ -524,3 +524,44 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
 @media(max-width:800px){
  #productos.view.active>.panel:first-of-type>.edit-image-box{margin-top:12px!important}
 }
+
+
+/* A220 Artículos · selector explícito del formulario (imagen izquierda + dos columnas) */
+@media(min-width:801px){
+ #productFormPanel{
+  display:grid!important;
+  grid-template-columns:minmax(210px,.9fr) minmax(0,1fr) minmax(0,1fr)!important;
+  grid-template-rows:auto auto auto auto auto auto!important;
+  gap:10px 14px!important;align-items:start!important;
+ }
+ #productFormPanel>h3{grid-column:1/-1!important;grid-row:1!important}
+ #productFormPanel>.grid2{display:contents!important}
+ #productFormPanel>.edit-image-box{
+  grid-column:1!important;grid-row:2/span 4!important;
+  min-width:0!important;min-height:0!important;height:100%!important;margin:0!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:flex-start!important;padding:12px!important;
+  border:1px solid var(--line,rgba(255,255,255,.12))!important;border-radius:14px!important;
+ }
+ #productFormPanel>.edit-image-box .edit-image-head{
+  width:100%!important;display:flex!important;flex-direction:column!important;
+  align-items:center!important;gap:5px!important;
+ }
+ #productFormPanel>.edit-image-box .edit-image-preview{
+  width:min(100%,220px)!important;height:180px!important;flex:0 0 auto!important;
+ }
+ #productFormPanel>.grid2>#pName{grid-column:2!important;grid-row:2!important}
+ #productFormPanel>.grid2>#pCat{grid-column:3!important;grid-row:2!important}
+ #productFormPanel>.grid2>#pCost{grid-column:2!important;grid-row:3!important}
+ #productFormPanel>.grid2>#pPrice{grid-column:3!important;grid-row:3!important}
+ #productFormPanel>.grid2>#pStock{grid-column:2!important;grid-row:4!important}
+ #productFormPanel>.grid2>#pMinStock{grid-column:3!important;grid-row:4!important}
+ #productFormPanel>.grid2>#pBarcode{grid-column:2/4!important;grid-row:5!important}
+ #productFormPanel>#pSourceInfo{grid-column:1!important;grid-row:6!important;margin:0!important;text-align:center!important}
+ #productFormPanel>button.btn-primary{grid-column:2!important;grid-row:6!important;width:100%!important}
+ #productFormPanel>button.btn-outline{grid-column:3!important;grid-row:6!important;width:100%!important}
+ #productFormPanel>.grid2>input{min-width:0!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+}
+@media(max-width:800px){
+ #productFormPanel>.edit-image-box{margin-top:12px!important}
+}
