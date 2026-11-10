@@ -64,3 +64,7 @@ body #productos .edit-image-preview .image-placeholder{color:#fff!important}
 @media print{
   body,body *{color:#000!important;background:#fff!important}
 }
+
+/* Ticket legible: el papel blanco siempre lleva tinta negra, incluso con tema oscuro */
+.a220-ticket-paper,.a220-ticket-paper *,.a220-ticket-paper span,.a220-ticket-paper strong,.a220-ticket-paper small,.a220-ticket-paper div{color:#000!important;-webkit-text-fill-color:#000!important;text-shadow:none!important;opacity:1!important}
+.a220-ticket-paper{background:#fff!important;color-scheme:light!important}
