@@ -385,3 +385,100 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
  #ventas.view.active .sale-checkout-column .cart-panel th:first-child,
  #ventas.view.active .sale-checkout-column .cart-panel td:first-child{min-width:75px!important}
 }
+
+
+/* A220 POS · responsive definitivo mobile-first */
+#ventas.view.active{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ grid-auto-flow:row!important;
+ grid-auto-rows:max-content!important;
+ align-items:stretch!important;
+ gap:12px!important;
+ width:100%!important;
+ min-width:0!important;
+}
+#ventas.view.active>.page-head,
+#ventas.view.active>.sale-client-panel,
+#ventas.view.active>.sale-products-column,
+#ventas.view.active>.sale-selected-column,
+#ventas.view.active>.sale-checkout-column{
+ grid-column:1!important;grid-row:auto!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ margin:0!important;align-self:stretch!important;
+}
+#ventas.view.active>.sale-products-column,
+#ventas.view.active>.sale-selected-column,
+#ventas.view.active>.sale-checkout-column{
+ display:flex!important;flex-direction:column!important;gap:12px!important;
+}
+#ventas.view.active .panel,
+#ventas.view.active .quick-product-panel,
+#ventas.view.active .sale-selection-panel,
+#ventas.view.active .cart-panel,
+#ventas.view.active .payment-panel{
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ box-sizing:border-box!important;margin:0!important;
+}
+#ventas.view.active>.sale-client-panel{
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ gap:10px!important;padding:14px!important;
+}
+#ventas.view.active .sale-client-heading,
+#ventas.view.active #clienteNombre,
+#ventas.view.active #clienteTelefono,
+#ventas.view.active #saleClientSuggestions{grid-column:1!important;width:100%!important;min-width:0!important}
+#ventas.view.active .quick-search{display:flex!important;flex-direction:column!important;gap:9px!important}
+#ventas.view.active .quick-search input,
+#ventas.view.active .quick-search button{width:100%!important;max-width:none!important}
+#ventas.view.active input,
+#ventas.view.active select,
+#ventas.view.active textarea{
+ min-height:46px!important;height:auto!important;width:100%!important;max-width:100%!important;
+ box-sizing:border-box!important;font-size:16px!important;line-height:1.35!important;padding:11px 12px!important;
+}
+#ventas.view.active button,
+#ventas.view.active .btn{
+ min-height:46px!important;height:auto!important;box-sizing:border-box!important;
+ font-size:14px!important;line-height:1.25!important;padding:11px 13px!important;
+ white-space:normal!important;touch-action:manipulation;
+}
+#ventas.view.active .qty-selector{display:flex!important;gap:8px!important;align-items:center!important}
+#ventas.view.active .qty-selector .qty-btn{width:48px!important;min-width:48px!important;flex:0 0 48px!important}
+#ventas.view.active .qty-selector .qty-input{flex:1 1 auto!important;text-align:center!important}
+#ventas.view.active .product-preview{min-width:0!important;overflow-wrap:anywhere!important}
+#ventas.view.active .sale-selection-panel label,
+#ventas.view.active .quick-product-panel label,
+#ventas.view.active .payment-panel label{display:block!important;font-size:14px!important;line-height:1.4!important;margin:8px 0 6px!important}
+#ventas.view.active .field-note{font-size:13px!important;line-height:1.45!important;overflow-wrap:anywhere!important}
+#ventas.view.active .a220-checkout-summary{padding:14px!important;gap:10px!important}
+#ventas.view.active .a220-checkout-summary span,
+#ventas.view.active .a220-change-line span{font-size:14px!important}
+#ventas.view.active .a220-checkout-final strong{font-size:27px!important}
+#ventas.view.active .a220-sale-actions{display:grid!important;grid-template-columns:1fr!important;gap:9px!important;width:100%!important}
+#ventas.view.active .sale-checkout-column .cart-panel .table-wrap{
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ overflow-x:auto!important;overflow-y:visible!important;max-height:none!important;
+}
+#ventas.view.active .cart-panel table{min-width:480px!important;width:100%!important}
+#ventas.view.active .cart-panel th,
+#ventas.view.active .cart-panel td{font-size:12px!important;padding:8px 6px!important;white-space:nowrap!important}
+#ventas.view.active .tot{font-size:19px!important;padding-top:10px!important}
+#ventas.view.active .sale-checkout-column .panel{padding:14px!important}
+#ventas.view.active .sale-checkout-column h3{font-size:17px!important;margin:0 0 10px!important}
+#ventas.view.active .page-head{display:flex!important;flex-wrap:wrap!important;gap:10px!important;justify-content:space-between!important}
+#ventas.view.active .page-head h2{font-size:22px!important}
+@media(min-width:768px){
+ #ventas.view.active{
+  grid-template-columns:minmax(0,1fr) minmax(0,1.08fr)!important;
+  gap:14px!important;
+ }
+ #ventas.view.active>.page-head,
+ #ventas.view.active>.sale-client-panel{grid-column:1/-1!important}
+ #ventas.view.active>.sale-products-column{grid-column:1!important;grid-row:3!important}
+ #ventas.view.active>.sale-selected-column{grid-column:1!important;grid-row:4!important}
+ #ventas.view.active>.sale-checkout-column{grid-column:2!important;grid-row:3 / span 2!important}
+ #ventas.view.active .quick-search{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important}
+ #ventas.view.active .quick-search button{width:auto!important}
+ #ventas.view.active .a220-sale-actions{grid-template-columns:1fr!important}
+}
