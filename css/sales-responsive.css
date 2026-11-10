@@ -324,7 +324,7 @@
 @media(min-width:768px){
   #ventas.view.active.view.active{
     display:grid!important;
-    grid-template-columns:minmax(220px,.95fr) minmax(300px,1.2fr) minmax(245px,.95fr)!important;
+    grid-template-columns:minmax(0,.95fr) minmax(0,1.2fr) minmax(0,.95fr)!important;
     grid-auto-flow:row!important;align-items:start!important;gap:12px!important;
   }
   #ventas.view.active.view.active>.page-head,
