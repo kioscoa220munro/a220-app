@@ -342,3 +342,15 @@ html,body{font-size:16px}label{font-size:14px}.muted,.field-note{font-size:13px}
 #ventas.view.active .sale-checkout-column .payment-panel{margin-top:0!important}
 @media(max-width:760px){#ventas.view.active{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}#ventas.view.active>.sale-products-column{grid-column:1!important}#ventas.view.active>.sale-selected-column{grid-column:2!important}#ventas.view.active>.sale-checkout-column{grid-column:1/-1!important}}
 @media(max-width:600px){#ventas.view.active{display:flex!important;flex-direction:column!important;gap:8px!important}#ventas.view.active>.page-head,#ventas.view.active>.sale-client-panel,#ventas.view.active>.sale-products-column,#ventas.view.active>.sale-selected-column,#ventas.view.active>.sale-checkout-column{width:100%!important}#ventas.view.active>.sale-products-column,#ventas.view.active>.sale-selected-column,#ventas.view.active>.sale-checkout-column{gap:8px!important}#ventas.view.active .sale-checkout-column .cart-panel .table-wrap{max-height:none!important}}
+
+/* Venta: mantener Cobro/Carrito a la derecha también en móvil */
+@media(max-width:760px){
+ #ventas.view.active{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr)!important;grid-auto-rows:max-content!important;align-items:start!important;gap:8px!important;overflow-x:auto!important}
+ #ventas.view.active>.page-head,#ventas.view.active>.sale-client-panel{grid-column:1/-1!important}
+ #ventas.view.active>.sale-products-column{grid-column:1!important;grid-row:3!important}
+ #ventas.view.active>.sale-selected-column{grid-column:1!important;grid-row:4!important}
+ #ventas.view.active>.sale-checkout-column{grid-column:2!important;grid-row:3 / span 2!important;align-self:start!important;min-width:0!important}
+ #ventas.view.active>.sale-products-column,#ventas.view.active>.sale-selected-column,#ventas.view.active>.sale-checkout-column{width:auto!important;min-width:0!important}
+ #ventas.view.active .sale-checkout-column .cart-panel .table-wrap{max-height:48vh!important;overflow:auto!important}
+}
+@media(max-width:420px){#ventas.view.active{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)!important;gap:6px!important}#ventas.view.active .sale-checkout-column .panel{padding:9px!important}}
