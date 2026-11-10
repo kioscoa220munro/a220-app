@@ -532,3 +532,8 @@
   #ventas.view.active .sale-checkout-column .cart-panel .table-wrap{max-height:none!important;min-height:100px!important}
 }
 #ventas .sale-selected-column{display:none!important}
+
+/* Deshacer última venta: acceso mínimo y discreto dentro de Cobro */
+#ventas .payment-panel{position:relative}
+#ventas #a220UndoSaleButton.a220-undo-discreet{display:block!important;width:26px!important;height:24px!important;min-height:0!important;margin:8px 0 0 auto!important;padding:0!important;border:0!important;border-radius:6px!important;background:transparent!important;color:var(--muted,#89909b)!important;font-size:15px!important;line-height:24px!important;opacity:.48!important;cursor:pointer!important;box-shadow:none!important}
+#ventas #a220UndoSaleButton.a220-undo-discreet:hover,#ventas #a220UndoSaleButton.a220-undo-discreet:focus-visible{opacity:1!important;color:var(--text,#e5e7eb)!important;background:rgba(127,127,127,.10)!important;outline:1px solid rgba(127,127,127,.25)!important}
