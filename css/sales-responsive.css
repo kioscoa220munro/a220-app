@@ -637,7 +637,7 @@
 
 
 /* A220 Ventas · ajuste definitivo: selección contigua a búsqueda */
-@media (min-width: 1051px){
+@media (min-width: 768px){
   #ventas.view.active.view.active>div.sale-products-column{
     grid-column:1!important;grid-row:3!important;
   }
