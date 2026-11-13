@@ -847,3 +847,19 @@
     margin: 10px 0 0 !important;
   }
 }
+
+
+/* Ajuste fino: búsqueda y artículo seleccionado sin separación vertical */
+@media (min-width: 900px) {
+  #ventas.view.active.view.active {
+    row-gap: 6px !important;
+  }
+  #ventas.view.active.view.active > .sale-products-column {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  #ventas.view.active.view.active > .sale-selected-column {
+    margin-top: -6px !important;
+    padding-top: 0 !important;
+  }
+}
