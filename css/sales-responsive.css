@@ -584,3 +584,53 @@
   #ventas.view.active.view.active>div.sale-selected-column{grid-column:1!important;grid-row:auto!important}
   #ventas.view.active.view.active>div.sale-selected-column>.sale-selection-panel{padding:10px!important}
 }
+
+
+/* A220 Ventas · artículo seleccionado junto a la búsqueda */
+@media (min-width: 1051px){
+  #ventas.view.active.view.active > .sale-products-column{
+    grid-column:1!important;grid-row:3!important;
+  }
+  #ventas.view.active.view.active > .sale-selected-column{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    grid-column:2!important;grid-row:3!important;width:100%!important;min-width:0!important;
+    align-self:start!important;
+  }
+  #ventas.view.active.view.active > .sale-selected-column > .sale-selection-panel{
+    display:flex!important;flex-direction:column!important;gap:9px!important;
+    width:100%!important;min-width:0!important;
+  }
+  #ventas.view.active.view.active > .sale-checkout-column{display:contents!important}
+  #ventas.view.active.view.active > .sale-checkout-column > .cart-panel{
+    grid-column:3!important;grid-row:3!important;min-width:0!important;
+  }
+  #ventas.view.active.view.active > .sale-checkout-column > .payment-panel{
+    grid-column:3!important;grid-row:4!important;min-width:0!important;
+  }
+  #ventas.view.active.view.active > .sale-checkout-column > .a220-sale-actions{
+    grid-column:3!important;grid-row:5!important;min-width:0!important;
+  }
+}
+@media (min-width: 681px) and (max-width: 1050px){
+  #ventas.view.active.view.active > .sale-products-column{grid-column:1!important;grid-row:3!important}
+  #ventas.view.active.view.active > .sale-selected-column{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    grid-column:1!important;grid-row:4!important;width:100%!important;
+  }
+  #ventas.view.active.view.active > .sale-selected-column > .sale-selection-panel{
+    display:flex!important;flex-direction:column!important;gap:8px!important;width:100%!important;
+  }
+  #ventas.view.active.view.active > .sale-checkout-column{display:contents!important}
+  #ventas.view.active.view.active > .sale-checkout-column > .cart-panel{grid-column:2!important;grid-row:3/span 2!important}
+  #ventas.view.active.view.active > .sale-checkout-column > .payment-panel{grid-column:2!important;grid-row:5!important}
+  #ventas.view.active.view.active > .sale-checkout-column > .a220-sale-actions{grid-column:2!important;grid-row:6!important}
+}
+@media (max-width: 680px){
+  #ventas.view.active.view.active > .sale-selected-column{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    width:100%!important;grid-column:1!important;grid-row:auto!important;
+  }
+  #ventas.view.active.view.active > .sale-selected-column > .sale-selection-panel{
+    display:flex!important;flex-direction:column!important;gap:8px!important;width:100%!important;
+  }
+}
