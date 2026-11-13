@@ -679,3 +679,37 @@
     border:0!important;background:transparent!important;box-shadow:none!important;
   }
 }
+
+
+/* Corrección solicitada: artículo seleccionado inmediatamente DEBAJO de búsqueda */
+@media (min-width: 681px){
+  #ventas.view.active.view.active{
+    grid-template-columns:minmax(250px,.9fr) minmax(360px,1.2fr) minmax(280px,.9fr)!important;
+    align-items:start!important;
+    row-gap:6px!important;
+  }
+  #ventas.view.active.view.active>div.sale-products-column{
+    grid-column:1!important;grid-row:3!important;
+  }
+  #ventas.view.active.view.active>div.sale-selected-column{
+    display:block!important;visibility:visible!important;opacity:1!important;
+    grid-column:1!important;grid-row:4!important;
+    width:100%!important;min-width:0!important;
+    position:static!important;margin:0!important;padding:0!important;
+    border:0!important;background:transparent!important;box-shadow:none!important;
+  }
+  #ventas.view.active.view.active>div.sale-selected-column>.sale-selection-panel{
+    display:flex!important;flex-direction:column!important;
+    width:100%!important;min-width:0!important;margin:0!important;
+  }
+  #ventas.view.active.view.active>div.sale-checkout-column{display:contents!important}
+  #ventas.view.active.view.active>div.sale-checkout-column>.cart-panel{
+    grid-column:2!important;grid-row:3/span 2!important;
+  }
+  #ventas.view.active.view.active>div.sale-checkout-column>.payment-panel{
+    grid-column:3!important;grid-row:3!important;
+  }
+  #ventas.view.active.view.active>div.sale-checkout-column>.a220-sale-actions{
+    grid-column:3!important;grid-row:4!important;
+  }
+}
