@@ -770,3 +770,80 @@
  #ventas.view.active.view.active>.sale-selected-column{display:block!important;visibility:visible!important;opacity:1!important}
  #ventas.view.active.view.active>.sale-payment-column>.a220-sale-actions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
 }
+
+
+/* A220 · distribución final basada en los cuatro contenedores reales del HTML */
+@media (min-width: 900px) {
+  #ventas.view.active.view.active {
+    display: grid !important;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr) minmax(0, 0.95fr) !important;
+    grid-auto-flow: row !important;
+    grid-auto-rows: max-content !important;
+    align-items: start !important;
+    column-gap: 14px !important;
+    row-gap: 12px !important;
+  }
+  #ventas.view.active.view.active > .page-head,
+  #ventas.view.active.view.active > .sale-client-panel {
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+  }
+  #ventas.view.active.view.active > .sale-products-column {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    position: static !important;
+    margin: 0 !important;
+  }
+  #ventas.view.active.view.active > .sale-selected-column {
+    grid-column: 1 !important;
+    grid-row: 4 !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    position: static !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  #ventas.view.active.view.active > .sale-cart-column {
+    grid-column: 2 !important;
+    grid-row: 3 / span 2 !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    position: static !important;
+    margin: 0 !important;
+  }
+  #ventas.view.active.view.active > .sale-payment-column {
+    grid-column: 3 !important;
+    grid-row: 3 / span 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    position: static !important;
+    margin: 0 !important;
+  }
+  #ventas.view.active.view.active > .sale-products-column > .panel,
+  #ventas.view.active.view.active > .sale-selected-column > .panel,
+  #ventas.view.active.view.active > .sale-cart-column > .panel,
+  #ventas.view.active.view.active > .sale-payment-column > .panel {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+  #ventas.view.active.view.active > .sale-payment-column > .a220-sale-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 9px !important;
+    width: 100% !important;
+    margin: 10px 0 0 !important;
+  }
+}
