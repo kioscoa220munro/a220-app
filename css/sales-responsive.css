@@ -100,7 +100,7 @@
   #ventas.view.active>.page-head,
   #ventas.view.active>.sale-client-panel{grid-column:1/-1!important}
   #ventas.view.active>.sale-products-column{grid-column:1!important;grid-row:3!important}
-  #ventas.view.active>.sale-selected-column{grid-column:2!important;grid-row:3!important}
+  #ventas.view.active.view.active>div.sale-selected-column{grid-column:2!important;grid-row:3!important}
   #ventas.view.active>.sale-checkout-column{grid-column:3!important;grid-row:3!important}
   #ventas.view.active .sale-checkout-column .cart-panel .table-wrap{max-height:38vh!important;overflow:auto!important}
 }
@@ -544,43 +544,43 @@
   display:block!important;visibility:visible!important;opacity:1!important;
   width:100%!important;min-width:0!important;grid-column:1!important;grid-row:4!important;
 }
-#ventas.view.active>.sale-selected-column>.sale-selection-panel{
+#ventas.view.active.view.active>div.sale-selected-column>.sale-selection-panel{
   display:flex!important;flex-direction:column!important;gap:9px!important;
   width:100%!important;min-width:0!important;padding:12px!important;
 }
-#ventas.view.active>.sale-selected-column .product-preview{
+#ventas.view.active.view.active>div.sale-selected-column .product-preview{
   display:flex!important;align-items:center!important;gap:10px!important;
   min-height:54px!important;max-height:none!important;padding:8px!important;
 }
-#ventas.view.active>.sale-selected-column .product-preview .product-info,
-#ventas.view.active>.sale-selected-column .product-preview .product-name,
-#ventas.view.active>.sale-selected-column .product-preview .muted,
-#ventas.view.active>.sale-selected-column .product-preview .product-price,
-#ventas.view.active>.sale-selected-column .product-preview .product-stock{
+#ventas.view.active.view.active>div.sale-selected-column .product-preview .product-info,
+#ventas.view.active.view.active>div.sale-selected-column .product-preview .product-name,
+#ventas.view.active.view.active>div.sale-selected-column .product-preview .muted,
+#ventas.view.active.view.active>div.sale-selected-column .product-preview .product-price,
+#ventas.view.active.view.active>div.sale-selected-column .product-preview .product-stock{
   display:block!important;
 }
-#ventas.view.active>.sale-selected-column .product-preview img{
+#ventas.view.active.view.active>div.sale-selected-column .product-preview img{
   display:block!important;max-width:64px!important;max-height:64px!important;object-fit:contain!important;
 }
-#ventas.view.active>.sale-selected-column .qty-selector{
+#ventas.view.active.view.active>div.sale-selected-column .qty-selector{
   display:grid!important;grid-template-columns:42px minmax(30px,1fr) 42px minmax(65px,.8fr)!important;
   align-items:center!important;gap:7px!important;width:100%!important;margin:0!important;
 }
-#ventas.view.active>.sale-selected-column .qty-selector button{
+#ventas.view.active.view.active>div.sale-selected-column .qty-selector button{
   display:flex!important;align-items:center!important;justify-content:center!important;
   min-height:40px!important;width:100%!important;font-size:20px!important;
 }
-#ventas.view.active>.sale-selected-column #qtyDisplay{
+#ventas.view.active.view.active>div.sale-selected-column #qtyDisplay{
   display:block!important;text-align:center!important;font-size:17px!important;
 }
-#ventas.view.active>.sale-selected-column #saleQty{
+#ventas.view.active.view.active>div.sale-selected-column #saleQty{
   display:block!important;width:100%!important;min-width:0!important;min-height:40px!important;
 }
-#ventas.view.active>.sale-selected-column .sale-selection-panel>button{
+#ventas.view.active.view.active>div.sale-selected-column .sale-selection-panel>button{
   display:block!important;visibility:visible!important;width:100%!important;min-height:42px!important;
   margin:0!important;
 }
 @media(max-width:680px){
-  #ventas.view.active>.sale-selected-column{grid-column:1!important;grid-row:auto!important}
+  #ventas.view.active.view.active>div.sale-selected-column{grid-column:1!important;grid-row:auto!important}
   #ventas.view.active>.sale-selected-column>.sale-selection-panel{padding:10px!important}
 }
