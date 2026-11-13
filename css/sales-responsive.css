@@ -540,7 +540,7 @@
 
 
 /* A220 Ventas · restaurar cantidad y confirmación visibles (un solo botón de agregar) */
-#ventas.view.active>.sale-selected-column{
+#ventas.view.active.view.active>div.sale-selected-column{
   display:block!important;visibility:visible!important;opacity:1!important;
   width:100%!important;min-width:0!important;grid-column:1!important;grid-row:4!important;
 }
@@ -582,5 +582,5 @@
 }
 @media(max-width:680px){
   #ventas.view.active.view.active>div.sale-selected-column{grid-column:1!important;grid-row:auto!important}
-  #ventas.view.active>.sale-selected-column>.sale-selection-panel{padding:10px!important}
+  #ventas.view.active.view.active>div.sale-selected-column>.sale-selection-panel{padding:10px!important}
 }
