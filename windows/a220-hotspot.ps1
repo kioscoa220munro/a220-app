@@ -42,7 +42,7 @@ function Invoke-Netsh([string[]]$Arguments) {
 }
 function Test-HostedNetworkSupport {
   $output = Invoke-Netsh @('wlan','show','drivers')
-  return ($output -match '(?im)Hosted network supported\s*:\s*Yes' -or $output -match '(?im)(Red hospedada admitida|Compatibilidad con red hospedada)\s*:\s*S[ií]')
+  return ($output -match '(?im)Hosted network supported\s*:\s*Yes' -or $output -match '(?im)(Red hospedada admitida|Compatibilidad con red hospedada)\s*:\s*S.')
 }
 function Get-HostedNetworkInfo {
   $output = Invoke-Netsh @('wlan','show','hostednetwork')
