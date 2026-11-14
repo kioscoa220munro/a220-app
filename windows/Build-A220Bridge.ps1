@@ -5,7 +5,8 @@ $Manifest = Join-Path $PSScriptRoot 'A220HotspotBridge\Package.appxmanifest'
 $Out = Join-Path $PSScriptRoot 'A220HotspotBridge\publish'
 $Package = Join-Path $PSScriptRoot 'A220-WiFi-Transferencias.msix'
 $CertPath = Join-Path $PSScriptRoot 'A220-LocalSigning.pfx'
-$CertPassword = ConvertTo-SecureString ([Guid]::NewGuid().ToString('N')) -AsPlainText -Force
+$PlainPassword = [Guid]::NewGuid().ToString('N')
+$CertPassword = ConvertTo-SecureString $PlainPassword -AsPlainText -Force
 
 if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) { throw 'Instalá .NET 8 SDK antes de continuar.' }
 $SdkBin = Join-Path $env:ProgramFiles(x86) 'Windows Kits\10\bin'
@@ -35,7 +36,7 @@ if (Test-Path $Package) { Remove-Item $Package -Force }
 if ($LASTEXITCODE -ne 0) { throw 'No se pudo empaquetar el controlador.' }
 $cert = New-SelfSignedCertificate -Type Custom -Subject 'CN=A220 Local' -KeyUsage DigitalSignature -FriendlyName 'A220 Local Package Signing' -CertStoreLocation 'Cert:\CurrentUser\My' -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3')
 Export-PfxCertificate -Cert $cert -FilePath $CertPath -Password $CertPassword | Out-Null
-& $SignTool.FullName sign /fd SHA256 /f $CertPath /p (ConvertFrom-SecureString $CertPassword -AsPlainText) $Package
+& $SignTool.FullName sign /fd SHA256 /f $CertPath /p $PlainPassword $Package
 if ($LASTEXITCODE -ne 0) { throw 'No se pudo firmar el paquete.' }
 Export-Certificate -Cert $cert -FilePath (Join-Path $PSScriptRoot 'A220-LocalSigning.cer') | Out-Null
 Import-Certificate -FilePath (Join-Path $PSScriptRoot 'A220-LocalSigning.cer') -CertStoreLocation 'Cert:\CurrentUser\TrustedPeople' | Out-Null
