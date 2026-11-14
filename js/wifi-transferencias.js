@@ -21,6 +21,8 @@
     const detail = $('a220WifiDetail');
     const clients = $('a220WifiClients');
     const countdown = $('a220WifiCountdown');
+    const ssid = $('a220WifiSsid');
+    const password = $('a220WifiPassword');
     const toggle = $('a220WifiToggle');
     const dot = $('a220WifiDot');
     if (!status || !data) return;
@@ -30,6 +32,8 @@
       ? 'Este adaptador no informa compatibilidad con Red hospedada de Windows.'
       : (data.internetSharing ? 'Internet compartido desde tu Wi-Fi principal.' : (active ? 'Red activa; verificá que tenga salida a Internet.' : 'Listo para activar desde A220.'));
     clients.textContent = String(Number(data.clients) || 0);
+    if (ssid) ssid.textContent = data.ssid || '—';
+    if (password) password.textContent = data.password || 'Disponible al activar';
     countdown.textContent = active && !Number(data.clients)
       ? (Number(data.secondsRemaining) > 0 ? 'Se apaga en ' + Math.ceil(data.secondsRemaining) + ' s' : 'Apagado automático pendiente')
       : (active ? 'Con clientes conectados' : 'Temporizador detenido');
