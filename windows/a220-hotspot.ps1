@@ -3,7 +3,7 @@
 $ErrorActionPreference = 'Stop'
 $Port = 8765
 $Ssid = 'A220_TRANSFERENCIAS'
-$WifiPassword = 'Transferir-A220-2026'
+$PasswordPath = Join-Path $env:LOCALAPPDATA 'A220Hotspot\\wifi-password.txt'\nif (!(Test-Path $PasswordPath)) {\n  $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#'\n  $randomBytes = New-Object byte[] 22\n  [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($randomBytes)\n  $generatedPassword = -join ($randomBytes | ForEach-Object { $alphabet[$_ % $alphabet.Length] })\n  $generatedPassword | Set-Content -Encoding ASCII $PasswordPath\n}\n$WifiPassword = (Get-Content $PasswordPath -Raw).Trim()
 $IdleSeconds = 120
 $TokenPath = Join-Path $env:LOCALAPPDATA 'A220Hotspot\token.txt'
 New-Item -ItemType Directory -Force -Path (Split-Path $TokenPath) | Out-Null
@@ -75,7 +75,7 @@ function Get-A220Status {
     Stop-A220Hotspot
     $info = Get-HostedNetworkInfo
   }
-  return @{ ok=$true; supported=$true; enabled=[bool]$info.enabled; clients=[int]$info.clients; secondsRemaining=$remaining; internetSharing=[bool]$script:InternetSharing; ssid=$Ssid; error=$script:LastError }
+  return @{ ok=$true; supported=$true; enabled=[bool]$info.enabled; clients=[int]$info.clients; secondsRemaining=$remaining; internetSharing=[bool]$script:InternetSharing; ssid=$Ssid; password=$WifiPassword; error=$script:LastError }
 }
 function Send-Json($Context, $Object, [int]$StatusCode = 200) {
   $json = $Object | ConvertTo-Json -Depth 6 -Compress
