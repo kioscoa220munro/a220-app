@@ -14,3 +14,9 @@
 .a220-calc-keys .calc-equals{color:#03171b;background:linear-gradient(135deg,#63fff0,#1bd8d0 55%,#35b9ff);border:0}
 .a220-calc-hint{margin:12px 0 0;text-align:center;color:#91aabb;font-size:11px}
 @media(max-width:480px){.a220-calculator{padding:16px}.a220-calc-keys{gap:6px}.a220-calc-keys button{min-height:50px}}
+
+/* Acceso a calculadora junto al selector PRO/FÁCIL y en el encabezado del modo Fácil */
+.a220-mode-switch .a220-calculator-trigger{min-height:36px;padding:7px 12px!important;font-size:12px;white-space:nowrap}
+.a220-easy-head-actions{display:flex;align-items:center;gap:8px}
+.a220-easy-head-actions .a220-calculator-trigger{min-height:38px;padding:8px 12px;font-size:13px;white-space:nowrap}
+@media(max-width:480px){.a220-mode-switch{gap:3px}.a220-mode-switch .a220-calculator-trigger{min-width:0;padding:7px 8px!important;font-size:11px}.a220-easy-head-actions{gap:6px}.a220-easy-head-actions .a220-calculator-trigger{padding:7px 9px;font-size:12px}}
