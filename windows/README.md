@@ -24,7 +24,7 @@ Este módulo agrega un panel web a A220 y un controlador local independiente. **
 5. Abrir A220 en esa misma PC, entrar en **Wi-Fi Transferencias**, pegar el código y pulsar **Vincular**.
 6. Activar el hotspot desde el panel.
 
-Red propuesta: `A220_TRANSFERENCIAS`. Clave inicial: `Transferir-A220-2026`. Cambiarla antes de ofrecer el acceso a clientes editando `$WifiPassword` en el script.
+Red propuesta: `A220_TRANSFERENCIAS`. La clave WPA2 se genera aleatoriamente en la primera ejecución y se guarda en `%LOCALAPPDATA%\\A220Hotspot\\wifi-password.txt`; también se muestra en la consola y en el panel A220.
 
 ## Apagado automático
 
