@@ -1,0 +1,16 @@
+.a220-calculator-overlay{position:fixed;inset:0;z-index:10030;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,5,12,.72);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.a220-calculator-overlay.is-open{display:flex}
+.a220-calculator{width:min(390px,100%);padding:20px;border:1px solid rgba(32,244,226,.42);border-radius:22px;background:linear-gradient(145deg,#102638,#07131f);color:#eaf7ff;box-shadow:0 24px 80px rgba(0,0,0,.55),0 0 32px rgba(32,244,226,.12)}
+.a220-calculator-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.a220-calculator-head h2{font-size:23px;margin:0}
+.a220-calculator-close{width:36px;height:36px;border:1px solid rgba(151,202,226,.35);border-radius:50%;background:rgba(255,255,255,.06);color:#eaf7ff;font-size:25px;line-height:1;cursor:pointer}
+.a220-calc-display{width:100%;height:64px;margin:0 0 14px!important;padding:12px 14px!important;border:1px solid rgba(32,244,226,.35)!important;border-radius:13px!important;background:rgba(2,10,18,.85)!important;color:#72fff0!important;text-align:right;font-size:27px!important;font-weight:750!important;letter-spacing:.04em}
+.a220-calc-keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.a220-calc-keys button{min-height:53px;border:1px solid rgba(135,183,207,.2);border-radius:12px;background:rgba(255,255,255,.065);color:#eaf7ff;font-size:18px;font-weight:750;cursor:pointer;transition:background .15s ease,transform .15s ease}
+.a220-calc-keys button:hover{background:rgba(32,244,226,.15);border-color:rgba(32,244,226,.5)}
+.a220-calc-keys button:active{transform:scale(.96)}
+.a220-calc-keys button:nth-child(4n){color:#67fff0;background:rgba(20,156,255,.09)}
+.a220-calc-keys .calc-clear{color:#ff9ca3;background:rgba(239,32,41,.12)}
+.a220-calc-keys .calc-equals{color:#03171b;background:linear-gradient(135deg,#63fff0,#1bd8d0 55%,#35b9ff);border:0}
+.a220-calc-hint{margin:12px 0 0;text-align:center;color:#91aabb;font-size:11px}
+@media(max-width:480px){.a220-calculator{padding:16px}.a220-calc-keys{gap:6px}.a220-calc-keys button{min-height:50px}}
