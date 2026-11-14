@@ -39,11 +39,18 @@ internal static class Program
         listener.Prefixes.Add($"http://127.0.0.1:{Port}/");
         listener.Start();
         Console.WriteLine($"Escuchando únicamente en http://127.0.0.1:{Port}/");
+        _ = Task.Run(async () =>
+        {
+            while (listener.IsListening)
+            {
+                await Task.Delay(1000);
+                await MaintainIdleShutdown();
+            }
+        });
         while (listener.IsListening)
         {
             var context = await listener.GetContextAsync();
             _ = Task.Run(() => Handle(context));
-            await MaintainIdleShutdown();
         }
     }
 
