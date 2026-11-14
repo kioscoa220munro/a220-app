@@ -3,20 +3,31 @@
 $ErrorActionPreference = 'Stop'
 $Port = 8765
 $Ssid = 'A220_TRANSFERENCIAS'
-$PasswordPath = Join-Path $env:LOCALAPPDATA 'A220Hotspot\\wifi-password.txt'\nif (!(Test-Path $PasswordPath)) {\n  $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#'\n  $randomBytes = New-Object byte[] 22\n  [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($randomBytes)\n  $generatedPassword = -join ($randomBytes | ForEach-Object { $alphabet[$_ % $alphabet.Length] })\n  $generatedPassword | Set-Content -Encoding ASCII $PasswordPath\n}\n$WifiPassword = (Get-Content $PasswordPath -Raw).Trim()
 $IdleSeconds = 120
-$TokenPath = Join-Path $env:LOCALAPPDATA 'A220Hotspot\token.txt'
-New-Item -ItemType Directory -Force -Path (Split-Path $TokenPath) | Out-Null
+$DataDir = Join-Path $env:LOCALAPPDATA 'A220Hotspot'
+New-Item -ItemType Directory -Force -Path $DataDir | Out-Null
+$TokenPath = Join-Path $DataDir 'token.txt'
+$PasswordPath = Join-Path $DataDir 'wifi-password.txt'
 if (!(Test-Path $TokenPath)) {
   $bytes = New-Object byte[] 32
   [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
   [Convert]::ToBase64String($bytes) | Set-Content -Encoding ASCII $TokenPath
 }
+if (!(Test-Path $PasswordPath)) {
+  $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#'
+  $randomBytes = New-Object byte[] 22
+  [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($randomBytes)
+  $generatedPassword = -join ($randomBytes | ForEach-Object { $alphabet[$_ % $alphabet.Length] })
+  $generatedPassword | Set-Content -Encoding ASCII $PasswordPath
+}
 $Token = (Get-Content $TokenPath -Raw).Trim()
+$WifiPassword = (Get-Content $PasswordPath -Raw).Trim()
 Write-Host ''
 Write-Host 'A220 WI-FI TRANSFERENCIAS' -ForegroundColor Cyan
-Write-Host 'Código para pegar en A220 (se mantiene en este equipo):' -ForegroundColor Yellow
+Write-Host 'Código para vincular A220:' -ForegroundColor Yellow
 Write-Host $Token -ForegroundColor Green
+Write-Host 'Clave Wi-Fi generada (también aparece en el panel A220):' -ForegroundColor Yellow
+Write-Host $WifiPassword -ForegroundColor Green
 Write-Host ''
 Write-Host 'No cierres esta ventana mientras quieras controlar el hotspot.' -ForegroundColor DarkGray
 
@@ -31,13 +42,19 @@ function Invoke-Netsh([string[]]$Arguments) {
 }
 function Test-HostedNetworkSupport {
   $output = Invoke-Netsh @('wlan','show','drivers')
-  return ($output -match '(?im)Hosted network supported\s*:\s*Yes' -or $output -match '(?im)Red hospedada admitida\s*:\s*S[ií]')
+  return ($output -match '(?im)Hosted network supported\s*:\s*Yes' -or $output -match '(?im)(Red hospedada admitida|Compatibilidad con red hospedada)\s*:\s*S[ií]')
 }
 function Get-HostedNetworkInfo {
   $output = Invoke-Netsh @('wlan','show','hostednetwork')
-  $started = $output -match '(?im)(Hosted network status|Estado de la red hospedada)\s*:\s*(Started|Iniciado)'
-  $macs = [regex]::Matches($output,'(?im)^\s*([0-9a-f]{2}(?:[:-][0-9a-f]{2}){5})\s*$')
-  return @{ enabled = [bool]$started; clients = $macs.Count; raw = $output }
+  $started = $output -match '(?im)^\s*(Status|Estado)\s*:\s*(Started|Iniciado|Iniciada)\s*$'
+  $clientMatch = [regex]::Match($output,'(?im)(Number of clients|Número de clientes)\s*:\s*(\d+)')
+  if ($clientMatch.Success) {
+    $clientCount = [int]$clientMatch.Groups[2].Value
+  } else {
+    $macs = [regex]::Matches($output,'(?im)^\s*([0-9a-f]{2}(?:[:-][0-9a-f]{2}){5})\s*$')
+    $clientCount = $macs.Count
+  }
+  return @{ enabled = [bool]$started; clients = $clientCount; raw = $output }
 }
 function Enable-InternetSharing {
   try {
@@ -96,7 +113,7 @@ try {
   $listener.Start()
   Write-Host "Controlador escuchando en http://127.0.0.1:$Port/" -ForegroundColor Cyan
   while ($listener.IsListening) {
-    # El timeout permite ejecutar el apagado automático incluso si la página se cierra.
+    # El timeout mantiene el apagado automático aunque se cierre la página.
     $task = $listener.GetContextAsync()
     if (!$task.Wait(1000)) {
       try { $null = Get-A220Status } catch { $script:LastError = $_.Exception.Message }
