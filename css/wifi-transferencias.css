@@ -1,0 +1,26 @@
+/* A220 Wi-Fi Transferencias */
+.a220-wifi-wrap{max-width:920px;margin:0 auto;display:grid;gap:16px}
+.a220-wifi-hero{position:relative;overflow:hidden;padding:clamp(20px,4vw,32px);border-radius:22px;border:1px solid var(--line,rgba(255,255,255,.12));background:linear-gradient(135deg,rgba(185,28,28,.16),rgba(30,41,59,.5));}
+.a220-wifi-brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.08em}
+.a220-wifi-brand-mark{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:#b91c1c;color:white;font-size:22px}
+.a220-wifi-title{margin:12px 0 5px;font-size:clamp(25px,4vw,36px);font-weight:900}
+.a220-wifi-subtitle{margin:0;color:var(--muted,#9ca3af);max-width:620px}
+.a220-wifi-state{display:flex;align-items:center;gap:10px;margin-top:22px;font-weight:800}
+.a220-wifi-dot{width:11px;height:11px;border-radius:50%;background:#64748b;box-shadow:0 0 0 5px rgba(100,116,139,.14)}
+.a220-wifi-dot.is-active{background:#22c55e;box-shadow:0 0 0 5px rgba(34,197,94,.15),0 0 16px rgba(34,197,94,.55)}
+.a220-wifi-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+.a220-wifi-primary{min-height:52px;padding:12px 22px;border:0;border-radius:13px;background:#b91c1c;color:#fff;font-weight:900;font-size:15px;cursor:pointer}
+.a220-wifi-primary.is-on{background:#475569}
+.a220-wifi-primary:disabled{opacity:.55;cursor:not-allowed}
+.a220-wifi-secondary{min-height:46px;padding:10px 15px;border-radius:12px;border:1px solid var(--line,rgba(255,255,255,.16));background:transparent;color:inherit;font-weight:700;cursor:pointer}
+.a220-wifi-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.a220-wifi-metric{padding:17px;border:1px solid var(--line,rgba(255,255,255,.12));border-radius:15px;background:var(--panel,rgba(255,255,255,.035))}
+.a220-wifi-metric span{display:block;color:var(--muted,#9ca3af);font-size:12px;margin-bottom:6px}
+.a220-wifi-metric strong{font-size:22px}
+.a220-wifi-note{padding:14px 16px;border-radius:13px;background:rgba(148,163,184,.09);color:var(--muted,#9ca3af);font-size:13px;line-height:1.5}
+.a220-wifi-setup{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+.a220-wifi-setup input{min-width:0;width:100%;padding:12px;border-radius:11px;border:1px solid var(--line,rgba(255,255,255,.16));background:var(--input-bg,rgba(0,0,0,.15));color:inherit}
+#a220WifiMessage{min-height:20px;font-size:13px;color:var(--muted,#9ca3af)}
+#a220WifiMessage[data-kind="error"]{color:#f87171}
+#a220WifiMessage[data-kind="success"]{color:#4ade80}
+@media(max-width:600px){.a220-wifi-controls,.a220-wifi-setup{grid-template-columns:1fr}.a220-wifi-secondary{width:100%}}
