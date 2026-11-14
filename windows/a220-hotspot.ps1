@@ -47,7 +47,7 @@ function Test-HostedNetworkSupport {
 function Get-HostedNetworkInfo {
   $output = Invoke-Netsh @('wlan','show','hostednetwork')
   $started = $output -match '(?im)^\s*(Status|Estado)\s*:\s*(Started|Iniciado|Iniciada)\s*$'
-  $clientMatch = [regex]::Match($output,'(?im)(Number of clients|Número de clientes)\s*:\s*(\d+)')
+  $clientMatch = [regex]::Match($output,'(?im)(Number of clients|N.mero de clientes)\s*:\s*(\d+)')
   if ($clientMatch.Success) {
     $clientCount = [int]$clientMatch.Groups[2].Value
   } else {
