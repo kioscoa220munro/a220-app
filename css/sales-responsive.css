@@ -1,865 +1,191 @@
-/* A220 PRO · Ventas POS responsive — reglas únicas, sin cascadas contradictorias */
+/* A220 Ventas · diseño compacto y unificado */
 #ventas.view.active{
   display:grid!important;
   grid-template-columns:minmax(0,1fr)!important;
   grid-auto-flow:row!important;
   grid-auto-rows:max-content!important;
   align-items:start!important;
-  gap:10px!important;
-  width:100%!important;
-  min-width:0!important;
-  box-sizing:border-box!important;
-}
-#ventas.view.active > .page-head,
-#ventas.view.active > .sale-client-panel,
-#ventas.view.active > .sale-products-column,
-#ventas.view.active > .sale-selected-column,
-#ventas.view.active > .sale-checkout-column{
-  min-width:0!important;
-  max-width:100%!important;
-  width:100%!important;
-  margin:0!important;
-  box-sizing:border-box!important;
-}
-#ventas.view.active > .page-head,
-#ventas.view.active > .sale-client-panel{grid-column:1/-1!important}
-#ventas.view.active > .sale-products-column,
-#ventas.view.active > .sale-selected-column,
-#ventas.view.active > .sale-checkout-column{
-  display:flex!important;
-  flex-direction:column!important;
-  align-self:stretch!important;
   gap:9px!important;
+  width:100%!important;
+  min-width:0!important;
+  padding:0!important;
+}
+#ventas.view.active,
+#ventas.view.active *{box-sizing:border-box!important}
+#ventas.view.active>.page-head,
+#ventas.view.active>.sale-client-panel,
+#ventas.view.active>.sale-products-column,
+#ventas.view.active>.sale-selected-column,
+#ventas.view.active>.sale-cart-column,
+#ventas.view.active>.sale-payment-column{
+  grid-column:1!important;grid-row:auto!important;
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  margin:0!important;position:static!important;
+}
+#ventas.view.active>.page-head{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:8px!important;padding:0 2px!important;min-height:32px!important;
+}
+#ventas.view.active>.page-head h2{font-size:18px!important;margin:0!important}
+#ventas.view.active>.page-head .eyebrow{display:none!important}
+#ventas.view.active .scan-big{padding:7px 11px!important;min-height:34px!important}
+#ventas.view.active>.sale-client-panel{
+  display:grid!important;
+  grid-template-columns:minmax(105px,.42fr) minmax(0,2fr) minmax(130px,1fr)!important;
+  grid-template-rows:auto!important;
+  align-items:center!important;gap:5px 9px!important;
+  padding:8px 10px!important;
+}
+#ventas.view.active .sale-client-heading{grid-column:1!important;grid-row:1!important;margin:0!important;min-width:0!important}
+#ventas.view.active .sale-client-heading h3{font-size:13px!important;margin:0!important}
+#ventas.view.active .sale-client-heading .muted{font-size:10px!important}
+#ventas.view.active #clienteNombre{grid-column:2!important;grid-row:1!important}
+#ventas.view.active #clienteTelefono{grid-column:3!important;grid-row:1!important}
+#ventas.view.active #saleClientSuggestions{grid-column:2/-1!important;grid-row:2!important;width:100%!important;min-width:0!important}
+#ventas.view.active>.sale-products-column,
+#ventas.view.active>.sale-selected-column,
+#ventas.view.active>.sale-cart-column,
+#ventas.view.active>.sale-payment-column{
+  display:flex!important;flex-direction:column!important;gap:7px!important;
 }
 #ventas.view.active .panel{
-  width:100%!important;
-  min-width:0!important;
-  max-width:100%!important;
-  margin:0!important;
-  padding:12px!important;
-  box-sizing:border-box!important;
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  margin:0!important;padding:10px!important;border-radius:13px!important;
 }
-#ventas.view.active .panel h3{margin:0 0 9px!important;font-size:16px!important;line-height:1.25!important}
-#ventas.view.active label{display:block;margin:8px 0 5px!important;font-size:12px!important;font-weight:700!important}
+#ventas.view.active .panel h3{font-size:14px!important;line-height:1.2!important;margin:0 0 7px!important}
+#ventas.view.active label{font-size:11px!important;margin:5px 0 3px!important}
 #ventas.view.active input,
 #ventas.view.active select,
 #ventas.view.active textarea{
-  width:100%!important;max-width:100%!important;min-width:0!important;
-  min-height:42px!important;padding:9px 10px!important;font-size:16px!important;
-  box-sizing:border-box!important;
+  min-width:0!important;width:100%!important;max-width:100%!important;
+  min-height:36px!important;height:auto!important;padding:7px 9px!important;
+  margin:2px 0 4px!important;font-size:14px!important;line-height:1.25!important;
 }
 #ventas.view.active button,
 #ventas.view.active .btn{
-  min-height:40px!important;padding:9px 11px!important;font-size:13px!important;
-  line-height:1.2!important;box-sizing:border-box!important;
-  touch-action:manipulation;white-space:normal!important;
+  min-height:34px!important;height:auto!important;padding:7px 9px!important;
+  margin:0!important;font-size:12px!important;line-height:1.2!important;
+  white-space:normal!important;touch-action:manipulation!important;
 }
-#ventas.view.active .page-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important}
-#ventas.view.active .page-head h2{margin:0!important;font-size:21px!important}
-#ventas.view.active .scan-big{flex:0 0 auto!important}
-#ventas.view.active > .sale-client-panel{
-  display:grid!important;
-  grid-template-columns:minmax(110px,.55fr) minmax(0,2fr) minmax(0,1.1fr)!important;
-  grid-template-rows:auto auto!important;
-  align-items:center!important;
-  gap:7px 10px!important;
-  padding:10px 12px!important;
+#ventas.view.active .quick-search{
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;gap:6px!important;
 }
-#ventas.view.active .sale-client-heading{grid-column:1!important;grid-row:1!important;min-width:0!important;margin:0!important}
-#ventas.view.active .sale-client-heading h3{margin:0!important;font-size:14px!important}
-#ventas.view.active #clienteNombre{grid-column:2!important;grid-row:1!important}
-#ventas.view.active #clienteTelefono{grid-column:3!important;grid-row:1!important}
-#ventas.view.active #saleClientSuggestions{grid-column:2/-1!important;grid-row:2!important;min-width:0!important;width:100%!important}
-#ventas.view.active .quick-search{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:7px!important}
 #ventas.view.active .quick-search>*{min-width:0!important}
-#ventas.view.active .field-note{font-size:11px!important;line-height:1.35!important;margin-top:7px!important;overflow-wrap:anywhere!important}
-#ventas.view.active .qty-selector{display:grid!important;grid-template-columns:40px minmax(0,1fr) 40px!important;gap:6px!important}
-#ventas.view.active .qty-selector>*{min-width:0!important}
-#ventas.view.active .qty-btn{min-height:42px!important;padding:6px!important}
-#ventas.view.active .qty-input{text-align:center!important}
-#ventas.view.active .product-preview{min-width:0!important;overflow-wrap:anywhere!important}
-#ventas.view.active .sale-checkout-column{gap:9px!important}
-#ventas.view.active .sale-checkout-column .table-wrap{width:100%!important;min-width:0!important;max-width:100%!important;overflow-x:auto!important}
-#ventas.view.active .cart-panel table{width:100%!important;min-width:390px!important}
+#ventas.view.active .quick-search input{margin:0!important}
+#ventas.view.active .quick-search button{min-width:70px!important}
+#ventas.view.active .field-note{font-size:10px!important;line-height:1.3!important;margin-top:4px!important}
+#ventas.view.active .search-list{max-height:190px!important;overflow:auto!important}
+#ventas.view.active .sale-selection-panel{display:flex!important;flex-direction:column!important;gap:5px!important}
+#ventas.view.active .sale-selection-panel h3{margin-bottom:2px!important}
+#ventas.view.active .sale-selection-panel>label:first-child,
+#ventas.view.active .sale-selection-panel>select,
+#ventas.view.active .sale-selection-panel>.field-note{display:none!important}
+#ventas.view.active .product-preview{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  min-height:55px!important;max-height:72px!important;overflow:hidden!important;
+  padding:4px!important;margin:0!important;gap:6px!important;
+}
+#ventas.view.active .product-preview .product-info,
+#ventas.view.active .product-preview .product-name,
+#ventas.view.active .product-preview .product-meta,
+#ventas.view.active .product-preview .product-description,
+#ventas.view.active .product-preview .muted,
+#ventas.view.active .product-preview .product-price,
+#ventas.view.active .product-preview .product-stock{display:none!important}
+#ventas.view.active .product-preview .product-image{width:58px!important;height:58px!important;flex:0 0 58px!important}
+#ventas.view.active .product-preview img{max-width:100%!important;max-height:60px!important;width:auto!important;object-fit:contain!important}
+#ventas.view.active .qty-selector{
+  display:grid!important;grid-template-columns:34px minmax(0,1fr) 34px auto!important;
+  align-items:center!important;gap:5px!important;margin:2px 0!important;
+}
+#ventas.view.active .qty-selector button{min-width:34px!important;width:34px!important;height:34px!important;padding:4px!important}
+#ventas.view.active .qty-selector strong{text-align:center!important}
+#ventas.view.active .qty-selector input{margin:0!important;max-width:76px!important;min-height:34px!important}
+#ventas.view.active .sale-selection-panel>button{width:100%!important;margin-top:2px!important}
+#ventas.view.active .cart-panel .table-wrap{
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  overflow:auto!important;max-height:42vh!important;
+}
+#ventas.view.active .cart-panel table{width:100%!important;min-width:350px!important}
 #ventas.view.active .cart-panel th,
-#ventas.view.active .cart-panel td{padding:6px 5px!important;font-size:11px!important;white-space:nowrap!important}
-#ventas.view.active .tot{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;padding-top:9px!important;font-weight:800!important}
-#ventas.view.active .tot span{font-size:22px!important}
-#ventas.view.active .a220-checkout-summary{padding:9px!important;gap:7px!important}
-#ventas.view.active .a220-checkout-final strong{font-size:24px!important}
-#ventas.view.active .a220-sale-actions{display:grid!important;grid-template-columns:1fr!important;gap:7px!important;width:100%!important}
+#ventas.view.active .cart-panel td{padding:5px 4px!important;font-size:10px!important;white-space:nowrap!important}
+#ventas.view.active .tot{display:flex!important;justify-content:space-between!important;align-items:center!important;margin-top:7px!important;padding-top:6px!important;font-size:16px!important}
+#ventas.view.active .tot span{font-size:20px!important}
+#ventas.view.active .payment-panel{display:flex!important;flex-direction:column!important;gap:5px!important}
+#ventas.view.active .payment-panel select{margin-bottom:2px!important}
+#ventas.view.active .a220-checkout-summary{padding:7px!important;gap:5px!important;margin-top:3px!important}
+#ventas.view.active .a220-checkout-summary>div{font-size:12px!important}
+#ventas.view.active .a220-checkout-final strong{font-size:21px!important}
+#ventas.view.active .a220-cash-fields{padding:7px!important;margin-top:3px!important}
+#ventas.view.active .a220-change-line{padding:6px 8px!important;margin-top:4px!important}
+#ventas.view.active .a220-sale-actions{
+  display:grid!important;grid-template-columns:1fr!important;gap:6px!important;
+  width:100%!important;margin:0!important;
+}
 #ventas.view.active .a220-sale-actions button{width:100%!important}
-#ventas.view.active .sale-checkout-column h3{font-size:15px!important}
+#ventas.view.active .sale-cart-column,
+#ventas.view.active .sale-payment-column{min-height:0!important}
 
-/* Escritorio: tres columnas reales y proporcionadas */
+/* 768 px en adelante: búsqueda/selección | carrito | cobro */
 @media(min-width:768px){
   #ventas.view.active{
-    grid-template-columns:minmax(0,.92fr) minmax(0,1fr) minmax(0,1.12fr)!important;
-    column-gap:12px!important;row-gap:10px!important;
+    grid-template-columns:minmax(0,.92fr) minmax(0,1.18fr) minmax(0,.92fr)!important;
+    column-gap:10px!important;row-gap:8px!important;
   }
   #ventas.view.active>.page-head,
-  #ventas.view.active>.sale-client-panel{grid-column:1/-1!important}
+  #ventas.view.active>.sale-client-panel{grid-column:1/-1!important;grid-row:auto!important}
   #ventas.view.active>.sale-products-column{grid-column:1!important;grid-row:3!important}
-  #ventas.view.active.view.active>div.sale-selected-column{grid-column:2!important;grid-row:3!important}
-  #ventas.view.active>.sale-checkout-column{grid-column:3!important;grid-row:3!important}
-  #ventas.view.active .sale-checkout-column .cart-panel .table-wrap{max-height:38vh!important;overflow:auto!important}
+  #ventas.view.active>.sale-selected-column{grid-column:1!important;grid-row:4!important}
+  #ventas.view.active>.sale-cart-column{grid-column:2!important;grid-row:3/span 2!important}
+  #ventas.view.active>.sale-payment-column{grid-column:3!important;grid-row:3/span 2!important}
+  #ventas.view.active .cart-panel .table-wrap{max-height:38vh!important}
+  #ventas.view.active .payment-panel{height:auto!important}
 }
 
-/* Tablet: operación a la izquierda, cobro a la derecha */
+/* Tablet pequeña: dos columnas, operación a la izquierda y cobro a la derecha */
 @media(min-width:640px) and (max-width:767px){
-  #ventas.view.active{grid-template-columns:minmax(0,1fr) minmax(0,1.08fr)!important;column-gap:10px!important}
+  #ventas.view.active{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px!important}
   #ventas.view.active>.page-head,
   #ventas.view.active>.sale-client-panel{grid-column:1/-1!important}
   #ventas.view.active>.sale-products-column{grid-column:1!important;grid-row:3!important}
   #ventas.view.active>.sale-selected-column{grid-column:1!important;grid-row:4!important}
-  #ventas.view.active>.sale-checkout-column{grid-column:2!important;grid-row:3/span 2!important}
+  #ventas.view.active>.sale-cart-column{grid-column:2!important;grid-row:3!important}
+  #ventas.view.active>.sale-payment-column{grid-column:2!important;grid-row:4!important}
 }
 
-/* Móvil: una columna, controles cómodos y sin scroll horizontal de página */
+/* Móvil: una sola columna */
 @media(max-width:639px){
-  #ventas.view.active{gap:9px!important}
-  #ventas.view.active>.sale-client-panel{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:7px!important}
-  #ventas.view.active .sale-client-heading{grid-column:1/-1!important;grid-row:1!important}
-  #ventas.view.active #clienteNombre{grid-column:1!important;grid-row:2!important}
-  #ventas.view.active #clienteTelefono{grid-column:2!important;grid-row:2!important}
-  #ventas.view.active #saleClientSuggestions{grid-column:1/-1!important;grid-row:3!important}
-  #ventas.view.active .quick-search{grid-template-columns:minmax(0,1fr)!important}
-  #ventas.view.active .quick-search button{width:100%!important}
-  #ventas.view.active .cart-panel table{min-width:420px!important}
-}
-
-/* Navegación táctil horizontal */
-#a220Dock.a220-cyber-dock{
-  display:flex!important;flex-flow:row nowrap!important;justify-content:flex-start!important;
-  align-items:center!important;overflow-x:auto!important;overflow-y:hidden!important;
-  -webkit-overflow-scrolling:touch!important;overscroll-behavior-x:contain!important;
-  scrollbar-width:thin!important;max-width:100%!important;
-}
-#a220Dock.a220-cyber-dock button{
-  flex:0 0 auto!important;min-width:max-content!important;min-height:44px!important;
-  height:44px!important;padding:8px 12px!important;white-space:nowrap!important;
-}
-@media(max-width:767px){#a220Dock.a220-cyber-dock{width:calc(100% - 16px)!important;gap:5px!important}}
-
-
-/* A220 · ANULACIÓN DE CASCADAS ANTIGUAS: estructura real del HTML */
-#ventas.view.active.view.active{
-  display:grid!important;
-  grid-template-columns:minmax(0,.92fr) minmax(0,1fr) minmax(0,1.12fr)!important;
-  grid-auto-flow:row!important;
-  grid-auto-rows:max-content!important;
-  align-items:start!important;
-  gap:12px!important;
-  width:100%!important;
-  min-width:0!important;
-}
-#ventas.view.active.view.active > div.page-head,
-#ventas.view.active.view.active > div.sale-client-panel{
-  grid-column:1/-1!important;
-  grid-row:auto!important;
-  width:100%!important;
-  min-width:0!important;
-  max-width:100%!important;
-  margin:0!important;
-}
-#ventas.view.active.view.active > div.sale-products-column{
-  grid-column:1!important;grid-row:auto!important;
-  width:100%!important;min-width:0!important;max-width:100%!important;
-  display:flex!important;flex-direction:column!important;
-  position:static!important;max-height:none!important;overflow:visible!important;
-}
-#ventas.view.active.view.active > div.sale-selected-column{
-  grid-column:2!important;grid-row:auto!important;
-  width:100%!important;min-width:0!important;max-width:100%!important;
-  display:flex!important;flex-direction:column!important;
-  position:static!important;max-height:none!important;overflow:visible!important;
-}
-#ventas.view.active.view.active > div.sale-checkout-column{
-  grid-column:3!important;grid-row:auto!important;
-  width:100%!important;min-width:0!important;max-width:100%!important;
-  display:flex!important;flex-direction:column!important;
-  position:static!important;max-height:none!important;overflow:visible!important;
-}
-#ventas.view.active.view.active > div.sale-products-column > div,
-#ventas.view.active.view.active > div.sale-selected-column > div,
-#ventas.view.active.view.active > div.sale-checkout-column > div,
-#ventas.view.active.view.active > div.sale-checkout-column > .a220-sale-actions{
-  width:100%!important;min-width:0!important;max-width:100%!important;
-  margin:0!important;position:static!important;
-}
-#ventas.view.active.view.active > div.sale-client-panel{
-  display:grid!important;
-  grid-template-columns:minmax(140px,.55fr) minmax(0,2fr) minmax(0,1fr)!important;
-  grid-template-rows:auto auto!important;
-  align-items:center!important;gap:7px 12px!important;padding:10px 14px!important;
-}
-#ventas.view.active.view.active > div.sale-client-panel > div.sale-client-heading{
-  grid-column:1!important;grid-row:1!important;
-}
-#ventas.view.active.view.active > div.sale-client-panel > input#clienteNombre{
-  grid-column:2!important;grid-row:1!important;
-}
-#ventas.view.active.view.active > div.sale-client-panel > input#clienteTelefono{
-  grid-column:3!important;grid-row:1!important;
-}
-#ventas.view.active.view.active > div.sale-client-panel > div#saleClientSuggestions{
-  grid-column:2/-1!important;grid-row:2!important;
-}
-#ventas.view.active.view.active .sale-checkout-column .cart-panel .table-wrap{
-  max-height:42vh!important;overflow:auto!important;min-width:0!important;
-}
-#ventas.view.active.view.active .cart-panel table{min-width:420px!important}
-#ventas.view.active.view.active .a220-sale-actions{
-  display:grid!important;grid-template-columns:1fr!important;gap:7px!important;
-  width:100%!important;grid-column:auto!important;grid-row:auto!important;
-}
-@media(min-width:768px) and (max-width:1100px){
-  #ventas.view.active.view.active{
-    grid-template-columns:minmax(0,1fr) minmax(0,1.08fr)!important;
-  }
-  #ventas.view.active.view.active > div.sale-products-column{grid-column:1!important}
-  #ventas.view.active.view.active > div.sale-selected-column{grid-column:1!important}
-  #ventas.view.active.view.active > div.sale-checkout-column{grid-column:2!important;grid-row:3/span 2!important}
-}
-@media(max-width:767px){
-  #ventas.view.active.view.active{
-    display:flex!important;flex-direction:column!important;gap:9px!important;
-  }
-  #ventas.view.active.view.active > div.page-head,
-  #ventas.view.active.view.active > div.sale-client-panel,
-  #ventas.view.active.view.active > div.sale-products-column,
-  #ventas.view.active.view.active > div.sale-selected-column,
-  #ventas.view.active.view.active > div.sale-checkout-column{
-    width:100%!important;max-width:100%!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active > div.sale-client-panel{
-    display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-  }
-  #ventas.view.active.view.active > div.sale-client-panel > div.sale-client-heading{grid-column:1/-1!important;grid-row:1!important}
-  #ventas.view.active.view.active > div.sale-client-panel > input#clienteNombre{grid-column:1!important;grid-row:2!important}
-  #ventas.view.active.view.active > div.sale-client-panel > input#clienteTelefono{grid-column:2!important;grid-row:2!important}
-  #ventas.view.active.view.active > div.sale-client-panel > div#saleClientSuggestions{grid-column:1/-1!important;grid-row:3!important}
-  #ventas.view.active.view.active .sale-checkout-column .cart-panel .table-wrap{max-height:none!important}
-}
-
-
-/* A220 · distribución solicitada: búsqueda izquierda, carrito centro, cobro derecha */
-@media(min-width:1101px){
-  #ventas.view.active.view.active{
-    grid-template-columns:minmax(250px,.95fr) minmax(360px,1.25fr) minmax(270px,.9fr)!important;
-    align-items:start!important;
-  }
-  /* El contenedor de cobro deja que carrito y pago ocupen columnas independientes */
-  #ventas.view.active.view.active > div.sale-checkout-column{display:contents!important}
-  #ventas.view.active.view.active > div.sale-products-column{grid-column:1!important;grid-row:3!important}
-  #ventas.view.active.view.active > div.sale-selected-column{grid-column:1!important;grid-row:4!important}
-  #ventas.view.active.view.active > div.sale-checkout-column > .cart-panel{
-    grid-column:2!important;grid-row:3/span 2!important;
-    align-self:start!important;width:100%!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active > div.sale-checkout-column > .payment-panel,
-  #ventas.view.active.view.active > div.sale-checkout-column > .a220-sale-actions{
-    grid-column:3!important;grid-row:auto!important;
-    align-self:start!important;width:100%!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active > div.sale-checkout-column > .payment-panel{grid-row:3!important}
-  #ventas.view.active.view.active > div.sale-checkout-column > .a220-sale-actions{grid-row:4!important}
-  /* En el panel de artículo se conserva lo necesario para operar y se quita texto repetido */
-  #ventas.view.active.view.active .sale-selection-panel > label:first-child,
-  #ventas.view.active.view.active .sale-selection-panel > select,
-  #ventas.view.active.view.active .sale-selection-panel > .field-note{display:none!important}
-  #ventas.view.active.view.active .sale-selection-panel .product-preview{
-    display:flex!important;justify-content:center!important;align-items:center!important;
-    min-height:112px!important;padding:8px!important;margin:0 0 10px!important;
-  }
-  #ventas.view.active.view.active .sale-selection-panel .product-preview .product-name,
-  #ventas.view.active.view.active .sale-selection-panel .product-preview .product-meta,
-  #ventas.view.active.view.active .sale-selection-panel .product-preview .product-description{display:none!important}
-  #ventas.view.active.view.active .sale-selection-panel .product-preview img{
-    display:block!important;max-width:100%!important;width:auto!important;
-    max-height:150px!important;object-fit:contain!important;margin:auto!important;
-  }
-}
-
-
-/* A220 Ventas · layout final: búsqueda | carrito | cobro */
-#ventas.view.active.view.active .sale-selection-panel{
-  display:flex!important;flex-direction:column!important;gap:7px!important;
-  padding:9px!important;
-}
-#ventas.view.active.view.active .sale-selection-panel>label:first-child,
-#ventas.view.active.view.active .sale-selection-panel>select,
-#ventas.view.active.view.active .sale-selection-panel>.field-note{
-  display:none!important;
-}
-#ventas.view.active.view.active .sale-selection-panel .product-preview{
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  min-height:64px!important;max-height:94px!important;overflow:hidden!important;
-  margin:0!important;padding:5px!important;
-}
-#ventas.view.active.view.active .sale-selection-panel .product-preview .product-info,
-#ventas.view.active.view.active .sale-selection-panel .product-preview .product-name,
-#ventas.view.active.view.active .sale-selection-panel .product-preview .muted,
-#ventas.view.active.view.active .sale-selection-panel .product-preview .product-price,
-#ventas.view.active.view.active .sale-selection-panel .product-preview .product-stock{
-  display:none!important;
-}
-#ventas.view.active.view.active .sale-selection-panel .product-preview .product-image{
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  width:100%!important;height:76px!important;
-}
-#ventas.view.active.view.active .sale-selection-panel .product-preview img{
-  display:block!important;width:auto!important;max-width:100%!important;
-  max-height:76px!important;object-fit:contain!important;margin:auto!important;
-}
-#ventas.view.active.view.active .sale-selection-panel>label{
-  margin:3px 0 2px!important;
-}
-#ventas.view.active.view.active .sale-selection-panel .qty-selector{margin:0!important}
-#ventas.view.active.view.active .sale-selection-panel>button{
-  width:100%!important;margin-top:2px!important;
-}
-
-/* Desde 768 px: cliente arriba y tres columnas proporcionales debajo */
-@media(min-width:768px){
-  #ventas.view.active.view.active{
-    display:grid!important;
-    grid-template-columns:minmax(0,.95fr) minmax(0,1.2fr) minmax(0,.95fr)!important;
-    grid-auto-flow:row!important;align-items:start!important;gap:12px!important;
-  }
-  #ventas.view.active.view.active>.page-head,
-  #ventas.view.active.view.active>.sale-client-panel{grid-column:1/-1!important;grid-row:auto!important}
-  #ventas.view.active.view.active>.sale-products-column{
-    grid-column:1!important;grid-row:3!important;
-  }
-  #ventas.view.active.view.active>.sale-selected-column{
-    grid-column:1!important;grid-row:4!important;
-  }
-  #ventas.view.active.view.active>.sale-checkout-column{display:contents!important}
-  #ventas.view.active.view.active>.sale-checkout-column>.cart-panel{
-    grid-column:2!important;grid-row:3/span 2!important;
-    align-self:start!important;width:100%!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active>.sale-checkout-column>.payment-panel{
-    grid-column:3!important;grid-row:3!important;
-    align-self:start!important;width:100%!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active>.sale-checkout-column>.a220-sale-actions{
-    grid-column:3!important;grid-row:4!important;
-    align-self:start!important;width:100%!important;min-width:0!important;
-  }
-}
-/* Tablet pequeña: búsqueda y selección a la izquierda; carrito y cobro a la derecha */
-@media(min-width:640px) and (max-width:767px){
-  #ventas.view.active.view.active{
-    display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr)!important;
-    grid-auto-flow:row!important;align-items:start!important;gap:10px!important;
-  }
-  #ventas.view.active.view.active>.page-head,
-  #ventas.view.active.view.active>.sale-client-panel{grid-column:1/-1!important}
-  #ventas.view.active.view.active>.sale-products-column{grid-column:1!important;grid-row:3!important}
-  #ventas.view.active.view.active>.sale-selected-column{grid-column:1!important;grid-row:4!important}
-  #ventas.view.active.view.active>.sale-checkout-column{display:contents!important}
-  #ventas.view.active.view.active>.sale-checkout-column>.cart-panel{
-    grid-column:2!important;grid-row:3!important;width:100%!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active>.sale-checkout-column>.payment-panel{
-    grid-column:2!important;grid-row:4!important;width:100%!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active>.sale-checkout-column>.a220-sale-actions{
-    grid-column:2!important;grid-row:5!important;width:100%!important;min-width:0!important;
-  }
-}
-/* Móvil: una sola columna y carrito/cobro conservan su flujo normal */
-@media(max-width:639px){
-  #ventas.view.active.view.active{
-    display:flex!important;flex-direction:column!important;gap:9px!important;
-  }
-  #ventas.view.active.view.active>.sale-products-column,
-  #ventas.view.active.view.active>.sale-selected-column,
-  #ventas.view.active.view.active>.sale-checkout-column{width:100%!important}
-  #ventas.view.active.view.active>.sale-checkout-column{display:flex!important}
-  #ventas.view.active.view.active .sale-selection-panel .product-preview{min-height:54px!important}
-}
-
-
-/* A220 Ventas · limpieza visual: búsqueda | carrito | cobro */
-@media(min-width:768px){
- #ventas.view.active.view.active{
-  display:grid!important;
-  grid-template-columns:minmax(245px,.95fr) minmax(340px,1.25fr) minmax(260px,.95fr)!important;
-  grid-auto-flow:row!important;align-items:start!important;gap:12px!important;
- }
- #ventas.view.active.view.active>.page-head,
- #ventas.view.active.view.active>.sale-client-panel{grid-column:1/-1!important;grid-row:auto!important}
- #ventas.view.active.view.active>.sale-products-column{
-  grid-column:1!important;grid-row:3!important;min-width:0!important;
- }
- #ventas.view.active.view.active>.sale-selected-column{
-  display:contents!important;
- }
- #ventas.view.active.view.active>.sale-selected-column>.sale-selection-panel{
-  display:contents!important;
- }
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.product-preview{
-  grid-column:1!important;grid-row:4!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  min-height:96px!important;max-height:112px!important;margin:0!important;padding:5px!important;
-  border:1px solid var(--line,rgba(255,255,255,.12))!important;border-radius:12px!important;
-  background:var(--panel,rgba(255,255,255,.035))!important;
- }
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.product-preview .product-info,
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.product-preview .product-name,
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.product-preview .muted,
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.product-preview .product-price,
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.product-preview .product-stock{
-  display:none!important;
- }
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.product-preview img{
-  display:block!important;width:auto!important;max-width:100%!important;height:auto!important;max-height:96px!important;object-fit:contain!important;margin:auto!important;
- }
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>label:first-child,
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>select,
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.field-note,
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>label[for="salePrice"],
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>#salePrice{
-  display:none!important;
- }
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>label:not(:first-child){
-  grid-column:1!important;grid-row:5!important;margin:2px 0 0!important;
- }
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.qty-selector{
-  grid-column:1!important;grid-row:6!important;margin:0!important;
- }
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>button{
-  grid-column:1!important;grid-row:7!important;width:100%!important;margin:0!important;
- }
- #ventas.view.active.view.active>.sale-checkout-column{display:contents!important}
- #ventas.view.active.view.active>.sale-checkout-column>.cart-panel{
-  grid-column:2!important;grid-row:3/span 5!important;align-self:start!important;
-  width:100%!important;min-width:0!important;margin:0!important;
- }
- #ventas.view.active.view.active>.sale-checkout-column>.payment-panel{
-  grid-column:3!important;grid-row:3!important;align-self:start!important;
-  width:100%!important;min-width:0!important;margin:0!important;
- }
- #ventas.view.active.view.active>.sale-checkout-column>.a220-sale-actions{
-  grid-column:3!important;grid-row:4!important;align-self:start!important;
-  display:grid!important;grid-template-columns:1fr!important;gap:8px!important;
-  width:100%!important;min-width:0!important;margin:0!important;
- }
- #ventas.view.active.view.active>.sale-products-column .quick-product-panel{padding:12px!important}
- #ventas.view.active.view.active>.sale-products-column .quick-product-panel>.field-note{display:none!important}
- #ventas.view.active.view.active .a220-sale-actions button[onclick="finishSale(false)"]{
-  background:#16a34a!important;color:#fff!important;border-color:#16a34a!important;
- }
- #ventas.view.active.view.active .a220-sale-actions button[onclick="finishSale(true)"]{
-  background:#2563eb!important;color:#fff!important;border-color:#2563eb!important;
- }
-}
-@media(min-width:640px) and (max-width:767px){
- #ventas.view.active.view.active>.sale-selected-column{display:contents!important}
- #ventas.view.active.view.active>.sale-selected-column>.sale-selection-panel{display:contents!important}
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.product-preview{
-  grid-column:1!important;grid-row:4!important;min-height:86px!important;max-height:100px!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
- }
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.product-preview .product-info,
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>label:first-child,
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>select,
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.field-note,
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>label[for="salePrice"],
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>#salePrice{display:none!important}
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>label:not(:first-child){grid-column:1!important;grid-row:5!important}
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.qty-selector{grid-column:1!important;grid-row:6!important}
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>button{grid-column:1!important;grid-row:7!important}
- #ventas.view.active.view.active>.sale-checkout-column{display:contents!important}
- #ventas.view.active.view.active>.sale-checkout-column>.cart-panel{grid-column:2!important;grid-row:3/span 2!important}
- #ventas.view.active.view.active>.sale-checkout-column>.payment-panel{grid-column:2!important;grid-row:5!important}
- #ventas.view.active.view.active>.sale-checkout-column>.a220-sale-actions{grid-column:2!important;grid-row:6!important}
-}
-@media(max-width:639px){
- #ventas.view.active.view.active>.sale-selected-column{display:block!important;width:100%!important}
- #ventas.view.active.view.active>.sale-selected-column>.sale-selection-panel{
-  display:flex!important;flex-direction:column!important;gap:7px!important;padding:10px!important;
- }
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>.product-preview{min-height:76px!important}
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>label[for="salePrice"],
- #ventas.view.active.view.active>.sale-selected-column .sale-selection-panel>#salePrice{display:none!important}
-}
-
-
-/* A220 Ventas: búsqueda + carrito + cobro, sin panel redundante de cantidad/precio */
-@media (min-width: 1051px){
-  #ventas.view.active{
-    display:grid!important;
-    grid-template-columns:minmax(250px,.9fr) minmax(360px,1.2fr) minmax(280px,.9fr)!important;
-    gap:10px!important;
-    align-items:start!important;
-  }
-  #ventas.view.active>.page-head,
-  #ventas.view.active>.sale-client-panel{grid-column:1/-1!important}
-  #ventas.view.active>.sale-products-column{grid-column:1!important;grid-row:3!important;min-width:0!important}
-  #ventas.view.active>.sale-checkout-column{display:contents!important}
-  #ventas.view.active>.sale-checkout-column>.cart-panel{grid-column:2!important;grid-row:3!important;min-width:0!important}
-  #ventas.view.active>.sale-checkout-column>.payment-panel{grid-column:3!important;grid-row:3!important;min-width:0!important}
-  #ventas.view.active>.sale-checkout-column>.a220-sale-actions{grid-column:3!important;grid-row:4!important;min-width:0!important}
-}
-@media (min-width:681px) and (max-width:1050px){
-  #ventas.view.active{
-    display:grid!important;
-    grid-template-columns:minmax(220px,.85fr) minmax(320px,1.15fr)!important;
-    gap:9px!important;
-    align-items:start!important;
-  }
-  #ventas.view.active>.page-head,
-  #ventas.view.active>.sale-client-panel{grid-column:1/-1!important}
-  #ventas.view.active>.sale-products-column{grid-column:1!important;grid-row:3!important;min-width:0!important}
-  #ventas.view.active>.sale-checkout-column{display:contents!important}
-  #ventas.view.active>.sale-checkout-column>.cart-panel{grid-column:2!important;grid-row:3!important;min-width:0!important}
-  #ventas.view.active>.sale-checkout-column>.payment-panel{grid-column:2!important;grid-row:4!important;min-width:0!important}
-  #ventas.view.active>.sale-checkout-column>.a220-sale-actions{grid-column:2!important;grid-row:5!important;min-width:0!important}
-}
-@media (max-width:680px){
-  #ventas.view.active{display:flex!important;flex-direction:column!important;gap:8px!important}
+  #ventas.view.active{grid-template-columns:minmax(0,1fr)!important;gap:8px!important}
   #ventas.view.active>.page-head,
   #ventas.view.active>.sale-client-panel,
-  #ventas.view.active>.sale-products-column{width:100%!important;margin:0!important}
-  #ventas.view.active>.sale-checkout-column{display:flex!important;flex-direction:column!important;width:100%!important;gap:8px!important;margin:0!important}
-  #ventas.view.active>.sale-checkout-column>.cart-panel,
-  #ventas.view.active>.sale-checkout-column>.payment-panel,
-  #ventas.view.active>.sale-checkout-column>.a220-sale-actions{width:100%!important;margin:0!important;min-width:0!important}
-  #ventas.view.active .sale-checkout-column .cart-panel .table-wrap{max-height:none!important;min-height:100px!important}
-}
-#ventas .sale-selected-column{display:none!important}
-
-/* Deshacer última venta: acceso mínimo y discreto dentro de Cobro */
-#ventas .payment-panel{position:relative}
-#ventas #a220UndoSaleButton.a220-undo-discreet{display:block!important;width:26px!important;height:24px!important;min-height:0!important;margin:8px 0 0 auto!important;padding:0!important;border:0!important;border-radius:6px!important;background:transparent!important;color:var(--muted,#89909b)!important;font-size:15px!important;line-height:24px!important;opacity:.48!important;cursor:pointer!important;box-shadow:none!important}
-#ventas #a220UndoSaleButton.a220-undo-discreet:hover,#ventas #a220UndoSaleButton.a220-undo-discreet:focus-visible{opacity:1!important;color:var(--text,#e5e7eb)!important;background:rgba(127,127,127,.10)!important;outline:1px solid rgba(127,127,127,.25)!important}
-
-
-/* A220 Ventas · restaurar cantidad y confirmación visibles (un solo botón de agregar) */
-#ventas.view.active.view.active>div.sale-selected-column{
-  display:block!important;visibility:visible!important;opacity:1!important;
-  width:100%!important;min-width:0!important;grid-column:1!important;grid-row:4!important;
-}
-#ventas.view.active.view.active>div.sale-selected-column>.sale-selection-panel{
-  display:flex!important;flex-direction:column!important;gap:9px!important;
-  width:100%!important;min-width:0!important;padding:12px!important;
-}
-#ventas.view.active.view.active>div.sale-selected-column .product-preview{
-  display:flex!important;align-items:center!important;gap:10px!important;
-  min-height:54px!important;max-height:none!important;padding:8px!important;
-}
-#ventas.view.active.view.active>div.sale-selected-column .product-preview .product-info,
-#ventas.view.active.view.active>div.sale-selected-column .product-preview .product-name,
-#ventas.view.active.view.active>div.sale-selected-column .product-preview .muted,
-#ventas.view.active.view.active>div.sale-selected-column .product-preview .product-price,
-#ventas.view.active.view.active>div.sale-selected-column .product-preview .product-stock{
-  display:block!important;
-}
-#ventas.view.active.view.active>div.sale-selected-column .product-preview img{
-  display:block!important;max-width:64px!important;max-height:64px!important;object-fit:contain!important;
-}
-#ventas.view.active.view.active>div.sale-selected-column .qty-selector{
-  display:grid!important;grid-template-columns:42px minmax(30px,1fr) 42px minmax(65px,.8fr)!important;
-  align-items:center!important;gap:7px!important;width:100%!important;margin:0!important;
-}
-#ventas.view.active.view.active>div.sale-selected-column .qty-selector button{
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  min-height:40px!important;width:100%!important;font-size:20px!important;
-}
-#ventas.view.active.view.active>div.sale-selected-column #qtyDisplay{
-  display:block!important;text-align:center!important;font-size:17px!important;
-}
-#ventas.view.active.view.active>div.sale-selected-column #saleQty{
-  display:block!important;width:100%!important;min-width:0!important;min-height:40px!important;
-}
-#ventas.view.active.view.active>div.sale-selected-column .sale-selection-panel>button{
-  display:block!important;visibility:visible!important;width:100%!important;min-height:42px!important;
-  margin:0!important;
-}
-@media(max-width:680px){
-  #ventas.view.active.view.active>div.sale-selected-column{grid-column:1!important;grid-row:auto!important}
-  #ventas.view.active.view.active>div.sale-selected-column>.sale-selection-panel{padding:10px!important}
+  #ventas.view.active>.sale-products-column,
+  #ventas.view.active>.sale-selected-column,
+  #ventas.view.active>.sale-cart-column,
+  #ventas.view.active>.sale-payment-column{grid-column:1!important;grid-row:auto!important}
+  #ventas.view.active>.sale-client-panel{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+  #ventas.view.active .sale-client-heading,
+  #ventas.view.active #saleClientSuggestions{grid-column:1/-1!important}
+  #ventas.view.active #clienteNombre{grid-column:1!important}
+  #ventas.view.active #clienteTelefono{grid-column:2!important}
+  #ventas.view.active .quick-search{grid-template-columns:minmax(0,1fr) auto!important}
 }
 
-
-/* A220 Ventas · artículo seleccionado junto a la búsqueda */
-@media (min-width: 1051px){
-  #ventas.view.active.view.active > .sale-products-column{
-    grid-column:1!important;grid-row:3!important;
-  }
-  #ventas.view.active.view.active > .sale-selected-column{
-    display:block!important;visibility:visible!important;opacity:1!important;
-    grid-column:2!important;grid-row:3!important;width:100%!important;min-width:0!important;
-    align-self:start!important;
-  }
-  #ventas.view.active.view.active > .sale-selected-column > .sale-selection-panel{
-    display:flex!important;flex-direction:column!important;gap:9px!important;
-    width:100%!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active > .sale-checkout-column{display:contents!important}
-  #ventas.view.active.view.active > .sale-checkout-column > .cart-panel{
-    grid-column:3!important;grid-row:3!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active > .sale-checkout-column > .payment-panel{
-    grid-column:3!important;grid-row:4!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active > .sale-checkout-column > .a220-sale-actions{
-    grid-column:3!important;grid-row:5!important;min-width:0!important;
-  }
-}
-@media (min-width: 681px) and (max-width: 1050px){
-  #ventas.view.active.view.active > .sale-products-column{grid-column:1!important;grid-row:3!important}
-  #ventas.view.active.view.active > .sale-selected-column{
-    display:block!important;visibility:visible!important;opacity:1!important;
-    grid-column:1!important;grid-row:4!important;width:100%!important;
-  }
-  #ventas.view.active.view.active > .sale-selected-column > .sale-selection-panel{
-    display:flex!important;flex-direction:column!important;gap:8px!important;width:100%!important;
-  }
-  #ventas.view.active.view.active > .sale-checkout-column{display:contents!important}
-  #ventas.view.active.view.active > .sale-checkout-column > .cart-panel{grid-column:2!important;grid-row:3/span 2!important}
-  #ventas.view.active.view.active > .sale-checkout-column > .payment-panel{grid-column:2!important;grid-row:5!important}
-  #ventas.view.active.view.active > .sale-checkout-column > .a220-sale-actions{grid-column:2!important;grid-row:6!important}
-}
-@media (max-width: 680px){
-  #ventas.view.active.view.active > .sale-selected-column{
-    display:block!important;visibility:visible!important;opacity:1!important;
-    width:100%!important;grid-column:1!important;grid-row:auto!important;
-  }
-  #ventas.view.active.view.active > .sale-selected-column > .sale-selection-panel{
-    display:flex!important;flex-direction:column!important;gap:8px!important;width:100%!important;
-  }
-}
-
-
-/* A220 Ventas · ajuste definitivo: selección contigua a búsqueda */
-@media (min-width: 768px){
-  #ventas.view.active.view.active>div.sale-products-column{
-    grid-column:1!important;grid-row:3!important;
-  }
-  #ventas.view.active.view.active>div.sale-selected-column{
-    display:block!important;visibility:visible!important;opacity:1!important;
-    grid-column:2!important;grid-row:3!important;
-    width:100%!important;min-width:0!important;max-height:none!important;
-    position:static!important;overflow:visible!important;
-    margin:0!important;padding:0!important;border:0!important;
-    background:transparent!important;box-shadow:none!important;
-  }
-  #ventas.view.active.view.active>div.sale-selected-column>.sale-selection-panel{
-    display:flex!important;flex-direction:column!important;gap:9px!important;
-    width:100%!important;min-width:0!important;margin:0!important;
-  }
-  #ventas.view.active.view.active>div.sale-checkout-column{display:contents!important}
-  #ventas.view.active.view.active>div.sale-checkout-column>.cart-panel{
-    grid-column:3!important;grid-row:3!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active>div.sale-checkout-column>.payment-panel{
-    grid-column:3!important;grid-row:4!important;min-width:0!important;
-  }
-  #ventas.view.active.view.active>div.sale-checkout-column>.a220-sale-actions{
-    grid-column:3!important;grid-row:5!important;min-width:0!important;
-  }
-}
-@media (min-width: 681px) and (max-width: 1050px){
-  #ventas.view.active.view.active>div.sale-selected-column{
-    display:block!important;visibility:visible!important;opacity:1!important;
-    grid-column:1!important;grid-row:4!important;width:100%!important;
-    position:static!important;max-height:none!important;overflow:visible!important;
-    margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;
-  }
-}
-@media (max-width: 680px){
-  #ventas.view.active.view.active>div.sale-selected-column{
-    display:block!important;visibility:visible!important;opacity:1!important;
-    width:100%!important;position:static!important;margin:0!important;
-    border:0!important;background:transparent!important;box-shadow:none!important;
-  }
-}
-
-
-/* Corrección solicitada: artículo seleccionado inmediatamente DEBAJO de búsqueda */
-@media (min-width: 681px){
-  #ventas.view.active.view.active{
-    grid-template-columns:minmax(250px,.9fr) minmax(360px,1.2fr) minmax(280px,.9fr)!important;
-    align-items:start!important;
-    row-gap:6px!important;
-  }
-  #ventas.view.active.view.active>div.sale-products-column{
-    grid-column:1!important;grid-row:3!important;
-  }
-  #ventas.view.active.view.active>div.sale-selected-column{
-    display:block!important;visibility:visible!important;opacity:1!important;
-    grid-column:1!important;grid-row:4!important;
-    width:100%!important;min-width:0!important;
-    position:static!important;margin:0!important;padding:0!important;
-    border:0!important;background:transparent!important;box-shadow:none!important;
-  }
-  #ventas.view.active.view.active>div.sale-selected-column>.sale-selection-panel{
-    display:flex!important;flex-direction:column!important;
-    width:100%!important;min-width:0!important;margin:0!important;
-  }
-  #ventas.view.active.view.active>div.sale-checkout-column{display:contents!important}
-  #ventas.view.active.view.active>div.sale-checkout-column>.cart-panel{
-    grid-column:2!important;grid-row:3/span 2!important;
-  }
-  #ventas.view.active.view.active>div.sale-checkout-column>.payment-panel{
-    grid-column:3!important;grid-row:3!important;
-  }
-  #ventas.view.active.view.active>div.sale-checkout-column>.a220-sale-actions{
-    grid-column:3!important;grid-row:4!important;
-  }
-}
-
-
-/* A220 · estructura real en tres columnas independientes */
-@media (min-width: 1000px){
- #ventas.view.active.view.active{
-  display:grid!important;
-  grid-template-columns:minmax(250px,.88fr) minmax(390px,1.22fr) minmax(280px,.9fr)!important;
-  grid-auto-flow:row!important;
-  align-items:start!important;
-  gap:12px!important;
- }
- #ventas.view.active.view.active>.page-head,
- #ventas.view.active.view.active>.sale-client-panel{grid-column:1/-1!important}
- #ventas.view.active.view.active>.sale-products-column,
- #ventas.view.active.view.active>.sale-selected-column{
-  grid-column:1!important;position:static!important;min-width:0!important;
-  width:100%!important;max-height:none!important;overflow:visible!important;
-  margin:0!important;
- }
- #ventas.view.active.view.active>.sale-cart-column{
-  grid-column:2!important;grid-row:3/span 2!important;
-  min-width:0!important;width:100%!important;
- }
- #ventas.view.active.view.active>.sale-payment-column{
-  grid-column:3!important;grid-row:3/span 2!important;
-  min-width:0!important;width:100%!important;
- }
- #ventas.view.active.view.active>.sale-products-column>.panel,
- #ventas.view.active.view.active>.sale-selected-column>.sale-selection-panel,
- #ventas.view.active.view.active>.sale-cart-column>.cart-panel,
- #ventas.view.active.view.active>.sale-payment-column>.payment-panel{margin:0!important;width:100%!important}
- #ventas.view.active.view.active>.sale-selected-column{
-  display:block!important;visibility:visible!important;opacity:1!important;
-  padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;
- }
- #ventas.view.active.view.active>.sale-selected-column>.sale-selection-panel{
-  display:flex!important;flex-direction:column!important;gap:9px!important;
- }
- #ventas.view.active.view.active>.sale-payment-column>.a220-sale-actions{
-  display:grid!important;grid-template-columns:1fr!important;gap:9px!important;
-  width:100%!important;margin-top:10px!important;
- }
-}
-@media (min-width:681px) and (max-width:999px){
- #ventas.view.active.view.active{
-  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-  align-items:start!important;gap:10px!important;
- }
- #ventas.view.active.view.active>.page-head,
- #ventas.view.active.view.active>.sale-client-panel{grid-column:1/-1!important}
- #ventas.view.active.view.active>.sale-products-column,
- #ventas.view.active.view.active>.sale-selected-column{grid-column:1!important;min-width:0!important}
- #ventas.view.active.view.active>.sale-cart-column{grid-column:2!important;grid-row:3!important;min-width:0!important}
- #ventas.view.active.view.active>.sale-payment-column{grid-column:2!important;grid-row:4!important;min-width:0!important}
- #ventas.view.active.view.active>.sale-selected-column{display:block!important;visibility:visible!important;opacity:1!important}
- #ventas.view.active.view.active>.sale-payment-column>.a220-sale-actions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
-}
-
-
-/* A220 · distribución final basada en los cuatro contenedores reales del HTML */
-@media (min-width: 900px) {
-  #ventas.view.active.view.active {
-    display: grid !important;
-    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr) minmax(0, 0.95fr) !important;
-    grid-auto-flow: row !important;
-    grid-auto-rows: max-content !important;
-    align-items: start !important;
-    column-gap: 14px !important;
-    row-gap: 12px !important;
-  }
-  #ventas.view.active.view.active > .page-head,
-  #ventas.view.active.view.active > .sale-client-panel {
-    grid-column: 1 / -1 !important;
-    grid-row: auto !important;
-  }
-  #ventas.view.active.view.active > .sale-products-column {
-    grid-column: 1 !important;
-    grid-row: 3 !important;
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    position: static !important;
-    margin: 0 !important;
-  }
-  #ventas.view.active.view.active > .sale-selected-column {
-    grid-column: 1 !important;
-    grid-row: 4 !important;
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    position: static !important;
-    max-height: none !important;
-    overflow: visible !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-  }
-  #ventas.view.active.view.active > .sale-cart-column {
-    grid-column: 2 !important;
-    grid-row: 3 / span 2 !important;
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    position: static !important;
-    margin: 0 !important;
-  }
-  #ventas.view.active.view.active > .sale-payment-column {
-    grid-column: 3 !important;
-    grid-row: 3 / span 2 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    position: static !important;
-    margin: 0 !important;
-  }
-  #ventas.view.active.view.active > .sale-products-column > .panel,
-  #ventas.view.active.view.active > .sale-selected-column > .panel,
-  #ventas.view.active.view.active > .sale-cart-column > .panel,
-  #ventas.view.active.view.active > .sale-payment-column > .panel {
-    width: 100% !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-  }
-  #ventas.view.active.view.active > .sale-payment-column > .a220-sale-actions {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 9px !important;
-    width: 100% !important;
-    margin: 10px 0 0 !important;
-  }
-}
-
-
-/* Ajuste fino: búsqueda y artículo seleccionado sin separación vertical */
-@media (min-width: 900px) {
-  #ventas.view.active.view.active {
-    row-gap: 6px !important;
-  }
-  #ventas.view.active.view.active > .sale-products-column {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
-  }
-  #ventas.view.active.view.active > .sale-selected-column {
-    margin-top: -6px !important;
-    padding-top: 0 !important;
-  }
+/* Encabezado y navegación más bajos para aprovechar la pantalla */
+header{padding:7px 16px!important;min-height:58px!important}
+header .brand{font-size:19px!important}
+header .sub{font-size:9px!important}
+header .header-right{gap:5px!important;align-items:center!important}
+header .header-right .btn{padding:7px 10px!important;min-height:34px!important;font-size:11px!important}
+nav#a220Dock{padding:4px 10px!important;gap:3px!important;min-height:39px!important}
+nav#a220Dock button{min-height:34px!important;height:34px!important;padding:6px 10px!important;font-size:11px!important}
+main{padding:9px 12px!important}
+footer{padding:5px!important}
+@media(max-width:639px){
+  header{padding:7px 9px!important;gap:6px!important;flex-wrap:wrap!important}
+  header .brand{font-size:17px!important}
+  header .header-right{gap:3px!important;flex-wrap:wrap!important;justify-content:flex-end!important}
+  header .header-right .btn{font-size:10px!important;padding:6px 7px!important}
+  nav#a220Dock{width:100%!important;overflow-x:auto!important}
+  main{padding:8px!important}
 }
